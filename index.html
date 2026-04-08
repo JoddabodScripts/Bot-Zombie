@@ -281,6 +281,25 @@
   
 
       
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="plugins/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Plugin Marketplace
+
+      </a>
+    </li>
+  
+
+      
     </ul>
   </div>
 </nav>
@@ -393,10 +412,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#features-at-a-glance" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Features at a glance
+        How it works
       
     </span>
   </a>
@@ -404,10 +423,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
+  <a href="#quickstart" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick example
+        Quickstart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-available" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's available
       
     </span>
   </a>
@@ -987,6 +1017,33 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin Marketplace
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1014,10 +1071,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#features-at-a-glance" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Features at a glance
+        How it works
       
     </span>
   </a>
@@ -1025,10 +1082,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
+  <a href="#quickstart" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick example
+        Quickstart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-available" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's available
       
     </span>
   </a>
@@ -1056,101 +1124,123 @@
 
 
 <h1 id="nerimity-sdk">nerimity-sdk</h1>
-<p>A fully-featured Python SDK for building <a href="https://nerimity.com">Nerimity</a> bots. Think discord.py, but for Nerimity.</p>
+<p>A Python library for building bots on <a href="https://nerimity.com">Nerimity</a>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>nerimity-sdk
 </code></pre></div>
-<h2 id="features-at-a-glance">Features at a glance</h2>
+<h2 id="how-it-works">How it works</h2>
+<p>You create a <code>Bot</code>, attach handlers with decorators, then call <code>bot.run()</code>.
+The bot connects over a WebSocket, receives events, and dispatches them to your handlers.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Nerimity → WebSocket → GatewayClient → EventEmitter → your handlers
+</code></pre></div>
+<p>Everything your handlers need is in the <code>ctx</code> object passed to them.</p>
+<h2 id="quickstart">Quickstart</h2>
+<p><strong>Get a token:</strong> <a href="https://nerimity.com/app/settings/developer/applications">nerimity.com/app/settings/developer/applications</a> → create app → add Bot → copy token.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>nerimity<span class="w"> </span>create<span class="w"> </span>my-bot
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>my-bot<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>cp<span class="w"> </span>.env.example<span class="w"> </span>.env<span class="w">   </span><span class="c1"># paste token</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>python<span class="w"> </span>bot.py
+</code></pre></div>
+<p>Or manually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nerimity_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bot</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">load_dotenv</span><span class="p">()</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;NERIMITY_TOKEN&quot;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;!&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="nd">@bot</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;ready&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_ready</span><span class="p">(</span><span class="n">me</span><span class="p">):</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Logged in as </span><span class="si">{</span><span class="n">me</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">me</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="nd">@bot</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;ping&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Replies with Pong!&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">ping</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="s2">&quot;Pong! 🏓&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="n">bot</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="whats-available">What's available</h2>
 <table>
 <thead>
 <tr>
 <th>Feature</th>
-<th>Description</th>
+<th>How to use</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Typed events</strong></td>
-<td>Every gateway event is a dataclass — full autocomplete, no raw dicts</td>
+<td>Event listeners</td>
+<td><code>@bot.on("message:created")</code></td>
 </tr>
 <tr>
-<td><strong>Prefix commands</strong></td>
-<td>Arg parsing, converters, middleware, cooldowns, help generator</td>
+<td>Prefix commands</td>
+<td><code>@bot.command("ping")</code></td>
 </tr>
 <tr>
-<td><strong>Slash commands</strong></td>
-<td><code>@bot.slash("ban")</code> — register + handle in one place</td>
+<td>Slash commands</td>
+<td><code>@bot.slash("info")</code></td>
 </tr>
 <tr>
-<td><strong>Buttons</strong></td>
-<td>Pattern-matched button handlers with TTL</td>
+<td>Buttons</td>
+<td><code>@bot.button("confirm:{action}")</code></td>
 </tr>
 <tr>
-<td><strong>Paginator</strong></td>
-<td>Multi-page responses with prev/next navigation</td>
+<td>Argument converters</td>
+<td><code>args=[Int, MemberConverter]</code></td>
 </tr>
 <tr>
-<td><strong>ctx.confirm()</strong></td>
-<td>Yes/no confirmation for destructive commands</td>
+<td>Confirmation prompts</td>
+<td><code>await ctx.confirm("Sure?")</code></td>
 </tr>
 <tr>
-<td><strong>ctx.ask()</strong></td>
-<td>Multi-step conversation helpers with timeout</td>
+<td>Multi-step conversations</td>
+<td><code>await ctx.ask("Your name?")</code></td>
 </tr>
 <tr>
-<td><strong>Mentions</strong></td>
-<td>Parse <code>[@:id]</code> ↔ user objects, <code>mention(user_id)</code> helper</td>
+<td>DMs</td>
+<td><code>await ctx.author.send(bot.rest, "Hi!")</code></td>
 </tr>
 <tr>
-<td><strong>Cache</strong></td>
-<td>LRU/TTL cache with partial merge, optional Redis</td>
+<td>Paginator</td>
+<td><code>await Paginator(pages).send(ctx)</code></td>
 </tr>
 <tr>
-<td><strong>Permissions</strong></td>
-<td>Declarative flag checks + role hierarchy</td>
+<td>Mention helpers</td>
+<td><code>mention(user_id)</code> / <code>ctx.mentions</code></td>
 </tr>
 <tr>
-<td><strong>Plugins</strong></td>
-<td>Hot-reload modules at runtime</td>
+<td>Persistent storage</td>
+<td><code>JsonStore</code> / <code>SqliteStore</code> / <code>RedisStore</code></td>
 </tr>
 <tr>
-<td><strong>Storage</strong></td>
-<td>JSON / SQLite / Redis key-value store</td>
+<td>Scheduled tasks</td>
+<td><code>@bot.cron("0 9 * * *")</code></td>
 </tr>
 <tr>
-<td><strong>Scheduler</strong></td>
-<td><code>@bot.cron("0 9 * * *")</code> backed by croniter</td>
+<td>Event waiting</td>
+<td><code>await bot.wait_for("member_joined", ...)</code></td>
 </tr>
 <tr>
-<td><strong>Error handlers</strong></td>
-<td><code>@bot.on_command_error</code>, <code>on_slash_error</code>, <code>on_button_error</code></td>
+<td>Plugins (hot-reload)</td>
+<td><code>await bot.plugins.load(MyPlugin())</code></td>
 </tr>
 <tr>
-<td><strong>Dev tools</strong></td>
-<td><code>debug=True</code>, <code>watch=True</code>, <code>MockBot</code> for unit tests</td>
+<td>Error handlers</td>
+<td><code>@bot.on_command_error</code></td>
 </tr>
 <tr>
-<td><strong>CLI</strong></td>
-<td><code>nerimity create my-bot</code> scaffolds a project</td>
+<td>Stale cache detection</td>
+<td><code>user.stale == True</code> after reconnect</td>
+</tr>
+<tr>
+<td>Debug mode</td>
+<td><code>Bot(debug=True)</code></td>
+</tr>
+<tr>
+<td>Auto-reload on save</td>
+<td><code>Bot(watch=True)</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="quick-example">Quick example</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nerimity_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bot</span><span class="p">,</span> <span class="n">Int</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;YOUR_TOKEN&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;!&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nd">@bot</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;ready&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_ready</span><span class="p">(</span><span class="n">me</span><span class="p">):</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Logged in as </span><span class="si">{</span><span class="n">me</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">me</span><span class="o">.</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nd">@bot</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">Int</span><span class="p">,</span> <span class="n">Int</span><span class="p">])</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">args</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="n">bot</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</code></pre></div>
-<p>See the <a href="guide/installation/">Getting Started guide</a> or jump straight to the <a href="example/">Example Bot</a>.</p>
+<p>See the <a href="guide/installation/">Getting Started guide</a> or the <a href="example/">Example Bot</a> for a full working example.</p>
 
 
 
