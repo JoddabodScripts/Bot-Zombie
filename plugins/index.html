@@ -1199,6 +1199,16 @@
 <td>Logs joins, leaves, deletes, and edits</td>
 <td><code>channel_id</code></td>
 </tr>
+<tr>
+<td><code>RoleMenuPlugin</code></td>
+<td>React to a message to get a role, unreact to remove it</td>
+<td><code>message_id</code>, <code>roles</code> (dict of emoji → role_id)</td>
+</tr>
+<tr>
+<td><code>PollPlugin</code></td>
+<td>Timed reaction poll with automatic result tallying</td>
+<td>loaded once, then <code>await plugin.create(ctx, question, options, duration)</code></td>
+</tr>
 </tbody>
 </table>
 <hr />
