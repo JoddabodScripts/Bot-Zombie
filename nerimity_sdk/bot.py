@@ -26,7 +26,7 @@ from nerimity_sdk.storage import MemoryStore, Store
 from nerimity_sdk.utils.logging import configure_logger, get_logger
 from nerimity_sdk.models import Message, User
 
-__version__ = "0.3.2"
+__version__ = "0.3.7"
 
 
 class Bot:
@@ -190,10 +190,11 @@ class Bot:
         """Handle a button click. The pattern matches the button's ID.
 
         Use {name} segments to capture dynamic parts of the ID.
+        Note: colons are not allowed in button IDs — use underscores instead.
 
         Usage::
 
-            @bot.button("confirm:{action}")
+            @bot.button("confirm_{action}")
             async def on_confirm(bctx):
                 await bctx.popup("Done!", f"You confirmed: {bctx.params['action']}")
 

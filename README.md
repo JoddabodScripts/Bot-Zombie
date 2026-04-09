@@ -195,21 +195,21 @@ async def confirm_cmd(ctx):
     await ctx.reply(
         "Are you sure?",
         buttons=[
-            Button(id="yes:confirm", label="✅ Yes"),
-            Button(id="no:confirm",  label="❌ No", alert=True),
+            Button(id="yes_confirm", label="✅ Yes"),
+            Button(id="no_confirm",  label="❌ No", alert=True),
         ]
     )
 
-@bot.button("yes:{action}")
+@bot.button("yes_{action}")
 async def on_yes(bctx):
     await bctx.popup("Done!", f"Confirmed: {bctx.params['action']}")
 
-@bot.button("no:{action}")
+@bot.button("no_{action}")
 async def on_no(bctx):
     await bctx.popup("Cancelled", "Nothing was changed.")
 ```
 
-`bctx.popup(title, content)` shows a modal to the user who clicked. `bctx.reply(content)` posts in the channel instead.
+> Button IDs cannot contain colons. Use underscores as separators.
 
 ---
 

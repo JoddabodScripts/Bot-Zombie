@@ -52,16 +52,16 @@ async def poll(ctx):
     msg = await ctx.reply(
         f"📊 **{question}**",
         buttons=[
-            Button(id=f"poll:yes:{ctx.channel_id}", label="👍 Yes"),
-            Button(id=f"poll:no:{ctx.channel_id}",  label="👎 No", alert=True),
+            Button(id=f"poll_yes_{ctx.channel_id}", label="👍 Yes"),
+            Button(id=f"poll_no_{ctx.channel_id}",  label="👎 No", alert=True),
         ]
     )
 
-@bot.button("poll:yes:{channel_id}")
+@bot.button("poll_yes_{channel_id}")
 async def on_poll_yes(bctx):
     await bctx.popup("Vote recorded!", "You voted 👍 Yes")
 
-@bot.button("poll:no:{channel_id}")
+@bot.button("poll_no_{channel_id}")
 async def on_poll_no(bctx):
     await bctx.popup("Vote recorded!", "You voted 👎 No")
 ```

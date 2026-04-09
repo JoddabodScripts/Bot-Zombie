@@ -39,9 +39,7 @@ class RESTClient:
 
     async def _get_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
-            self._session = aiohttp.ClientSession(
-                headers={"Authorization": self._token, "Content-Type": "application/json"}
-            )
+            self._session = aiohttp.ClientSession()
         return self._session
 
     def _bucket_key(self, method: str, path: str) -> str:
@@ -64,7 +62,11 @@ class RESTClient:
 
             await bucket.acquire()
             session = await self._get_session()
-            async with session.request(method, url, **kwargs) as resp:
+            req_headers = {
+                "Authorization": self._token,
+                "Content-Type": "application/json",
+            }
+            async with session.request(method, url, headers=req_headers, **kwargs) as resp:
                 bucket.update(dict(resp.headers))
 
                 if resp.status == 429:
@@ -112,14 +114,30 @@ class RESTClient:
                               socket_id: Optional[str] = None,
                               nerimity_file_id: Optional[str] = None,
                               buttons: Optional[list[dict]] = None) -> dict:
-        body: dict = {"content": content}
+        url = f"{BASE_URL}/channels/{channel_id}/messages"
+        headers = {"Authorization": self._token}
+        data: dict = {"content": content, "buttons": []}
         if socket_id:
-            body["socketId"] = socket_id
+            data["socketId"] = socket_id
         if nerimity_file_id:
-            body["nerimityCdnFileId"] = nerimity_file_id
-        if buttons is not None:
-            body["buttons"] = buttons
-        return await self.request("POST", f"/channels/{channel_id}/messages", json=body)
+            data["nerimityCdnFileId"] = nerimity_file_id
+        if buttons:
+            for b in buttons:
+                data["buttons"].append({
+                    "label": str(b["label"]),
+                    "id": str(b["id"]),
+                    "alert": bool(b.get("alert", False)),
+                })
+        import json as _json
+        session = await self._get_session()
+        async with session.post(url, headers=headers, json=data) as resp:
+            if resp.status >= 400:
+                text = await resp.text()
+                raise aiohttp.ClientResponseError(
+                    resp.request_info, resp.history,
+                    status=resp.status, message=text,
+                )
+            return await resp.json()
 
     async def button_callback(self, channel_id: str, message_id: str,
                                button_id: str, user_id: str,

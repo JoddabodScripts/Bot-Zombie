@@ -8,13 +8,15 @@ from nerimity_sdk import Button
 msg = await ctx.reply(
     "Are you sure?",
     buttons=[
-        Button(id="confirm:delete:123", label="✅ Yes, delete"),
-        Button(id="cancel:delete:123",  label="❌ Cancel", alert=True),
+        Button(id="confirm_delete_123", label="✅ Yes, delete"),
+        Button(id="cancel_delete_123",  label="❌ Cancel", alert=True),
     ]
 )
 ```
 
 `alert=True` renders the button in red.
+
+> **Note:** Button IDs cannot contain colons (`:`). Use underscores (`_`) as separators instead.
 
 ## Handling clicks
 

@@ -87,7 +87,7 @@ class Context:
         if buttons is not None:
             from nerimity_sdk.commands.buttons import Button
             btn_data = [
-                {"label": b.label, "id": b.id, "alert": getattr(b, "alert", False)}
+                {"label": str(b.label), "id": str(b.id), "alert": getattr(b, "alert", False)}
                 for b in buttons
             ]
         data = await self.rest.create_message(self.channel_id, content, buttons=btn_data)
