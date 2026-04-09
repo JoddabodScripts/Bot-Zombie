@@ -1,0 +1,9 @@
+python-socketio[asyncio_client]>=5.11
+aiohttp>=3.9
+python-dotenv>=1.0
+
+# Optional extras — uncomment what you need
+# croniter>=2.0       # @bot.cron() scheduled tasks
+# watchfiles>=0.21    # watch=True plugin auto-reload
+# aiosqlite>=0.19     # SqliteStore
+# redis>=5.0          # RedisStore / Redis cache adapter
