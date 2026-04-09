@@ -78,6 +78,17 @@ class RESTClient:
                     await asyncio.sleep(retry_after)
                     continue
 
+                if resp.status == 403:
+                    # Silently return None only for channel message endpoints
+                    # (bot lacks permission to speak). Raise for everything else.
+                    if "/channels/" in path and "/messages" in path:
+                        return None
+                    text = await resp.text()
+                    raise aiohttp.ClientResponseError(
+                        resp.request_info, resp.history,
+                        status=resp.status, message=text
+                    )
+
                 if resp.status >= 400:
                     text = await resp.text()
                     raise aiohttp.ClientResponseError(
@@ -99,13 +110,26 @@ class RESTClient:
 
     async def create_message(self, channel_id: str, content: str,
                               socket_id: Optional[str] = None,
-                              nerimity_file_id: Optional[str] = None) -> dict:
+                              nerimity_file_id: Optional[str] = None,
+                              buttons: Optional[list[dict]] = None) -> dict:
         body: dict = {"content": content}
         if socket_id:
             body["socketId"] = socket_id
         if nerimity_file_id:
-            body["nerimityFileId"] = nerimity_file_id
+            body["nerimityCdnFileId"] = nerimity_file_id
+        if buttons is not None:
+            body["buttons"] = buttons
         return await self.request("POST", f"/channels/{channel_id}/messages", json=body)
+
+    async def button_callback(self, channel_id: str, message_id: str,
+                               button_id: str, user_id: str,
+                               title: str, content: str) -> None:
+        """Send a popup response to a button click."""
+        await self.request(
+            "POST",
+            f"/channels/{channel_id}/messages/{message_id}/buttons/{button_id}/callback",
+            json={"userId": str(user_id), "title": title, "content": content},
+        )
 
     async def fetch_messages(self, channel_id: str, limit: int = 50,
                               before: Optional[str] = None,
@@ -142,6 +166,34 @@ class RESTClient:
 
     async def delete_role(self, server_id: str, role_id: str) -> dict:
         return await self.request("DELETE", f"/servers/{server_id}/roles/{role_id}")
+
+    async def upload_file(self, path: str) -> str:
+        """Upload a file to Nerimity CDN. Returns the fileId string."""
+        import aiohttp as _aiohttp
+        cdn_url = "https://cdn.nerimity.com/upload"
+        session = await self._get_session()
+        with open(path, "rb") as f:
+            data = _aiohttp.FormData()
+            import os
+            data.add_field("file", f, filename=os.path.basename(path))
+            async with session.post(cdn_url, data=data,
+                                    headers={"Authorization": self._token}) as resp:
+                if resp.status >= 400:
+                    text = await resp.text()
+                    raise RuntimeError(f"CDN upload failed ({resp.status}): {text}")
+                result = await resp.json()
+                return result["fileId"]
+
+    async def open_dm(self, user_id: str) -> dict:
+        """Open (or retrieve) a DM channel with a user. Returns the Channel."""
+        return await self.request("POST", f"/users/{user_id}/open-channel")
+
+    async def bulk_delete_messages(self, channel_id: str, message_ids: list[str]) -> None:
+        """Delete multiple messages. Falls back to sequential deletes if no bulk endpoint."""
+        import asyncio
+        await asyncio.gather(*[
+            self.delete_message(channel_id, mid) for mid in message_ids
+        ])
 
     async def register_bot_commands(self, commands: list[dict]) -> dict:
         return await self.request("POST", "/applications/bot/commands", json={"commands": commands})

@@ -5,6 +5,13 @@
 - Python 3.10+
 - A Nerimity bot token
 
+**Getting a token:**
+
+1. Go to [nerimity.com/app/settings/developer/applications](https://nerimity.com/app/settings/developer/applications)
+2. Create a new application
+3. Add a **Bot** user to it
+4. Copy the token — that's your `NERIMITY_TOKEN`
+
 ## Install
 
 ```bash

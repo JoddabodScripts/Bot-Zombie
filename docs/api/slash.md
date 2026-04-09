@@ -1,39 +1,49 @@
 # Slash Commands
 
-Nerimity slash commands are registered with the API and dispatched when a user types `/command`.
-
-## Registering
+Slash commands in nerimity-sdk are the same as prefix commands — `@bot.slash` is an alias for `@bot.command`.
 
 ```python
-@bot.slash("ban", description="Ban a user", args_hint="<user_id> [reason]")
-async def ban(sctx):
-    parts = sctx.args.split(None, 1)
-    user_id = parts[0]
-    await sctx.rest.ban_member(sctx.server_id, user_id)
-    await sctx.reply(f"Banned {mention(user_id)}")
+@bot.command("ban", description="Ban a user")
+async def ban(ctx):
+    ...
 ```
 
-Slash commands are automatically synced to Nerimity on bot ready via `POST /api/applications/bot/commands`.
+This registers `/ban` in Nerimity's slash menu **and** handles `!ban`. You don't need a separate slash handler.
 
-## SlashContext
+## `@bot.slash` alias
 
-| Property | Type | Description |
-|---|---|---|
-| `sctx.command_name` | `str` | The slash command name |
-| `sctx.args` | `str` | Raw argument string |
-| `sctx.channel_id` | `str` | Channel ID |
-| `sctx.server_id` | `str \| None` | Server ID |
-| `sctx.user_id` | `str` | Invoking user ID |
-| `sctx.user` | `User \| None` | Resolved from cache |
-| `sctx.server` | `Server \| None` | Resolved from cache |
-
-### `await sctx.reply(content)`
-Send a response to the slash command.
-
-## Error handling
+If you prefer the explicit name:
 
 ```python
-@bot.on_slash_error
-async def on_slash_error(sctx, error):
-    await sctx.reply(f"❌ {error}")
+@bot.slash("ban", description="Ban a user")
+async def ban(ctx):
+    ...
 ```
+
+Identical behaviour.
+
+## Hiding from the slash menu
+
+Use `@bot.command_private` (or `@bot.slash_private`) to keep a command prefix-only:
+
+```python
+@bot.command_private("debug")
+async def debug(ctx):
+    await ctx.reply("internal info")
+```
+
+This never appears in the `/` menu.
+
+## SlashContext vs Context
+
+There is no separate `SlashContext` — slash and prefix invocations both receive the same `Context` object. See [Context](context.md) for the full reference.
+
+## Registration
+
+Public commands are automatically synced to Nerimity's API on bot ready. You'll see:
+
+```
+[Bot] Synced 3 command(s): ['ping', 'ban', 'kick']
+```
+
+in the logs when it works.

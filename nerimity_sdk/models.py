@@ -32,6 +32,7 @@ class User:
     hex_color: str
     badge: UserBadge = UserBadge.NONE
     avatar: Optional[str] = None
+    stale: bool = False  # True after reconnect until confirmed fresh
 
     @classmethod
     def from_dict(cls, d: dict) -> "User":
@@ -56,6 +57,14 @@ class User:
             self.badge = UserBadge(d["badge"])
         if "avatar" in d:
             self.avatar = d["avatar"]
+        self.stale = False
+
+    async def send(self, rest, content: str) -> "Message":
+        """Open a DM channel with this user and send a message."""
+        channel_data = await rest.open_dm(self.id)
+        channel_id = channel_data["id"]
+        data = await rest.create_message(channel_id, content)
+        return Message.from_dict(data)
 
 
 @dataclass
@@ -101,6 +110,7 @@ class Channel:
     server_id: Optional[str] = None
     name: Optional[str] = None
     type: int = 0
+    stale: bool = False
 
     @classmethod
     def from_dict(cls, d: dict) -> "Channel":

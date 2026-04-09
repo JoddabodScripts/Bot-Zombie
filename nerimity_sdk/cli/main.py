@@ -25,7 +25,7 @@ async def ping(ctx):
     await ctx.reply("Pong!")
 
 
-@bot.command("help", description="Show available commands")
+@bot.command_private("help", description="Show available commands")
 async def help_cmd(ctx):
     await ctx.reply(bot.router.help_text())
 
@@ -62,7 +62,11 @@ async def setup(bot):
 
 _GITIGNORE = "__pycache__/\n*.pyc\n.env\n"
 
-_ENV_TEMPLATE = "NERIMITY_TOKEN=your_token_here\n"
+_ENV_TEMPLATE = (
+    "# Get your token at: https://nerimity.com/app/settings/developer/applications\n"
+    "# Create an application → add a Bot → copy the token\n"
+    "NERIMITY_TOKEN=your_token_here\n"
+)
 
 _README = textwrap.dedent("""\
     # {name}
@@ -117,6 +121,12 @@ def cli() -> None:
 
     sub.add_parser("version", help="Show SDK version")
 
+    lint_p = sub.add_parser("lint", help="Check bot code for common mistakes")
+    lint_p.add_argument("paths", nargs="*", default=["."], help="Files or directories to lint")
+
+    dev_p = sub.add_parser("dev", help="Run bot in development mode (debug + watch + pretty logs)")
+    dev_p.add_argument("file", nargs="?", default="bot.py", help="Bot file to run (default: bot.py)")
+
     args = parser.parse_args()
 
     if args.command == "create":
@@ -124,5 +134,11 @@ def cli() -> None:
     elif args.command == "version":
         from nerimity_sdk import __version__
         print(f"nerimity-sdk {__version__}")
+    elif args.command == "lint":
+        from nerimity_sdk.cli.lint import run_lint
+        run_lint(args.paths)
+    elif args.command == "dev":
+        from nerimity_sdk.cli.dev import run
+        run(args.file)
     else:
         parser.print_help()

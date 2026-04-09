@@ -1,6 +1,6 @@
 # Example Bot
 
-A complete bot demonstrating every major feature. Source: [`example_bot/bot.py`](https://github.com/your-org/nerimity-sdk/blob/main/example_bot/bot.py)
+A complete bot demonstrating every major feature. Source: [`example_bot/bot.py`](https://github.com/JoddabodScripts/Nerimity-SDK/blob/master/example_bot/bot.py)
 
 ## Setup
 
@@ -41,20 +41,15 @@ async def slash_info(sctx):
     await sctx.reply(f"nerimity-sdk v{__version__}")
 ```
 
-### Buttons with TTL
+### Poll with reactions
 
 ```python
-@bot.command("poll")
+@bot.command("poll", description="Start a yes/no poll")
 async def poll(ctx):
-    msg = await ctx.reply("Vote!")
-
-    @bot.button(f"poll:yes:{msg.id}", ttl=300)
-    async def on_yes(bctx):
-        await bctx.reply("You voted Yes!")
-
-    @bot.button(f"poll:no:{msg.id}", ttl=300)
-    async def on_no(bctx):
-        await bctx.reply("You voted No!")
+    question = " ".join(ctx.args) if ctx.args else "Do you agree?"
+    msg = await ctx.reply(f"📊 **{question}**\n👍 Yes  |  👎 No")
+    await ctx.rest.add_reaction(msg.channel_id, msg.id, "👍")
+    await ctx.rest.add_reaction(msg.channel_id, msg.id, "👎")
 ```
 
 ### Paginator
@@ -120,4 +115,4 @@ async def main():
 
 ## Full source
 
-See [`example_bot/bot.py`](https://github.com/your-org/nerimity-sdk/blob/main/example_bot/bot.py) for the complete runnable file.
+See [`example_bot/bot.py`](https://github.com/JoddabodScripts/Nerimity-SDK/blob/master/example_bot/bot.py) for the complete runnable file.

@@ -1,49 +1,79 @@
 # nerimity-sdk
 
-A fully-featured Python SDK for building [Nerimity](https://nerimity.com) bots. Think discord.py, but for Nerimity.
+A Python library for building bots on [Nerimity](https://nerimity.com).
 
 ```bash
 pip install nerimity-sdk
 ```
 
-## Features at a glance
+## How it works
 
-| Feature | Description |
-|---|---|
-| **Typed events** | Every gateway event is a dataclass — full autocomplete, no raw dicts |
-| **Prefix commands** | Arg parsing, converters, middleware, cooldowns, help generator |
-| **Slash commands** | `@bot.slash("ban")` — register + handle in one place |
-| **Buttons** | Pattern-matched button handlers with TTL |
-| **Paginator** | Multi-page responses with prev/next navigation |
-| **ctx.confirm()** | Yes/no confirmation for destructive commands |
-| **ctx.ask()** | Multi-step conversation helpers with timeout |
-| **Mentions** | Parse `[@:id]` ↔ user objects, `mention(user_id)` helper |
-| **Cache** | LRU/TTL cache with partial merge, optional Redis |
-| **Permissions** | Declarative flag checks + role hierarchy |
-| **Plugins** | Hot-reload modules at runtime |
-| **Storage** | JSON / SQLite / Redis key-value store |
-| **Scheduler** | `@bot.cron("0 9 * * *")` backed by croniter |
-| **Error handlers** | `@bot.on_command_error`, `on_slash_error`, `on_button_error` |
-| **Dev tools** | `debug=True`, `watch=True`, `MockBot` for unit tests |
-| **CLI** | `nerimity create my-bot` scaffolds a project |
+You create a `Bot`, attach handlers with decorators, then call `bot.run()`.
+The bot connects over a WebSocket, receives events, and dispatches them to your handlers.
 
-## Quick example
+```
+Nerimity → WebSocket → GatewayClient → EventEmitter → your handlers
+```
+
+Everything your handlers need is in the `ctx` object passed to them.
+
+## Quickstart
+
+**Get a token:** [nerimity.com/app/settings/developer/applications](https://nerimity.com/app/settings/developer/applications) → create app → add Bot → copy token.
+
+```bash
+nerimity create my-bot
+cd my-bot && cp .env.example .env   # paste token
+python bot.py
+```
+
+Or manually:
 
 ```python
-from nerimity_sdk import Bot, Int
+import os
+from dotenv import load_dotenv
+from nerimity_sdk import Bot
 
-bot = Bot(token="YOUR_TOKEN", prefix="!")
+load_dotenv()
+bot = Bot(token=os.environ["NERIMITY_TOKEN"], prefix="!")
 
 @bot.on("ready")
 async def on_ready(me):
     print(f"Logged in as {me.username}#{me.tag}")
 
-@bot.command("add", args=[Int, Int])
-async def add(ctx):
-    a, b = ctx.args
-    await ctx.reply(f"{a} + {b} = {a + b}")
+@bot.command("ping", description="Replies with Pong!")
+async def ping(ctx):
+    await ctx.reply("Pong! 🏓")
 
 bot.run()
 ```
 
-See the [Getting Started guide](guide/installation.md) or jump straight to the [Example Bot](example.md).
+## What's available
+
+| Feature | How to use |
+|---|---|
+| Event listeners | `@bot.on("message:created")` |
+| Prefix + slash commands | `@bot.command("ping")` — works as `!ping` and `/ping` |
+| Prefix-only commands | `@bot.command_private("debug")` |
+| Argument converters | `args=[Int, MemberConverter]` |
+| Confirmation prompts | `await ctx.confirm("Sure?")` |
+| Multi-step conversations | `await ctx.ask("Your name?")` |
+| DMs | `await ctx.author.send(bot.rest, "Hi!")` |
+| Edit messages | `await ctx.edit(msg.id, "updated!")` |
+| File uploads | `await ctx.reply_file("image.png")` |
+| Paginator | `await Paginator(pages).send(ctx)` |
+| Mention helpers | `mention(user_id)` / `ctx.mentions` |
+| Webhooks | `await Webhook(token).send("Hello!")` |
+| Persistent storage | `JsonStore` / `SqliteStore` / `RedisStore` |
+| Scheduled tasks | `@bot.cron("0 9 * * *")` |
+| Event waiting (typed) | `await bot.wait_for("member_joined", ...)` |
+| Plugins (hot-reload) | `await bot.plugins.load(MyPlugin())` |
+| Contrib plugins | `pip install nerimity-sdk-contrib` |
+| Error handlers | `@bot.on_command_error` |
+| Cooldown feedback | automatic "try again in Xs" message |
+| Stale cache detection | `user.stale == True` after reconnect |
+| Static analysis | `nerimity lint` |
+| Debug mode | `Bot(debug=True)` |
+| Auto-reload on save | `Bot(watch=True)` |
+
+See the [Getting Started guide](guide/installation.md) or the [Example Bot](example.md) for a full working example.

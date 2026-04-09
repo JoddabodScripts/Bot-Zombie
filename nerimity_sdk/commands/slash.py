@@ -1,5 +1,6 @@
 """Slash command router: @bot.slash decorator + dispatch from gateway events."""
 from __future__ import annotations
+import shlex
 from dataclasses import dataclass, field
 from typing import Any, Callable, Coroutine, Optional, TYPE_CHECKING
 
@@ -14,12 +15,14 @@ Handler = Callable[["SlashContext"], Coroutine[Any, Any, None]]
 class SlashContext:
     """Context passed to slash command handlers."""
     command_name: str
-    args: str          # raw args string from the slash invocation
+    raw_args: str          # unparsed arg string
     channel_id: str
     server_id: Optional[str]
     user_id: str
     rest: "RESTClient"
     cache: "Cache"
+    args: list = field(default_factory=list)   # populated by converters
+    flags: dict = field(default_factory=dict)
 
     @property
     def user(self):
@@ -32,9 +35,17 @@ class SlashContext:
         return None
 
     async def reply(self, content: str):
+        """Send a response. Returns None silently if bot lacks channel permission (403)."""
         from nerimity_sdk.models import Message
         data = await self.rest.create_message(self.channel_id, content)
+        if data is None:
+            return None
         return Message.from_dict(data)
+
+    async def defer(self) -> None:
+        """Acknowledge the slash command immediately (sends a typing indicator).
+        Call this before slow async work to avoid timeout."""
+        await self.rest.send_typing(self.channel_id)
 
 
 @dataclass
@@ -42,37 +53,34 @@ class SlashCommandDef:
     name: str
     handler: Handler
     description: str = ""
-    args_hint: str = ""  # shown in Nerimity's slash UI
+    args_hint: str = ""
+    converters: list = field(default_factory=list)
 
 
 class SlashRouter:
     def __init__(self) -> None:
         self._commands: dict[str, SlashCommandDef] = {}
+        self._synced: bool = False
 
-    def slash(self, name: str, *, description: str = "", args_hint: str = ""):
-        """Decorator: @bot.slash("ban", description="Ban a user", args_hint="<user_id>")"""
+    def slash(self, name: str, *, description: str = "", args_hint: str = "",
+              args: list | None = None):
         def decorator(fn: Handler) -> Handler:
             self._commands[name] = SlashCommandDef(
                 name=name, handler=fn,
                 description=description, args_hint=args_hint,
+                converters=args or [],
             )
+            self._synced = False
             return fn
         return decorator
 
     def to_bot_commands(self) -> list[dict]:
-        """Serialize registered slash commands for POST /api/applications/bot/commands."""
         return [
             {"name": cmd.name, "description": cmd.description, "args": cmd.args_hint}
             for cmd in self._commands.values()
         ]
 
     async def dispatch(self, event: Any, rest: "RESTClient", cache: "Cache") -> bool:
-        """Dispatch a message:created event that looks like a slash invocation.
-
-        Nerimity slash commands arrive as regular messages whose content starts
-        with the command name (the client prefixes them). We detect them by
-        checking if the message content matches a registered slash command name.
-        """
         from nerimity_sdk.events.payloads import MessageCreatedEvent
         if isinstance(event, MessageCreatedEvent):
             msg = event.message
@@ -84,24 +92,53 @@ class SlashRouter:
         if not parts:
             return False
 
-        cmd_name = parts[0].lstrip("/")
+        # Nerimity sends slash commands as "/name:botUserId [args]"
+        # Strip the leading / and the :botUserId suffix
+        cmd_token = parts[0].lstrip("/")
+        cmd_name = cmd_token.split(":")[0]
         cmd = self._commands.get(cmd_name)
         if not cmd:
             return False
 
+        raw_args = parts[1] if len(parts) > 1 else ""
+
+        # Parse args the same way prefix commands do
+        try:
+            tokens = shlex.split(raw_args)
+        except ValueError:
+            tokens = raw_args.split()
+
         sctx = SlashContext(
             command_name=cmd_name,
-            args=parts[1] if len(parts) > 1 else "",
+            raw_args=raw_args,
             channel_id=msg.channel_id,
             server_id=msg.server_id,
             user_id=msg.created_by.id,
             rest=rest,
             cache=cache,
+            args=tokens,
         )
+
+        # Run converters if defined
+        if cmd.converters:
+            from nerimity_sdk.commands.converters import convert_args, ConversionError
+            try:
+                sctx.args = await convert_args(sctx, cmd.converters)  # type: ignore
+            except ConversionError as e:
+                await sctx.reply(str(e))
+                return True
+
         await cmd.handler(sctx)
         return True
 
     async def sync(self, rest: "RESTClient") -> None:
-        """Register all slash commands with Nerimity."""
-        if self._commands:
+        """Register all slash commands with Nerimity API."""
+        if not self._commands or self._synced:
+            return
+        from nerimity_sdk.utils.logging import get_logger
+        try:
             await rest.register_bot_commands(self.to_bot_commands())
+            self._synced = True
+            get_logger().info(f"[Slash] Synced {len(self._commands)} command(s): {list(self._commands)}")
+        except Exception as exc:
+            get_logger().error(f"[Slash] Sync failed: {exc}")

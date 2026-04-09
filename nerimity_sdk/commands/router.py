@@ -25,7 +25,8 @@ class CommandDef:
     required_bot_perms: list = field(default_factory=list)
     middleware: list[Middleware] = field(default_factory=list)
     cooldown: float = 0.0
-    converters: list = field(default_factory=list)  # list of converter instances
+    converters: list = field(default_factory=list)
+    public: bool = True  # if True, registered with Nerimity API as a slash command
 
 
 def _parse_args(text: str) -> tuple[list[str], dict[str, Any]]:
@@ -71,28 +72,27 @@ class CommandRouter:
         middleware: list[Middleware] | None = None,
         cooldown: float = 0.0,
         args: list | None = None,
+        public: bool = True,
     ):
-        """Decorator to register a command."""
         def decorator(fn: Handler) -> Handler:
             cmd = CommandDef(
-                name=name,
-                handler=fn,
-                description=description,
-                usage=usage,
-                category=category,
-                aliases=aliases or [],
+                name=name, handler=fn, description=description,
+                usage=usage, category=category, aliases=aliases or [],
                 guild_only=guild_only,
                 required_user_perms=required_user_perms or [],
                 required_bot_perms=required_bot_perms or [],
-                middleware=middleware or [],
-                cooldown=cooldown,
-                converters=args or [],
+                middleware=middleware or [], cooldown=cooldown,
+                converters=args or [], public=public,
             )
             self._commands[name] = cmd
             for alias in cmd.aliases:
                 self._aliases[alias] = name
             return fn
         return decorator
+
+    def command_private(self, name: str, **kwargs):
+        """Register a prefix-only command — never synced to the Nerimity API."""
+        return self.command(name, public=False, **kwargs)
 
     def use(self, middleware: Middleware) -> None:
         """Register a global middleware applied to every command."""
@@ -133,7 +133,7 @@ class CommandRouter:
             last = self._cooldowns.get(key, 0)
             remaining = cmd.cooldown - (time.monotonic() - last)
             if remaining > 0:
-                await ctx.reply(f"Slow down! Try again in {remaining:.1f}s.")
+                await ctx.reply(f"⏳ You can use `{cmd.name}` again in **{remaining:.1f}s**.")
                 return True
             self._cooldowns[key] = time.monotonic()
 
@@ -161,14 +161,16 @@ class CommandRouter:
         # Build middleware chain
         all_mw = self._global_middleware + cmd.middleware
 
-        async def run_handler(c: "Context") -> None:
+        async def run_handler(c: "Context") -> bool:
             await cmd.handler(c)
+            return True
 
         chain = run_handler
         for mw in reversed(all_mw):
             prev = chain
-            async def make_next(c: "Context", _mw=mw, _prev=prev) -> None:
-                await _mw(c, _prev)
+            async def make_next(c: "Context", _mw=mw, _prev=prev) -> bool:
+                result = await _mw(c, _prev)
+                return result is not False
             chain = make_next
 
         await chain(ctx)

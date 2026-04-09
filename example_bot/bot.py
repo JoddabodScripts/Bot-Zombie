@@ -19,8 +19,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from nerimity_sdk import (
-    Bot, Paginator, Embed, MessageBuilder,
-    Button, ComponentRow,
+    Bot, Paginator,
     mention, JsonStore,
     Int, MemberConverter,
 )
@@ -169,25 +168,23 @@ async def slash_ban(sctx):
 
 @bot.command("poll", description="Start a yes/no poll", usage="<question>")
 async def poll(ctx):
+    from nerimity_sdk import Button
     question = " ".join(ctx.args) if ctx.args else "Do you agree?"
-    msg = await ctx.reply(question)
+    msg = await ctx.reply(
+        f"📊 **{question}**",
+        buttons=[
+            Button(id=f"poll:yes:{ctx.channel_id}", label="👍 Yes"),
+            Button(id=f"poll:no:{ctx.channel_id}",  label="👎 No", alert=True),
+        ]
+    )
 
-    row = ComponentRow()
-    row.add(Button(id=f"poll:yes:{msg.id}", label="👍 Yes"))
-    row.add(Button(id=f"poll:no:{msg.id}", label="👎 No"))
+@bot.button("poll:yes:{channel_id}")
+async def on_poll_yes(bctx):
+    await bctx.popup("Vote recorded!", "You voted 👍 Yes")
 
-    # Register handlers with 5-minute TTL
-    @bot.button(f"poll:yes:{msg.id}", ttl=300)
-    async def on_yes(bctx):
-        user = bctx.user
-        name = f"{user.username}#{user.tag}" if user else bctx.user_id
-        await bctx.reply(f"✅ {name} voted **Yes**")
-
-    @bot.button(f"poll:no:{msg.id}", ttl=300)
-    async def on_no(bctx):
-        user = bctx.user
-        name = f"{user.username}#{user.tag}" if user else bctx.user_id
-        await bctx.reply(f"❌ {name} voted **No**")
+@bot.button("poll:no:{channel_id}")
+async def on_poll_no(bctx):
+    await bctx.popup("Vote recorded!", "You voted 👎 No")
 
 
 @bot.button("confirm:{action}:{target}")

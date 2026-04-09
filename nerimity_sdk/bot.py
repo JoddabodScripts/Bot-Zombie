@@ -3,7 +3,14 @@ from __future__ import annotations
 import asyncio
 import logging
 import signal
-from typing import Any, Callable, Coroutine, Optional
+from typing import Any, Callable, Coroutine, Literal, Optional, TYPE_CHECKING, overload
+
+if TYPE_CHECKING:
+    from nerimity_sdk.events.payloads import (
+        MessageCreatedEvent, MessageUpdatedEvent, MessageDeletedEvent,
+        MemberJoinedEvent, MemberLeftEvent, ReactionAddedEvent,
+        ReactionRemovedEvent, PresenceUpdatedEvent, TypingEvent,
+    )
 
 from nerimity_sdk.transport.gateway import GatewayClient
 from nerimity_sdk.transport.rest import RESTClient
@@ -19,7 +26,7 @@ from nerimity_sdk.storage import MemoryStore, Store
 from nerimity_sdk.utils.logging import configure_logger, get_logger
 from nerimity_sdk.models import Message, User
 
-__version__ = "0.2.0"
+__version__ = "0.3.1"
 
 
 class Bot:
@@ -110,6 +117,7 @@ class Bot:
         self.emitter.on("server:channel_updated", self._on_channel_upsert)
         self.emitter.on("server:channel_deleted", self._on_channel_deleted)
         self.emitter.on("disconnect", self._on_disconnect)
+        self.emitter.on("inbox:opened", self._on_inbox_opened)
 
     # ── Decorators ────────────────────────────────────────────────────────────
 
@@ -126,11 +134,20 @@ class Bot:
         return decorator
 
     def command(self, name: str, **kwargs):
-        return self.router.command(name, **kwargs)
+        """Register a command. Shows in Nerimity's / menu and responds to !prefix."""
+        return self.router.command(name, public=True, **kwargs)
+
+    def command_private(self, name: str, **kwargs):
+        """Register a prefix-only command. Never shown in the / menu."""
+        return self.router.command(name, public=False, **kwargs)
 
     def slash(self, name: str, **kwargs):
-        """Decorator: @bot.slash("ban", description="Ban a user")"""
-        return self.slash_router.slash(name, **kwargs)
+        """Alias for @bot.command — registers with API and handles prefix."""
+        return self.command(name, **kwargs)
+
+    def slash_private(self, name: str, **kwargs):
+        """Alias for @bot.command_private — prefix only, not in / menu."""
+        return self.command_private(name, **kwargs)
 
     def button(self, pattern: str, ttl: Optional[float] = None):
         """Decorator: @bot.button("confirm:{action}:{target}")"""
@@ -138,6 +155,55 @@ class Bot:
 
     def cron(self, expr: str):
         return self.scheduler.cron(expr)
+
+    @overload
+    async def wait_for(self, event: Literal["message:created"], *, check=None, timeout: float=60.0) -> "MessageCreatedEvent": ...
+    @overload
+    async def wait_for(self, event: Literal["message:updated"], *, check=None, timeout: float=60.0) -> "MessageUpdatedEvent": ...
+    @overload
+    async def wait_for(self, event: Literal["message:deleted"], *, check=None, timeout: float=60.0) -> "MessageDeletedEvent": ...
+    @overload
+    async def wait_for(self, event: Literal["server:member_joined"], *, check=None, timeout: float=60.0) -> "MemberJoinedEvent": ...
+    @overload
+    async def wait_for(self, event: Literal["server:member_left"], *, check=None, timeout: float=60.0) -> "MemberLeftEvent": ...
+    @overload
+    async def wait_for(self, event: Literal["message:reaction_added"], *, check=None, timeout: float=60.0) -> "ReactionAddedEvent": ...
+    @overload
+    async def wait_for(self, event: Literal["message:reaction_removed"], *, check=None, timeout: float=60.0) -> "ReactionRemovedEvent": ...
+    @overload
+    async def wait_for(self, event: Literal["user:presence_update"], *, check=None, timeout: float=60.0) -> "PresenceUpdatedEvent": ...
+    @overload
+    async def wait_for(self, event: Literal["channel:typing"], *, check=None, timeout: float=60.0) -> "TypingEvent": ...
+    @overload
+    async def wait_for(self, event: str, *, check=None, timeout: float=60.0) -> Any: ...
+
+    async def wait_for(self, event: str, check=None, timeout: float = 60.0):
+        """Wait for a gateway event matching an optional check function.
+
+        Returns the typed event payload, or raises asyncio.TimeoutError.
+
+        Usage::
+
+            event = await bot.wait_for(
+                "server:member_joined",
+                check=lambda e: e.server_id == "123",
+                timeout=30,
+            )
+        """
+        future: asyncio.Future = asyncio.get_event_loop().create_future()
+
+        async def _listener(payload) -> None:
+            if check and not check(payload):
+                return
+            if not future.done():
+                future.set_result(payload)
+
+        self.emitter.once(event, _listener)
+        try:
+            return await asyncio.wait_for(future, timeout=timeout)
+        except asyncio.TimeoutError:
+            self.emitter.off(event, _listener)
+            raise
 
     @property
     def on_command_error(self):
@@ -186,8 +252,8 @@ class Bot:
 
         self._ready.set()
         self.logger.info(f"[Bot] Ready as {self._me.username if self._me else 'unknown'}")
-        # Sync slash commands
-        await self.slash_router.sync(self.rest)
+        # Sync public commands to Nerimity API
+        await self._sync_commands()
         self.scheduler.start_all()
         await self.plugins.dispatch_ready()
         await self.emitter.emit("ready", self._me)
@@ -207,7 +273,15 @@ class Bot:
         ctx = Context(msg, self.rest, self.cache, [], {},
                       emitter=self.emitter, button_router=self.button_router)
 
-        # Try prefix commands first
+        # Normalise slash invocations: "/ping:botId args" → "!ping args"
+        content = msg.content or ""
+        if content.startswith("/"):
+            # strip leading / and :botUserId suffix from command token
+            parts = content[1:].split(None, 1)
+            cmd_token = parts[0].split(":")[0]
+            rest_of = parts[1] if len(parts) > 1 else ""
+            msg.content = f"{prefix}{cmd_token} {rest_of}".strip()
+
         old_prefix = self.router.prefix
         self.router.prefix = prefix
         try:
@@ -216,11 +290,22 @@ class Bot:
             self.router.prefix = old_prefix
 
         if not handled:
-            # Try slash commands (messages starting with /)
-            if msg.content.startswith("/"):
-                await self._dispatch_slash(event)
-            else:
-                await self.emitter.emit("message", msg)
+            await self.emitter.emit("message", msg)
+
+    async def _sync_commands(self) -> None:
+        """Register all public commands with the Nerimity API."""
+        public = [
+            {"name": cmd.name, "description": cmd.description, "args": cmd.usage}
+            for cmd in self.router._commands.values()
+            if cmd.public
+        ]
+        if not public:
+            return
+        try:
+            await self.rest.register_bot_commands(public)
+            self.logger.info(f"[Bot] Synced {len(public)} command(s): {[c['name'] for c in public]}")
+        except Exception as exc:
+            self.logger.error(f"[Bot] Command sync failed: {exc}")
 
     async def _dispatch_command(self, ctx) -> bool:
         try:
@@ -232,14 +317,13 @@ class Bot:
                 self.logger.error(f"[Command] Unhandled error: {exc}")
             return True
 
-    async def _dispatch_slash(self, event: Any) -> None:
+    async def _dispatch_slash(self, event: Any) -> bool:
         from nerimity_sdk.events.payloads import MessageCreatedEvent
         from nerimity_sdk.commands.slash import SlashContext
         try:
-            await self.slash_router.dispatch(event, self.rest, self.cache)
+            return await self.slash_router.dispatch(event, self.rest, self.cache)
         except Exception as exc:
             if self._slash_error_handler:
-                # Build a minimal SlashContext for the error handler
                 msg = event.message if isinstance(event, MessageCreatedEvent) else None
                 if msg:
                     sctx = SlashContext("", "", msg.channel_id, msg.server_id,
@@ -247,6 +331,7 @@ class Bot:
                     await self._slash_error_handler(sctx, exc)
             else:
                 self.logger.error(f"[Slash] Unhandled error: {exc}")
+            return True
 
     async def _on_button_clicked(self, event: Any) -> None:
         data = event if isinstance(event, dict) else {}
@@ -296,13 +381,17 @@ class Bot:
         if isinstance(event, ChannelDeletedEvent):
             self.cache.channels.delete(event.channel_id)
 
+    async def _on_inbox_opened(self, event: Any) -> None:
+        """inbox:opened — a DM channel was opened. Cache the channel."""
+        data = event if isinstance(event, dict) else {}
+        channel_data = data.get("channel") or data
+        if isinstance(channel_data, dict) and "id" in channel_data:
+            self.cache.upsert_channel(channel_data)
+
     async def _on_disconnect(self, _: Any) -> None:
         if self._invalidate_on_disconnect:
-            self.logger.warning("[Bot] Disconnected — invalidating cache")
-            self.cache = Cache(
-                max_size=self.cache.servers._max,
-                ttl=self.cache.servers._ttl,
-            )
+            self.logger.warning("[Bot] Disconnected — marking cache stale")
+            self.cache.mark_all_stale()
         self._ready.clear()
 
     # ── Lifecycle ─────────────────────────────────────────────────────────────

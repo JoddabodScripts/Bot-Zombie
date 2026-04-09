@@ -40,7 +40,15 @@ class LRUCache(Generic[T]):
 
 
 class Cache:
-    """Central cache for all Nerimity objects with partial-merge support."""
+    """Central cache for all Nerimity objects.
+
+    Objects are stored in LRU caches keyed by their snowflake ID.
+    All upsert_* methods merge partial data rather than overwriting —
+    so a gateway event that only sends {id, username} won't wipe the avatar.
+
+    After a reconnect, objects are marked stale (obj.stale == True) until
+    they are updated by a fresh gateway event.
+    """
 
     def __init__(self, max_size: int = 1000, ttl: float = 0) -> None:
         from nerimity_sdk.models import Server, Channel, User, Member, Message
@@ -103,3 +111,12 @@ class Cache:
         msg = Message.from_dict(data)
         self.messages.set(msg.id, msg)
         return msg
+
+    def mark_all_stale(self) -> None:
+        """Mark every cached object as stale after a reconnect."""
+        for obj in self.users.values():
+            obj.stale = True
+        for obj in self.servers.values():
+            pass  # Server has no stale flag — channels/members cover it
+        for obj in self.channels.values():
+            obj.stale = True

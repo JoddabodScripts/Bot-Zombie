@@ -3,12 +3,47 @@
 ## Building buttons
 
 ```python
-from nerimity_sdk import Button, ComponentRow
+from nerimity_sdk import Button
 
-row = ComponentRow()
-row.add(Button(id="confirm:delete:123", label="✅ Confirm"))
-row.add(Button(id="cancel:delete:123",  label="❌ Cancel", alert=True))
+msg = await ctx.reply(
+    "Are you sure?",
+    buttons=[
+        Button(id="confirm:delete:123", label="✅ Yes, delete"),
+        Button(id="cancel:delete:123",  label="❌ Cancel", alert=True),
+    ]
+)
 ```
+
+`alert=True` renders the button in red.
+
+## Handling clicks
+
+```python
+@bot.button("confirm:{action}:{target}")
+async def on_confirm(bctx):
+    action = bctx.params["action"]   # "delete"
+    target = bctx.params["target"]   # "123"
+    # do the thing...
+    await bctx.popup("Done!", f"{action} on {target} completed.")
+
+@bot.button("cancel:{action}:{target}")
+async def on_cancel(bctx):
+    await bctx.popup("Cancelled", "Nothing was changed.")
+```
+
+`bctx.popup(title, content)` shows a modal dialog to the user who clicked — it doesn't post a message in the channel.
+
+`bctx.reply(content)` posts a message in the channel instead.
+
+## TTL (auto-expiry)
+
+```python
+@bot.button(f"confirm:{msg.id}", ttl=300)   # expires after 5 minutes
+async def on_confirm(bctx):
+    ...
+```
+
+After the TTL expires the handler is removed and clicks are silently ignored.
 
 ## Registering handlers
 

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nerimity-sdk"
-version = "0.1.0"
+version = "0.3.1"
 description = "A fully-featured Python SDK for building Nerimity bots"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -27,6 +27,7 @@ docs = ["mkdocs-material>=9.0"]
 [project.scripts]
 nerimity = "nerimity_sdk.cli.main:cli"
 nerimity-help = "nerimity_sdk.cli.help:main"
+nerimity-lint = "nerimity_sdk.cli.lint:run_lint"
 
 [tool.hatch.build.targets.wheel]
 packages = ["nerimity_sdk"]

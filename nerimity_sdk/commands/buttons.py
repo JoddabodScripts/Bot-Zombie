@@ -62,6 +62,24 @@ class ButtonContext:
     async def reply(self, content: str) -> None:
         await self.rest.create_message(self.channel_id, content)
 
+    async def popup(self, title: str, content: str) -> None:
+        """Send a popup dialog to the user who clicked the button.
+
+        This is the primary way to respond to button clicks — it shows a
+        small modal to the user without posting a message in the channel.
+
+        Usage::
+
+            @bot.button("confirm:delete:{target}")
+            async def on_confirm(bctx):
+                await bctx.popup("Deleted!", f"Successfully deleted {bctx.params['target']}")
+        """
+        await self.rest.button_callback(
+            self.channel_id, self.message_id,
+            self.button_id, self.user_id,
+            title, content,
+        )
+
     async def defer(self) -> None:
         """Acknowledge the button click without sending a visible response."""
         # Nerimity button clicks are fire-and-forget from the server side;

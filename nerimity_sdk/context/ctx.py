@@ -15,6 +15,24 @@ _NO  = {"no", "n", "nope", "cancel", "abort"}
 
 
 class Context:
+    """Everything you need inside a command handler.
+
+    Passed automatically to every @bot.command handler. You don't create this yourself.
+
+    Quick reference:
+        ctx.author          → User who sent the command
+        ctx.server          → Server it was sent in (None in DMs)
+        ctx.channel_id      → Channel ID to reply to
+        ctx.args            → Parsed positional arguments (converted if args= set)
+        ctx.flags           → --flag=value flags from the message
+        ctx.mentions        → [@:id] mentions resolved to User objects
+
+        await ctx.reply("hi")                   → send a message
+        await ctx.react("👍")                   → react to the triggering message
+        await ctx.ask("Your name?")             → wait for author's next message
+        await ctx.confirm("Sure?")              → yes/no prompt → True/False/None
+        await ctx.author.send(bot.rest, "hi")   → send a DM to the author
+    """
     def __init__(self, message: "Message", rest: "RESTClient",
                  cache: "Cache", args: list[str], flags: dict[str, Any],
                  emitter: Optional["EventEmitter"] = None,
@@ -63,9 +81,42 @@ class Context:
 
     # ── Messaging ─────────────────────────────────────────────────────────────
 
-    async def reply(self, content: str) -> "Message":
+    async def reply(self, content: str, buttons: list | None = None) -> "Message":
         from nerimity_sdk.models import Message
-        data = await self.rest.create_message(self.channel_id, content)
+        btn_data = None
+        if buttons is not None:
+            from nerimity_sdk.commands.buttons import Button
+            btn_data = [
+                {"label": b.label, "id": b.id, "alert": getattr(b, "alert", False)}
+                for b in buttons
+            ]
+        data = await self.rest.create_message(self.channel_id, content, buttons=btn_data)
+        return Message.from_dict(data)
+
+    async def reply_file(self, path: str, content: str = "") -> "Message":
+        """Upload a file to the Nerimity CDN then send it in this channel.
+
+        Usage::
+
+            await ctx.reply_file("image.png")
+            await ctx.reply_file("report.txt", content="Here's the report:")
+        """
+        from nerimity_sdk.models import Message
+        file_id = await self.rest.upload_file(path)
+        data = await self.rest.create_message(self.channel_id, content,
+                                               nerimity_file_id=file_id)
+        return Message.from_dict(data)
+
+    async def edit(self, message_id: str, content: str) -> "Message":
+        """Edit one of the bot's own messages.
+
+        Usage::
+
+            msg = await ctx.reply("thinking...")
+            await ctx.edit(msg.id, "done!")
+        """
+        from nerimity_sdk.models import Message
+        data = await self.rest.update_message(self.channel_id, message_id, content)
         return Message.from_dict(data)
 
     async def react(self, emoji: str, emoji_id: Optional[str] = None,

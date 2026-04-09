@@ -1,0 +1,16 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nerimity-sdk-contrib"
+version = "0.2.0"
+description = "Ready-made plugins for nerimity-sdk bots"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["nerimity", "bot", "sdk", "plugins"]
+dependencies = ["nerimity-sdk>=0.2.5"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["nerimity_sdk_contrib"]

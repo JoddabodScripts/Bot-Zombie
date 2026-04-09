@@ -1,109 +1,144 @@
 # Quick Start
 
-## Minimal bot
+This guide walks you from zero to a working bot in 5 minutes.
 
-```python
-from nerimity_sdk import Bot
+## 1. Get a token
 
-bot = Bot(token="YOUR_TOKEN", prefix="!")
+Go to [nerimity.com/app/settings/developer/applications](https://nerimity.com/app/settings/developer/applications).
 
-@bot.on("ready")
-async def on_ready(me):
-    print(f"Logged in as {me.username}#{me.tag}")
+1. Click **New Application**
+2. Go to the **Bot** tab and click **Add Bot**
+3. Copy the token
 
-@bot.command("ping", description="Pong!")
-async def ping(ctx):
-    await ctx.reply("Pong! 🏓")
+## 2. Create a project
 
-bot.run()
+```bash
+nerimity create my-bot
+cd my-bot
+cp .env.example .env
 ```
 
-## Adding a slash command
+Open `.env` and paste your token:
 
-```python
-@bot.slash("info", description="Show bot info")
-async def slash_info(sctx):
-    from nerimity_sdk import __version__
-    await sctx.reply(f"nerimity-sdk v{__version__}")
+```
+NERIMITY_TOKEN=paste_your_token_here
 ```
 
-## Argument converters
+## 3. Run it
 
-```python
-from nerimity_sdk import Int, MemberConverter
-
-@bot.command("add", args=[Int, Int])
-async def add(ctx):
-    a, b = ctx.args   # already ints
-    await ctx.reply(f"{a + b}")
-
-@bot.command("kick", args=[MemberConverter], guild_only=True)
-async def kick(ctx):
-    member = ctx.args[0]
-    if not await ctx.confirm(f"Kick {member.user.username}?"):
-        return await ctx.reply("Cancelled.")
-    await ctx.rest.kick_member(ctx.server_id, member.user.id)
-    await ctx.reply("Done.")
+```bash
+python bot.py
 ```
 
-## Buttons
+You should see `Logged in as YourBot#0000` in the terminal.
+
+---
+
+## 4. Add your first command
+
+Open `bot.py`. Add this anywhere before `bot.run()`:
 
 ```python
-from nerimity_sdk import Button, ComponentRow
-
-@bot.command("poll")
-async def poll(ctx):
-    msg = await ctx.reply("Vote!")
-
-    @bot.button(f"vote:yes:{msg.id}", ttl=300)
-    async def on_yes(bctx):
-        await bctx.reply("You voted Yes!")
-
-    @bot.button(f"vote:no:{msg.id}", ttl=300)
-    async def on_no(bctx):
-        await bctx.reply("You voted No!")
+@bot.command("hello", description="Say hello back")
+async def hello(ctx):
+    await ctx.reply(f"Hello, {ctx.author.username}!")
 ```
 
-## Paginator
+Save the file and restart. Type `!hello` in any channel the bot can see.
+
+---
+
+## 5. Read arguments
 
 ```python
-from nerimity_sdk import Paginator
-
-@bot.command("list")
-async def list_cmd(ctx):
-    pages = ["Page 1: ...", "Page 2: ...", "Page 3: ..."]
-    await Paginator(pages).send(ctx)
+@bot.command("say", description="Repeat something")
+async def say(ctx):
+    # ctx.args is a list of words the user typed after !say
+    if not ctx.args:
+        return await ctx.reply("Usage: !say <message>")
+    await ctx.reply(" ".join(ctx.args))
 ```
 
-## Error handling
+Type `!say hello world` → bot replies `hello world`.
+
+---
+
+## 6. Use typed converters
+
+Instead of parsing strings yourself, declare what types you expect:
+
+```python
+from nerimity_sdk import Int
+
+@bot.command("double", description="Double a number", args=[Int])
+async def double(ctx):
+    n = ctx.args[0]   # already an int
+    await ctx.reply(str(n * 2))
+```
+
+If the user types `!double abc`, they get a friendly error automatically.
+
+---
+
+## 7. Handle errors
+
+Add this once and all command errors show a message instead of silently failing:
 
 ```python
 @bot.on_command_error
 async def on_error(ctx, error):
     await ctx.reply(f"❌ {error}")
-
-@bot.on_slash_error
-async def on_slash_error(sctx, error):
-    await sctx.reply(f"❌ {error}")
 ```
 
-## Scheduled tasks
+---
+
+## 8. Slash commands work automatically
+
+Every `@bot.command` is already a slash command — it shows up in Nerimity's `/` menu automatically. No extra code needed.
 
 ```python
-@bot.cron("0 9 * * 1")   # Every Monday 09:00 UTC
-async def weekly():
-    await bot.rest.create_message(CHANNEL_ID, "Good morning!")
+@bot.command("ping", description="Check if the bot is alive")
+async def ping(ctx):
+    await ctx.reply("Pong!")
+# Users can now type !ping OR /ping
 ```
 
-## Persistent storage
+To keep a command prefix-only (hidden from the `/` menu):
+
+```python
+@bot.command_private("debug")
+async def debug(ctx):
+    await ctx.reply("secret")
+```
+
+---
+
+## 9. Save data between restarts
 
 ```python
 from nerimity_sdk import JsonStore
 
-bot = Bot(token="...", store=JsonStore("data.json"))
+bot = Bot(token=os.environ["NERIMITY_TOKEN"], prefix="!", store=JsonStore("data.json"))
 
-@bot.command("setprefix")
-async def setprefix(ctx):
-    await bot.store.set(f"guild:{ctx.server_id}:prefix", ctx.args[0])
-    await ctx.reply(f"Prefix set to `{ctx.args[0]}`")
+@bot.command("remember", description="Remember a value")
+async def remember(ctx):
+    if not ctx.args:
+        return await ctx.reply("Usage: !remember <value>")
+    await bot.store.set(f"user:{ctx.author.id}:note", ctx.args[0])
+    await ctx.reply(f"Remembered: {ctx.args[0]}")
+
+@bot.command("recall", description="Recall your saved value")
+async def recall(ctx):
+    note = await bot.store.get(f"user:{ctx.author.id}:note")
+    await ctx.reply(note or "Nothing saved yet.")
 ```
+
+---
+
+## What's next?
+
+- [Commands in depth](../api/commands.md) — converters, middleware, permissions, help generator
+- [Slash commands](../api/slash.md) — `/` commands with argument types
+- [Buttons](../api/buttons.md) — interactive button handlers
+- [Plugins](../api/plugins.md) — split your bot into reloadable modules
+- [Example Bot](../example.md) — a complete bot showing everything at once
