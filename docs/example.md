@@ -41,15 +41,29 @@ async def slash_info(sctx):
     await sctx.reply(f"nerimity-sdk v{__version__}")
 ```
 
-### Poll with reactions
+### Poll with buttons
 
 ```python
+from nerimity_sdk import Button
+
 @bot.command("poll", description="Start a yes/no poll")
 async def poll(ctx):
     question = " ".join(ctx.args) if ctx.args else "Do you agree?"
-    msg = await ctx.reply(f"📊 **{question}**\n👍 Yes  |  👎 No")
-    await ctx.rest.add_reaction(msg.channel_id, msg.id, "👍")
-    await ctx.rest.add_reaction(msg.channel_id, msg.id, "👎")
+    msg = await ctx.reply(
+        f"📊 **{question}**",
+        buttons=[
+            Button(id=f"poll:yes:{ctx.channel_id}", label="👍 Yes"),
+            Button(id=f"poll:no:{ctx.channel_id}",  label="👎 No", alert=True),
+        ]
+    )
+
+@bot.button("poll:yes:{channel_id}")
+async def on_poll_yes(bctx):
+    await bctx.popup("Vote recorded!", "You voted 👍 Yes")
+
+@bot.button("poll:no:{channel_id}")
+async def on_poll_no(bctx):
+    await bctx.popup("Vote recorded!", "You voted 👎 No")
 ```
 
 ### Paginator
