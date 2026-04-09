@@ -23,7 +23,7 @@ Everything your handlers need is in the `ctx` object passed to them.
 
 ```bash
 nerimity create my-bot
-cd my-bot && cp .env.example .env   # paste token
+cd my-bot && cp .env.example .env   # open .env and paste token
 python bot.py
 ```
 
@@ -35,7 +35,7 @@ from dotenv import load_dotenv
 from nerimity_sdk import Bot
 
 load_dotenv()
-bot = Bot(token=os.environ["NERIMITY_TOKEN"], prefix="!")
+bot = Bot(token=os.environ["NERIMITY_TOKEN"], prefix="!") # or make a .env file with this in it NERIMITY_TOKEN=your_token
 
 @bot.on("ready")
 async def on_ready(me):
@@ -43,7 +43,7 @@ async def on_ready(me):
 
 @bot.command("ping", description="Replies with Pong!")
 async def ping(ctx):
-    await ctx.reply("Pong! 🏓")
+    await ctx.reply("Pong!")
 
 bot.run()
 ```
