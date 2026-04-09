@@ -1,8 +1,8 @@
 site_name: nerimity-sdk
 site_description: A fully-featured Python SDK for building Nerimity bots
-site_url: https://nerimity-sdk.readthedocs.io
-repo_url: https://github.com/your-org/nerimity-sdk
-repo_name: nerimity-sdk
+site_url: https://joddabodscripts.github.io/Nerimity-SDK/
+repo_url: https://github.com/JoddabodScripts/Nerimity-SDK
+repo_name: Nerimity-SDK
 
 theme:
   name: material
@@ -14,6 +14,14 @@ theme:
     - navigation.tabs
     - navigation.sections
     - content.code.copy
+
+extra:
+  generator: false
+  meta:
+    - name: google-site-verification
+      content: gtMtSACbLxzOGzCPi9aMA-0gbRoqLJUhj6n5B5URnZw
+
+copyright: "Built by <a href='https://github.com/JoddabodScripts'>JoddabodScripts</a> · @Lyney:SHOW on Nerimity"
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -44,3 +52,4 @@ nav:
     - Scheduler: api/scheduler.md
     - Utilities: api/utils.md
   - Example Bot: example.md
+  - Plugin Marketplace: plugins.md
