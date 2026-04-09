@@ -1,6 +1,7 @@
 python-socketio[asyncio_client]>=5.11
 aiohttp>=3.9
 python-dotenv>=1.0
+mkdocs-material>=9.0
 
 # Optional extras — uncomment what you need
 # croniter>=2.0       # @bot.cron() scheduled tasks
