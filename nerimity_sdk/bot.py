@@ -26,7 +26,7 @@ from nerimity_sdk.storage import MemoryStore, Store
 from nerimity_sdk.utils.logging import configure_logger, get_logger
 from nerimity_sdk.models import Message, User
 
-__version__ = "0.3.7"
+__version__ = "0.3.8"
 
 
 class Bot:

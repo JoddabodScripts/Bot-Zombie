@@ -1,33 +1,38 @@
-"""nerimity dev — run your bot in development mode.
+"""nerimity dev — development runner.
 
-Equivalent to setting debug=True, watch=True on your Bot, but without
-having to touch your bot.py at all. Just run:
+- Auto-restarts the bot when any .py file in the working directory changes
+- Checks PyPI for a newer version of nerimity-sdk on startup
+- Pretty coloured log output
 
+Usage:
     nerimity dev bot.py
 """
 from __future__ import annotations
+import logging
 import os
 import sys
-import logging
+import subprocess
+import time
 
 
 _COLOURS = {
-    "DEBUG":    "\033[36m",   # cyan
-    "INFO":     "\033[32m",   # green
-    "WARNING":  "\033[33m",   # yellow
-    "ERROR":    "\033[31m",   # red
-    "CRITICAL": "\033[35m",   # magenta
+    "DEBUG":    "\033[36m",
+    "INFO":     "\033[32m",
+    "WARNING":  "\033[33m",
+    "ERROR":    "\033[31m",
+    "CRITICAL": "\033[35m",
     "RESET":    "\033[0m",
+    "BOLD":     "\033[1m",
+    "DIM":      "\033[2m",
 }
 
 
 class _PrettyFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
-        colour = _COLOURS.get(record.levelname, "")
-        reset  = _COLOURS["RESET"]
-        ts     = self.formatTime(record, "%H:%M:%S")
-        level  = f"{colour}{record.levelname:<8}{reset}"
-        name   = f"\033[2m{record.name}\033[0m"
+        c = _COLOURS
+        ts    = self.formatTime(record, "%H:%M:%S")
+        level = f"{c[record.levelname]}{record.levelname:<8}{c['RESET']}"
+        name  = f"{c['DIM']}{record.name}{c['RESET']}"
         return f"{ts}  {level}  {name}  {record.getMessage()}"
 
 
@@ -40,30 +45,87 @@ def _setup_pretty_logging() -> None:
     root.setLevel(logging.DEBUG)
 
 
+def _check_for_update() -> None:
+    """Print a notice if a newer nerimity-sdk is available on PyPI."""
+    try:
+        import urllib.request, json
+        from nerimity_sdk import __version__ as current
+        with urllib.request.urlopen(
+            "https://pypi.org/pypi/nerimity-sdk/json", timeout=3
+        ) as resp:
+            latest = json.loads(resp.read())["info"]["version"]
+
+        if latest != current:
+            c = _COLOURS
+            pip = "pip" if sys.platform != "win32" else "pip"
+            print(
+                f"\n{c['BOLD']}{c['WARNING']}⚠  nerimity-sdk update available: "
+                f"{current} → {latest}{c['RESET']}\n"
+                f"   Run: {c['BOLD']}pip install nerimity-sdk=={latest}{c['RESET']}\n"
+            )
+    except Exception:
+        pass  # no internet / PyPI down — silently skip
+
+
+def _snapshot(directory: str) -> dict[str, float]:
+    """Return a dict of {filepath: mtime} for all .py files under directory."""
+    snap: dict[str, float] = {}
+    for root, _, files in os.walk(directory):
+        # skip hidden dirs and common noise
+        if any(part.startswith(".") or part in ("__pycache__", ".venv", "venv", "site")
+               for part in root.split(os.sep)):
+            continue
+        for f in files:
+            if f.endswith(".py"):
+                path = os.path.join(root, f)
+                try:
+                    snap[path] = os.path.getmtime(path)
+                except OSError:
+                    pass
+    return snap
+
+
 def run(bot_file: str) -> None:
     _setup_pretty_logging()
+    _check_for_update()
 
-    # Inject dev flags via environment so bot.py doesn't need changing
-    os.environ.setdefault("NERIMITY_DEBUG", "1")
-    os.environ.setdefault("NERIMITY_WATCH", "1")
+    directory = os.path.dirname(os.path.abspath(bot_file))
+    c = _COLOURS
 
-    print(f"\033[32m[dev]\033[0m Starting {bot_file} in development mode "
-          f"(debug=True, watch=True)\n")
+    print(f"{c['BOLD']}{c['INFO']}[dev]{c['RESET']} Watching {directory} for changes...\n")
 
-    # Patch Bot.__init__ to force debug/watch on regardless of what bot.py sets
-    try:
-        import nerimity_sdk.bot as _bot_module
-        _orig_init = _bot_module.Bot.__init__
+    while True:
+        snapshot = _snapshot(directory)
 
-        def _patched_init(self, *args, **kwargs):
-            kwargs["debug"] = True
-            kwargs["watch"] = True
-            _orig_init(self, *args, **kwargs)
+        # Build the subprocess command — same Python interpreter, force dev flags via env
+        env = os.environ.copy()
+        env["NERIMITY_DEBUG"] = "1"
+        env["NERIMITY_WATCH"] = "0"  # we handle watching ourselves
 
-        _bot_module.Bot.__init__ = _patched_init
-    except Exception:
-        pass  # if patching fails, env vars are still set
+        cmd = [sys.executable, bot_file]
+        proc = subprocess.Popen(cmd, env=env)
 
-    # Run the bot file in its own namespace
-    import runpy
-    runpy.run_path(bot_file, run_name="__main__")
+        try:
+            while proc.poll() is None:
+                time.sleep(0.5)
+                current = _snapshot(directory)
+                changed = [p for p, m in current.items()
+                           if snapshot.get(p) != m or p not in snapshot]
+                if changed:
+                    rel = os.path.relpath(changed[0], directory)
+                    print(f"\n{c['WARNING']}[dev] {rel} changed — restarting...{c['RESET']}\n")
+                    proc.terminate()
+                    try:
+                        proc.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        proc.kill()
+                    break
+                snapshot = current
+        except KeyboardInterrupt:
+            print(f"\n{c['DIM']}[dev] Stopping.{c['RESET']}")
+            proc.terminate()
+            try:
+                proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+            sys.exit(0)
