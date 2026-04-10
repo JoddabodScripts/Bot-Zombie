@@ -114,8 +114,6 @@ class RESTClient:
                               socket_id: Optional[str] = None,
                               nerimity_file_id: Optional[str] = None,
                               buttons: Optional[list[dict]] = None) -> dict:
-        url = f"{BASE_URL}/channels/{channel_id}/messages"
-        headers = {"Authorization": self._token}
         data: dict = {"content": content, "buttons": []}
         if socket_id:
             data["socketId"] = socket_id
@@ -128,16 +126,7 @@ class RESTClient:
                     "id": str(b["id"]),
                     "alert": bool(b.get("alert", False)),
                 })
-        import json as _json
-        session = await self._get_session()
-        async with session.post(url, headers=headers, json=data) as resp:
-            if resp.status >= 400:
-                text = await resp.text()
-                raise aiohttp.ClientResponseError(
-                    resp.request_info, resp.history,
-                    status=resp.status, message=text,
-                )
-            return await resp.json()
+        return await self.request("POST", f"/channels/{channel_id}/messages", json=data)
 
     async def button_callback(self, channel_id: str, message_id: str,
                                button_id: str, user_id: str,
@@ -248,9 +237,23 @@ class RESTClient:
             "GET", f"/channels/{channel_id}/messages/{message_id}/reactions/users", params=params
         )
 
-    async def update_message(self, channel_id: str, message_id: str, content: str) -> dict:
+    async def update_message(self, channel_id: str, message_id: str, content: str,
+                              buttons: Optional[list[dict]] = None) -> dict:
+        body: dict = {"content": content}
+        if buttons is not None:
+            body["buttons"] = buttons
         return await self.request(
-            "PATCH", f"/channels/{channel_id}/messages/{message_id}", json={"content": content}
+            "PATCH", f"/channels/{channel_id}/messages/{message_id}", json=body
+        )
+
+    async def add_role(self, server_id: str, user_id: str, role_id: str) -> dict:
+        return await self.request(
+            "POST", f"/servers/{server_id}/members/{user_id}/roles/{role_id}"
+        )
+
+    async def remove_role(self, server_id: str, user_id: str, role_id: str) -> dict:
+        return await self.request(
+            "DELETE", f"/servers/{server_id}/members/{user_id}/roles/{role_id}"
         )
 
     async def pin_message(self, channel_id: str, message_id: str) -> dict:

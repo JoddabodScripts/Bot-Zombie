@@ -155,11 +155,10 @@ async def slash_info(sctx):
 
 @bot.slash("ban", description="Ban a user", args_hint="<user_id> [reason]")
 async def slash_ban(sctx):
-    parts = sctx.args.split(None, 1)
-    if not parts:
+    if not sctx.args:
         return await sctx.reply("Usage: /ban <user_id> [reason]")
-    user_id = parts[0]
-    reason = parts[1] if len(parts) > 1 else "No reason"
+    user_id = sctx.args[0]
+    reason = " ".join(sctx.args[1:]) if len(sctx.args) > 1 else "No reason"
     await sctx.rest.ban_member(sctx.server_id, user_id)
     await sctx.reply(f"🔨 Banned {mention(user_id)}: {reason}")
 
@@ -172,41 +171,28 @@ _poll_questions: dict[str, str] = {}  # msg_id → question
 @bot.command("poll", description="Start a yes/no poll", usage="<question>")
 async def poll(ctx):
     question = " ".join(ctx.args) if ctx.args else "Do you agree?"
-    import aiohttp
-    # Send with buttons in one shot
-    data = {
-        "content": f"📊 **{question}**\n👍 Yes — 0  |  👎 No — 0",
-        "buttons": [
-            {"label": "👍 Yes (0)", "id": "poll_yes_PLACEHOLDER", "alert": False},
-            {"label": "👎 No (0)",  "id": "poll_no_PLACEHOLDER",  "alert": True},
-        ]
-    }
-    async with aiohttp.ClientSession() as s:
-        async with s.post(
-            f"https://nerimity.com/api/channels/{ctx.channel_id}/messages",
-            headers={"Authorization": ctx.rest._token},
-            json=data
-        ) as resp:
-            msg = await resp.json()
 
+    # Send the poll message; use a temporary key, then re-key on the real message ID
+    msg = await ctx.rest.create_message(
+        ctx.channel_id,
+        f"📊 **{question}**\n👍 Yes — 0  |  👎 No — 0",
+        buttons=[
+            {"label": "👍 Yes (0)", "id": f"poll_yes_PENDING", "alert": False},
+            {"label": "👎 No (0)",  "id": f"poll_no_PENDING",  "alert": True},
+        ],
+    )
     msg_id = msg["id"]
     _poll_votes[msg_id] = {"yes": set(), "no": set()}
     _poll_questions[msg_id] = question
-
-    # Re-send with correct IDs now that we have msg_id
-    await ctx.rest.delete_message(ctx.channel_id, msg_id)
-    data["buttons"][0]["id"] = f"poll_yes_{msg_id}"
-    data["buttons"][1]["id"] = f"poll_no_{msg_id}"
-    async with aiohttp.ClientSession() as s:
-        async with s.post(
-            f"https://nerimity.com/api/channels/{ctx.channel_id}/messages",
-            headers={"Authorization": ctx.rest._token},
-            json=data
-        ) as resp:
-            final = await resp.json()
-    # update tracking to final message id
-    _poll_votes[final["id"]] = _poll_votes.pop(msg_id)
-    _poll_questions[final["id"]] = _poll_questions.pop(msg_id)
+    # Edit the message so button IDs contain the real message ID
+    await ctx.rest.update_message(
+        ctx.channel_id, msg_id,
+        f"📊 **{question}**\n👍 Yes — 0  |  👎 No — 0",
+        buttons=[
+            {"label": "👍 Yes (0)", "id": f"poll_yes_{msg_id}", "alert": False},
+            {"label": "👎 No (0)",  "id": f"poll_no_{msg_id}",  "alert": True},
+        ],
+    )
 
 
 @bot.button("poll_yes_{msg_id}")

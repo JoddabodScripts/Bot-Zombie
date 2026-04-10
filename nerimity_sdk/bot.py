@@ -345,7 +345,13 @@ class Bot:
             parts = content[1:].split(None, 1)
             cmd_token = parts[0].split(":")[0]
             rest_of = parts[1] if len(parts) > 1 else ""
-            msg.content = f"{prefix}{cmd_token} {rest_of}".strip()
+            content = f"{prefix}{cmd_token} {rest_of}".strip()
+            # Use a copy so the original Message object is not mutated
+            from nerimity_sdk.models import Message as _Msg
+            import dataclasses
+            msg = dataclasses.replace(msg, content=content)
+            ctx = Context(msg, self.rest, self.cache, [], {},
+                          emitter=self.emitter, button_router=self.button_router)
 
         old_prefix = self.router.prefix
         self.router.prefix = prefix
@@ -487,9 +493,18 @@ class Bot:
         asyncio.set_event_loop(loop)
 
         async def _run():
+            _closing = False
+
+            async def _shutdown():
+                nonlocal _closing
+                if _closing:
+                    return
+                _closing = True
+                await self.close()
+
             for sig in (signal.SIGINT, signal.SIGTERM):
                 try:
-                    loop.add_signal_handler(sig, lambda: asyncio.create_task(self.close()))
+                    loop.add_signal_handler(sig, lambda: asyncio.create_task(_shutdown()))
                 except NotImplementedError:
                     pass
             try:
@@ -497,7 +512,8 @@ class Bot:
             except asyncio.CancelledError:
                 pass
             finally:
-                await self.close()
+                if not _closing:
+                    await self.close()
 
         try:
             loop.run_until_complete(_run())

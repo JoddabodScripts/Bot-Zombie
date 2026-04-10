@@ -88,10 +88,11 @@ class ButtonContext:
     async def update_message(self, content: str,
                               buttons: Optional[list[ComponentRow]] = None) -> None:
         """Edit the message that contains the button."""
-        body: dict = {"content": content}
+        btn_data: Optional[list[dict]] = None
         if buttons is not None:
-            body["buttons"] = [b for row in buttons for b in row.to_list()]
-        await self.rest.update_message(self.channel_id, self.message_id, content)
+            btn_data = [b for row in buttons for b in row.to_list()]
+        await self.rest.update_message(self.channel_id, self.message_id, content,
+                                       buttons=btn_data)
 
 
 # ── ButtonRouter ──────────────────────────────────────────────────────────────
