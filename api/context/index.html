@@ -703,6 +703,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#await-ctxreply_dmcontent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        await ctx.reply_dm(content)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#await-ctxreply_then_deletecontent-delay50" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        await ctx.reply_then_delete(content, delay=5.0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#await-ctxreply_embedembed" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1217,6 +1239,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#await-ctxreply_dmcontent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        await ctx.reply_dm(content)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#await-ctxreply_then_deletecontent-delay50" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        await ctx.reply_then_delete(content, delay=5.0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#await-ctxreply_embedembed" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1407,31 +1451,37 @@
 <h2 id="methods">Methods</h2>
 <h3 id="await-ctxreplycontent"><code>await ctx.reply(content)</code></h3>
 <p>Send a message to the same channel. Returns <code>Message</code>.</p>
+<h3 id="await-ctxreply_dmcontent"><code>await ctx.reply_dm(content)</code></h3>
+<p>Send a DM to the command author instead of replying in the channel. Returns <code>Message</code>.</p>
+<h3 id="await-ctxreply_then_deletecontent-delay50"><code>await ctx.reply_then_delete(content, delay=5.0)</code></h3>
+<p>Send a message then automatically delete it after <code>delay</code> seconds.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">reply_then_delete</span><span class="p">(</span><span class="s2">&quot;✅ Done!&quot;</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
 <h3 id="await-ctxreply_embedembed"><code>await ctx.reply_embed(embed)</code></h3>
 <p>Send an embed to the same channel. Returns <code>Message</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nerimity_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embed</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">reply_embed</span><span class="p">(</span><span class="n">Embed</span><span class="p">()</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="s2">&quot;World&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="mh">0x5865f2</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nerimity_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embed</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">reply_embed</span><span class="p">(</span><span class="n">Embed</span><span class="p">()</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="s2">&quot;World&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="mh">0x5865f2</span><span class="p">))</span>
 </code></pre></div>
 <h3 id="await-ctxpin"><code>await ctx.pin()</code></h3>
 <p>Pin the triggering message in this channel.</p>
 <h3 id="await-ctxreactemoji-emoji_idnone-giffalse-webpfalse"><code>await ctx.react(emoji, emoji_id=None, gif=False, webp=False)</code></h3>
 <p>Add a reaction to the triggering message.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">react</span><span class="p">(</span><span class="s2">&quot;👍&quot;</span><span class="p">)</span>                          <span class="c1"># unicode</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">react</span><span class="p">(</span><span class="s2">&quot;wave&quot;</span><span class="p">,</span> <span class="n">emoji_id</span><span class="o">=</span><span class="s2">&quot;123456&quot;</span><span class="p">)</span>    <span class="c1"># custom emoji</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">react</span><span class="p">(</span><span class="s2">&quot;👍&quot;</span><span class="p">)</span>                          <span class="c1"># unicode</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">react</span><span class="p">(</span><span class="s2">&quot;wave&quot;</span><span class="p">,</span> <span class="n">emoji_id</span><span class="o">=</span><span class="s2">&quot;123456&quot;</span><span class="p">)</span>    <span class="c1"># custom emoji</span>
 </code></pre></div>
 <h3 id="await-ctxunreactemoji-emoji_idnone"><code>await ctx.unreact(emoji, emoji_id=None)</code></h3>
 <p>Remove a reaction.</p>
 <h3 id="await-ctxaskprompt-timeout300-checknone"><code>await ctx.ask(prompt, timeout=30.0, check=None)</code></h3>
 <p>Send a prompt and wait for the author's next message in the same channel.
 Returns <code>Message</code> or <code>None</code> on timeout.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">name</span> <span class="o">=</span> <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="s2">&quot;What&#39;s your name?&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">if</span> <span class="n">name</span><span class="p">:</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hi </span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">name</span> <span class="o">=</span> <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="s2">&quot;What&#39;s your name?&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hi </span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="await-ctxconfirmprompt-timeout300"><code>await ctx.confirm(prompt, timeout=30.0)</code></h3>
 <p>Ask a yes/no question. Returns <code>True</code>, <code>False</code>, or <code>None</code> on timeout.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">if</span> <span class="ow">not</span> <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="s2">&quot;Are you sure?&quot;</span><span class="p">):</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="k">return</span> <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="s2">&quot;Cancelled.&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">if</span> <span class="ow">not</span> <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="s2">&quot;Are you sure?&quot;</span><span class="p">):</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="k">return</span> <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="s2">&quot;Cancelled.&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>Accepts: <code>yes</code>, <code>y</code>, <code>yeah</code>, <code>yep</code>, <code>confirm</code>, <code>ok</code> → <code>True</code><br />
 Accepts: <code>no</code>, <code>n</code>, <code>nope</code>, <code>cancel</code>, <code>abort</code> → <code>False</code></p>

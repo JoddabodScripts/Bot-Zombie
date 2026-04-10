@@ -1227,6 +1227,21 @@
 <td>DM-based support tickets — users DM the bot, staff reply via a channel</td>
 <td><code>staff_channel_id</code>, <code>open_message</code>, <code>close_message</code></td>
 </tr>
+<tr>
+<td><code>GiveawayPlugin</code></td>
+<td>React-to-enter giveaway with random winner after a duration</td>
+<td>loaded once, then <code>await plugin.start(ctx, prize, duration, emoji)</code></td>
+</tr>
+<tr>
+<td><code>ReminderPlugin</code></td>
+<td><code>!remind 10m take a break</code> — DMs the user after the time</td>
+<td>loaded once, then <code>await plugin.set(ctx)</code></td>
+</tr>
+<tr>
+<td><code>TranslatePlugin</code></td>
+<td>Auto-translate messages in a channel (MyMemory, no API key needed)</td>
+<td><code>watch_channel_id</code>, <code>target_lang</code></td>
+</tr>
 </tbody>
 </table>
 <hr />

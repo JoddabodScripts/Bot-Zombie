@@ -1280,7 +1280,7 @@ The bot connects over a WebSocket, receives events, and dispatches them to your 
 </tr>
 <tr>
 <td>Runtime stats</td>
-<td><code>bot.stats</code> — uptime, messages, commands, cache sizes</td>
+<td><code>bot.stats</code> — uptime, messages, commands, cache sizes, rate limit hits</td>
 </tr>
 <tr>
 <td>Auto-restart on crash</td>
@@ -1289,6 +1289,34 @@ The bot connects over a WebSocket, receives events, and dispatches them to your 
 <tr>
 <td>Auto-restart on file save</td>
 <td>enabled by default in <code>bot.run()</code></td>
+</tr>
+<tr>
+<td>Health check endpoint</td>
+<td><code>Bot(health_port=8080)</code> → <code>GET /health</code> and <code>GET /stats</code></td>
+</tr>
+<tr>
+<td>Live dev dashboard</td>
+<td><code>nerimity dev bot.py</code> with <code>NERIMITY_HEALTH_PORT</code> set</td>
+</tr>
+<tr>
+<td>Built-in /stats command</td>
+<td>every bot gets <code>/stats</code> automatically</td>
+</tr>
+<tr>
+<td>DM reply</td>
+<td><code>await ctx.reply_dm("hi")</code></td>
+</tr>
+<tr>
+<td>Auto-delete reply</td>
+<td><code>await ctx.reply_then_delete("done", delay=5)</code></td>
+</tr>
+<tr>
+<td>Fetch user by ID</td>
+<td><code>await bot.rest.fetch_user(user_id)</code></td>
+</tr>
+<tr>
+<td>Bulk role assign</td>
+<td><code>await bot.rest.add_roles(server_id, user_id, [role1, role2])</code></td>
 </tr>
 </tbody>
 </table>
