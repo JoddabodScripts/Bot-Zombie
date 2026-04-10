@@ -44,7 +44,7 @@ async def hello(ctx):
     await ctx.reply(f"Hello, {ctx.author.username}!")
 ```
 
-Save the file and restart. Type `!hello` in any channel the bot can see.
+Save the file — the bot restarts automatically. Type `/hello` in any channel the bot can see.
 
 ---
 
@@ -53,30 +53,37 @@ Save the file and restart. Type `!hello` in any channel the bot can see.
 ```python
 @bot.command("say", description="Repeat something")
 async def say(ctx):
-    # ctx.args is a list of words the user typed after !say
     if not ctx.args:
-        return await ctx.reply("Usage: !say <message>")
+        return await ctx.reply("Usage: /say <message>")
     await ctx.reply(" ".join(ctx.args))
 ```
 
-Type `!say hello world` → bot replies `hello world`.
+Type `/say hello world` → bot replies `hello world`.
 
 ---
 
 ## 6. Use typed converters
 
-Instead of parsing strings yourself, declare what types you expect:
+**Option A — type annotations** (simplest):
+
+```python
+@bot.command("double", description="Double a number")
+async def double(ctx, n: int):
+    await ctx.reply(str(n * 2))
+```
+
+**Option B — explicit `args=`**:
 
 ```python
 from nerimity_sdk import Int
 
 @bot.command("double", description="Double a number", args=[Int])
 async def double(ctx):
-    n = ctx.args[0]   # already an int
+    n = ctx.args[0]
     await ctx.reply(str(n * 2))
 ```
 
-If the user types `!double abc`, they get a friendly error automatically.
+Either way, if the user types `/double abc` they get a friendly error automatically.
 
 ---
 
@@ -94,13 +101,13 @@ async def on_error(ctx, error):
 
 ## 8. Slash commands work automatically
 
-Every `@bot.command` is already a slash command — it shows up in Nerimity's `/` menu automatically. No extra code needed.
+Every `@bot.command` is already a slash command — it shows up in Nerimity's `/` menu automatically. The default prefix is `/` so users just type `/ping`.
 
 ```python
 @bot.command("ping", description="Check if the bot is alive")
 async def ping(ctx):
     await ctx.reply("Pong!")
-# Users can now type !ping OR /ping
+# Users type /ping
 ```
 
 To keep a command prefix-only (hidden from the `/` menu):

@@ -22,6 +22,17 @@ Passed to every prefix command handler. Wraps the triggering message with conven
 ### `await ctx.reply(content)`
 Send a message to the same channel. Returns `Message`.
 
+### `await ctx.reply_embed(embed)`
+Send an embed to the same channel. Returns `Message`.
+
+```python
+from nerimity_sdk import Embed
+await ctx.reply_embed(Embed().title("Hello").description("World").color(0x5865f2))
+```
+
+### `await ctx.pin()`
+Pin the triggering message in this channel.
+
 ### `await ctx.react(emoji, emoji_id=None, gif=False, webp=False)`
 Add a reaction to the triggering message.
 
@@ -58,7 +69,7 @@ Accepts: `no`, `n`, `nope`, `cancel`, `abort` → `False`
 Fetch messages from the channel. Returns `list[Message]`.
 
 ### `await ctx.fetch_member(user_id)`
-Look up a member from cache. Returns `Member | None`.
+Look up a member by user ID. Checks cache first, falls back to the API if not found. Returns `Member | None`.
 
 ### `await ctx.send_typing()`
 Send a typing indicator to the channel.

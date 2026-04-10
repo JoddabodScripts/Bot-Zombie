@@ -69,11 +69,39 @@ async def handler(bctx: ButtonContext, error: Exception): ...
 | `bot.router` | `CommandRouter` | Prefix command router |
 | `bot.slash_router` | `SlashRouter` | Slash command router |
 | `bot.button_router` | `ButtonRouter` | Button handler router |
+| `bot.stats` | `dict` | Runtime stats: uptime, messages seen, commands dispatched, cache sizes |
 
 ## Methods
 
-### `bot.run()`
-Blocking entry point. Handles `SIGINT`/`SIGTERM` gracefully.
+### `bot.run(auto_restart=True)`
+Blocking entry point. By default, wraps the bot in a watchdog that:
+- Restarts automatically on crash
+- Restarts when any `.py` file in the project is saved
+
+Pass `auto_restart=False` to disable this behaviour.
+
+### `await bot.wait_for(event, check=None, timeout=60.0, count=1)`
+Wait for a gateway event matching an optional check function.
+
+- Returns the typed event payload when `count=1` (default)
+- Returns a `list` of payloads when `count > 1`
+- Raises `asyncio.TimeoutError` if the timeout expires
+
+```python
+# Wait for one event
+event = await bot.wait_for(
+    "server:member_joined",
+    check=lambda e: e.server_id == "123",
+    timeout=30,
+)
+
+# Collect 3 reactions
+reactions = await bot.wait_for(
+    "message:reaction_added",
+    check=lambda e: e.message_id == msg.id,
+    count=3, timeout=60,
+)
+```
 
 ### `await bot.start()`
 Async version — use if you need to run alongside other async code.
@@ -82,4 +110,4 @@ Async version — use if you need to run alongside other async code.
 Flush queues, stop scheduler, disconnect gateway, close HTTP session.
 
 ### `Bot.from_shard(token, shard_id, shard_count, **kwargs)`
-Create a bot instance for a specific shard (architecture is ready; Nerimity sharding is a stub).
+Create a bot instance for a specific shard.

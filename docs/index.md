@@ -35,7 +35,7 @@ from dotenv import load_dotenv
 from nerimity_sdk import Bot
 
 load_dotenv()
-bot = Bot(token=os.environ["NERIMITY_TOKEN"], prefix="!") # or make a .env file with this in it NERIMITY_TOKEN=your_token
+bot = Bot(token=os.environ["NERIMITY_TOKEN"]) # or make a .env file with this in it NERIMITY_TOKEN=your_token
 
 @bot.on("ready")
 async def on_ready(me):
@@ -53,20 +53,25 @@ bot.run()
 | Feature | How to use |
 |---|---|
 | Event listeners | `@bot.on("message:created")` |
-| Prefix + slash commands | `@bot.command("ping")` — works as `!ping` and `/ping` |
+| Prefix + slash commands | `@bot.command("ping")` — works as `/ping` (default) |
 | Prefix-only commands | `@bot.command_private("debug")` |
-| Argument converters | `args=[Int, MemberConverter]` |
+| Argument converters | `args=[Int, MemberConverter]` or type annotations |
+| Type annotation converters | `async def add(ctx, a: int, b: int)` — no `args=` needed |
+| Permission shortcut | `@bot.command("ban", requires=Permissions.BAN_MEMBERS)` |
 | Confirmation prompts | `await ctx.confirm("Sure?")` |
 | Multi-step conversations | `await ctx.ask("Your name?")` |
 | DMs | `await ctx.author.send(bot.rest, "Hi!")` |
 | Edit messages | `await ctx.edit(msg.id, "updated!")` |
 | File uploads | `await ctx.reply_file("image.png")` |
+| Embeds | `await ctx.reply_embed(Embed().title("Hi"))` |
+| Pin messages | `await ctx.pin()` |
 | Paginator | `await Paginator(pages).send(ctx)` |
 | Mention helpers | `mention(user_id)` / `ctx.mentions` |
 | Webhooks | `await Webhook(token).send("Hello!")` |
 | Persistent storage | `JsonStore` / `SqliteStore` / `RedisStore` |
 | Scheduled tasks | `@bot.cron("0 9 * * *")` |
 | Event waiting (typed) | `await bot.wait_for("member_joined", ...)` |
+| Collect N events | `await bot.wait_for("reaction_added", count=3)` |
 | Plugins (hot-reload) | `await bot.plugins.load(MyPlugin())` |
 | Contrib plugins | `pip install nerimity-sdk-contrib` |
 | Error handlers | `@bot.on_command_error` |
@@ -74,6 +79,9 @@ bot.run()
 | Stale cache detection | `user.stale == True` after reconnect |
 | Static analysis | `nerimity lint` |
 | Debug mode | `Bot(debug=True)` |
-| Auto-reload on save | `Bot(watch=True)` |
+| JSON structured logs | `Bot(json_logs=True)` |
+| Runtime stats | `bot.stats` — uptime, messages, commands, cache sizes |
+| Auto-restart on crash | enabled by default in `bot.run()` |
+| Auto-restart on file save | enabled by default in `bot.run()` |
 
 See the [Getting Started guide](guide/installation.md) or the [Example Bot](example.md) for a full working example.

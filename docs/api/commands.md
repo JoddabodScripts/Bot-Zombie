@@ -1,6 +1,6 @@
 # Commands
 
-Commands are functions that run when a user types `!ping` **or** `/ping` in chat.
+Commands are functions that run when a user types `/ping` in chat.
 
 `@bot.command` does both at once — it registers the command with Nerimity's `/` slash menu **and** handles the prefix version. You only write the handler once.
 
@@ -10,7 +10,7 @@ async def ping(ctx):
     await ctx.reply("Pong! 🏓")
 ```
 
-Users can now trigger this with `!ping` or `/ping`. That's it.
+Users can now trigger this with `/ping`. That's it.
 
 If you want a command that **only** works with the prefix and never appears in the `/` menu:
 
@@ -52,6 +52,16 @@ async def add(ctx):
     a, b = ctx.args   # already ints — if the user types garbage, they get a friendly error
     await ctx.reply(f"{a + b}")
 ```
+
+Or even simpler — just use **type annotations** and the SDK figures it out automatically:
+
+```python
+@bot.command("add")
+async def add(ctx, a: int, b: int):
+    await ctx.reply(f"{a + b}")
+```
+
+No `args=` needed. The SDK reads the annotations and applies the right converters.
 
 ### Available converters
 
@@ -157,15 +167,30 @@ async def setup(ctx):
 
 ## Permission checks
 
-Only run a command if the user has the right permissions:
+Only run a command if the user has the right permissions.
+
+**Shortcut — `requires=`** (recommended):
 
 ```python
 from nerimity_sdk import Permissions
 
-@bot.command("ban", required_user_perms=[Permissions.BAN_MEMBERS])
+@bot.command("ban", requires=Permissions.BAN_MEMBERS)
 async def ban(ctx):
     ...  # only runs if the user has BAN_MEMBERS
-         # otherwise they get "You need the `ban_members` permission."
+```
+
+Pass multiple permissions as a list:
+
+```python
+@bot.command("nuke", requires=[Permissions.BAN_MEMBERS, Permissions.MANAGE_CHANNELS])
+async def nuke(ctx): ...
+```
+
+**Legacy — `required_user_perms=`** (still works):
+
+```python
+@bot.command("ban", required_user_perms=[Permissions.BAN_MEMBERS])
+async def ban(ctx): ...
 ```
 
 ---

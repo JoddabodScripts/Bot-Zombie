@@ -30,6 +30,9 @@ async def on_ready(me):
 | `LoggingPlugin` | Logs joins, leaves, deletes, and edits | `channel_id` |
 | `RoleMenuPlugin` | React to a message to get a role, unreact to remove it | `message_id`, `roles` (dict of emoji → role_id) |
 | `PollPlugin` | Timed reaction poll with automatic result tallying | loaded once, then `await plugin.create(ctx, question, options, duration)` |
+| `AntiSpamPlugin` | Rate-limits messages per user, auto-kicks/bans/deletes on threshold | `max_messages`, `window`, `action` (`"kick"`, `"ban"`, `"delete"`), `log_channel_id` |
+| `LevelingPlugin` | XP per message with cooldown, level-up announcements, persistent storage | `announce_channel_id`, `xp_per_message`, `xp_cooldown` |
+| `TicketPlugin` | DM-based support tickets — users DM the bot, staff reply via a channel | `staff_channel_id`, `open_message`, `close_message` |
 
 ---
 
