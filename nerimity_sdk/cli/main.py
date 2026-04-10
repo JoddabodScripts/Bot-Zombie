@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from nerimity_sdk import Bot
 
 load_dotenv()
-bot = Bot(token=os.environ["NERIMITY_TOKEN"], prefix="!")
+bot = Bot(token=os.environ["NERIMITY_TOKEN"], prefix="/")
 
 
 @bot.on("ready")

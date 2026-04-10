@@ -36,7 +36,7 @@ class Bot:
 
     Usage::
 
-        bot = Bot(token="YOUR_TOKEN", prefix="!")
+        bot = Bot(token="YOUR_TOKEN", prefix="/")
 
         @bot.command("ping")
         async def ping(ctx):
@@ -60,7 +60,7 @@ class Bot:
     def __init__(
         self,
         token: str,
-        prefix: str = "!",
+        prefix: str = "/",
         prefix_store: Optional[PrefixStore] = None,
         cache_size: int = 1000,
         cache_ttl: float = 0,
