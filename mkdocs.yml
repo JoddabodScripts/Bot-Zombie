@@ -27,6 +27,9 @@ theme:
 extra_css:
   - stylesheets/custom.css
 
+extra_javascript:
+  - javascripts/transitions.js
+
 plugins:
   - search:
       lang: en
