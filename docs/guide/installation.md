@@ -99,6 +99,18 @@ You should see a "Logged in" message in the terminal. Your bot is online! 🎉
 
 ---
 
+## Tip — Use VS Code instead of Notepad
+
+Notepad works, but [Visual Studio Code](https://code.visualstudio.com/) is a free editor that makes writing bot code much easier — it highlights errors, autocompletes, and has a built-in terminal.
+
+1. Download and install it from [code.visualstudio.com](https://code.visualstudio.com/)
+2. Open your bot folder: **File → Open Folder**
+3. Install the **Python extension** (it'll prompt you automatically)
+
+Once set up, you can open a terminal inside VS Code with `` Ctrl + ` `` and run `python bot.py` without leaving the editor.
+
+---
+
 ## Linux
 
 ```bash

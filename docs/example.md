@@ -4,10 +4,32 @@ A complete bot demonstrating every major feature. Source: [`example_bot/bot.py`]
 
 ## Setup
 
-```bash
+Install the SDK with cron support:
+
+```
 pip install "nerimity-sdk[cron]"
-export NERIMITY_TOKEN=your_token_here
-export ANNOUNCE_CHANNEL=your_channel_id   # optional, for cron demo
+```
+
+Create a `.env` file in the project folder.
+
+**Windows** — run in Command Prompt:
+```
+notepad .env
+```
+
+**Linux/Mac:**
+```bash
+nano .env
+```
+
+Paste this into the file (the second line is only needed for the cron demo):
+```
+NERIMITY_TOKEN=your_token_here
+ANNOUNCE_CHANNEL=your_channel_id
+```
+
+Then run the bot:
+```
 python example_bot/bot.py
 ```
 
