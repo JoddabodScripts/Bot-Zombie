@@ -101,23 +101,8 @@ body, [data-md-color-scheme="slate"] {
 }
 
 .md-nav__link {
-  border-radius: var(--arc-radius-sm);
-  transition: background var(--arc-transition), color var(--arc-transition);
+  transition: color var(--arc-transition);
   font-size: 0.82rem;
-  /* let Material control padding so the box aligns with the text */
-}
-
-.md-nav__item {
-  border-radius: var(--arc-radius-sm);
-  transition: background var(--arc-transition);
-}
-
-.md-nav__item:has(> .md-nav__link:hover) {
-  background: rgba(167,139,250,0.1);
-}
-
-.md-nav__item:has(> .md-nav__link--active) {
-  background: rgba(167,139,250,0.15);
 }
 
 .md-nav__link:hover {
