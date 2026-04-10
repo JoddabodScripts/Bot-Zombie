@@ -180,9 +180,38 @@ class Context:
     # ── Fetch helpers ─────────────────────────────────────────────────────────
 
     async def fetch_member(self, user_id: str) -> Optional["Member"]:
+        """Fetch a member by user ID. Falls back to API if not in cache."""
         if not self.server_id:
             return None
-        return self.cache.members.get(f"{self.server_id}:{user_id}")
+        cached = self.cache.members.get(f"{self.server_id}:{user_id}")
+        if cached:
+            return cached
+        try:
+            from nerimity_sdk.models import Member
+            data = await self.rest.request("GET", f"/servers/{self.server_id}/members/{user_id}")
+            if data:
+                member = Member.from_dict(data)
+                self.cache.members.set(f"{self.server_id}:{user_id}", member)
+                return member
+        except Exception:
+            pass
+        return None
+
+    async def reply_embed(self, embed: "Any") -> "Message":
+        """Send an embed in this channel.
+
+        Usage::
+
+            from nerimity_sdk import Embed
+            await ctx.reply_embed(Embed().title("Hello").description("World"))
+        """
+        from nerimity_sdk.models import Message
+        data = await self.rest.create_message(self.channel_id, "", embed=embed.to_dict())
+        return Message.from_dict(data)
+
+    async def pin(self) -> None:
+        """Pin the triggering message in this channel."""
+        await self.rest.pin_message(self.channel_id, self.message.id)
 
     async def fetch_messages(self, limit: int = 50, before: Optional[str] = None,
                               after: Optional[str] = None) -> list["Message"]:

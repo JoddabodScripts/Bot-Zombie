@@ -113,12 +113,15 @@ class RESTClient:
     async def create_message(self, channel_id: str, content: str,
                               socket_id: Optional[str] = None,
                               nerimity_file_id: Optional[str] = None,
-                              buttons: Optional[list[dict]] = None) -> dict:
+                              buttons: Optional[list[dict]] = None,
+                              embed: Optional[dict] = None) -> dict:
         data: dict = {"content": content, "buttons": []}
         if socket_id:
             data["socketId"] = socket_id
         if nerimity_file_id:
             data["nerimityCdnFileId"] = nerimity_file_id
+        if embed:
+            data["embed"] = embed
         if buttons:
             for b in buttons:
                 data["buttons"].append({

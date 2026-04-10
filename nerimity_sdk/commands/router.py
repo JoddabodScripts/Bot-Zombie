@@ -27,6 +27,7 @@ class CommandDef:
     cooldown: float = 0.0
     converters: list = field(default_factory=list)
     public: bool = True  # if True, registered with Nerimity API as a slash command
+    requires: list = field(default_factory=list)  # shortcut permission flags
 
 
 def _parse_args(text: str) -> tuple[list[str], dict[str, Any]]:
@@ -73,8 +74,17 @@ class CommandRouter:
         cooldown: float = 0.0,
         args: list | None = None,
         public: bool = True,
+        requires=None,
     ):
         def decorator(fn: Handler) -> Handler:
+            _requires = []
+            if requires is not None:
+                _requires = list(requires) if hasattr(requires, "__iter__") else [requires]
+            # If no explicit args= given, infer converters from type annotations
+            _converters = args
+            if _converters is None:
+                from nerimity_sdk.commands.converters import converters_from_annotations
+                _converters = converters_from_annotations(fn)
             cmd = CommandDef(
                 name=name, handler=fn, description=description,
                 usage=usage, category=category, aliases=aliases or [],
@@ -82,7 +92,8 @@ class CommandRouter:
                 required_user_perms=required_user_perms or [],
                 required_bot_perms=required_bot_perms or [],
                 middleware=middleware or [], cooldown=cooldown,
-                converters=args or [], public=public,
+                converters=_converters, public=public,
+                requires=_requires,
             )
             self._commands[name] = cmd
             for alias in cmd.aliases:
@@ -147,6 +158,17 @@ class CommandRouter:
                 for perm in cmd.required_user_perms:
                     if not has_permission(member, server, perm):
                         await ctx.reply(f"You need the `{perm}` permission.")
+                        return True
+
+        # requires= shortcut
+        if cmd.requires and ctx.server_id:
+            from nerimity_sdk.permissions.checker import has_permission
+            server = ctx.server
+            member = ctx.member
+            if server and member:
+                for perm in cmd.requires:
+                    if not has_permission(member, server, perm):
+                        await ctx.reply(f"❌ You need the `{perm.name}` permission to use this command.")
                         return True
 
         # Argument converters

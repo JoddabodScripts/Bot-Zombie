@@ -71,3 +71,33 @@ async def convert_args(ctx: "Context", converters: list) -> list:
             )
         results.append(await converter.convert(ctx, ctx.args[i]))
     return results
+
+
+def converters_from_annotations(fn) -> list:
+    """Extract converters from a command handler's type annotations.
+
+    Supports: int → Int, str → passthrough, and the SDK converter singletons.
+
+    Usage::
+
+        @bot.command("add")
+        async def add(ctx, a: int, b: int): ...
+        # equivalent to args=[Int, Int]
+    """
+    import inspect
+    sig = inspect.signature(fn)
+    _type_map = {int: Int, str: None}  # None = no conversion needed
+    converters = []
+    params = list(sig.parameters.values())
+    # Skip the first param (ctx)
+    for param in params[1:]:
+        ann = param.annotation
+        if ann is inspect.Parameter.empty:
+            continue
+        if ann in _type_map:
+            c = _type_map[ann]
+            if c is not None:
+                converters.append(c)
+        elif hasattr(ann, "convert"):
+            converters.append(ann)
+    return converters

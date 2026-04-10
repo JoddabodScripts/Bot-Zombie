@@ -27,7 +27,7 @@ from nerimity_sdk.storage import MemoryStore, Store
 from nerimity_sdk.utils.logging import configure_logger, get_logger
 from nerimity_sdk.models import Message, User
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 
 class Bot:
@@ -72,10 +72,12 @@ class Bot:
         shard_id: int = 0,
         shard_count: int = 1,
         logger=None,
+        json_logs: bool = False,
     ) -> None:
         configure_logger(
             level=logging.DEBUG if debug else logging.INFO,
             debug_payloads=debug,
+            json_logs=json_logs,
         )
         self.logger = logger or get_logger()
         self.token = token
@@ -83,6 +85,9 @@ class Bot:
         self.shard_id = shard_id
         self.shard_count = shard_count
         self._invalidate_on_disconnect = cache_invalidate_on_disconnect
+        self._start_time: float = 0.0
+        self._messages_seen: int = 0
+        self._commands_dispatched: int = 0
         self._watch = watch
         self._watch_paths = watch_paths
 
@@ -163,6 +168,10 @@ class Bot:
             @bot.command("ping", description="Check if the bot is alive")
             async def ping(ctx):
                 await ctx.reply("Pong!")
+
+            # Require a permission:
+            @bot.command("ban", requires=Permissions.BAN_MEMBERS)
+            async def ban(ctx): ...
         """
         return self.router.command(name, public=True, **kwargs)
 
@@ -243,10 +252,11 @@ class Bot:
     @overload
     async def wait_for(self, event: str, *, check=None, timeout: float=60.0) -> Any: ...
 
-    async def wait_for(self, event: str, check=None, timeout: float = 60.0):
+    async def wait_for(self, event: str, check=None, timeout: float = 60.0, count: int = 1):
         """Wait for a gateway event matching an optional check function.
 
-        Returns the typed event payload, or raises asyncio.TimeoutError.
+        Returns the typed event payload (or a list if count > 1).
+        Raises asyncio.TimeoutError if the timeout expires.
 
         Usage::
 
@@ -255,21 +265,67 @@ class Bot:
                 check=lambda e: e.server_id == "123",
                 timeout=30,
             )
+
+            # Collect 3 reactions:
+            reactions = await bot.wait_for(
+                "message:reaction_added",
+                check=lambda e: e.message_id == msg.id,
+                count=3, timeout=60,
+            )
         """
-        future: asyncio.Future = asyncio.get_event_loop().create_future()
+        if count == 1:
+            future: asyncio.Future = asyncio.get_event_loop().create_future()
 
-        async def _listener(payload) -> None:
-            if check and not check(payload):
-                return
-            if not future.done():
-                future.set_result(payload)
+            async def _listener(payload) -> None:
+                if check and not check(payload):
+                    return
+                if not future.done():
+                    future.set_result(payload)
 
-        self.emitter.once(event, _listener)
-        try:
-            return await asyncio.wait_for(future, timeout=timeout)
-        except asyncio.TimeoutError:
-            self.emitter.off(event, _listener)
-            raise
+            self.emitter.once(event, _listener)
+            try:
+                return await asyncio.wait_for(future, timeout=timeout)
+            except asyncio.TimeoutError:
+                self.emitter.off(event, _listener)
+                raise
+        else:
+            collected: list = []
+            future_n: asyncio.Future = asyncio.get_event_loop().create_future()
+
+            async def _listener_n(payload) -> None:
+                if check and not check(payload):
+                    return
+                collected.append(payload)
+                if len(collected) >= count and not future_n.done():
+                    future_n.set_result(collected)
+
+            self.emitter.on(event, _listener_n)
+            try:
+                return await asyncio.wait_for(future_n, timeout=timeout)
+            except asyncio.TimeoutError:
+                self.emitter.off(event, _listener_n)
+                raise
+            finally:
+                self.emitter.off(event, _listener_n)
+
+    @property
+    def stats(self) -> dict:
+        """Runtime statistics snapshot.
+
+        Returns a dict with:
+            uptime_seconds, messages_seen, commands_dispatched,
+            cached_users, cached_servers, cached_channels, cached_members
+        """
+        import time as _time
+        return {
+            "uptime_seconds": round(_time.monotonic() - self._start_time, 1) if self._start_time else 0,
+            "messages_seen": self._messages_seen,
+            "commands_dispatched": self._commands_dispatched,
+            "cached_users": len(self.cache.users._cache),
+            "cached_servers": len(self.cache.servers._cache),
+            "cached_channels": len(self.cache.channels._cache),
+            "cached_members": len(self.cache.members._cache),
+        }
 
     @property
     def on_command_error(self):
@@ -317,6 +373,8 @@ class Bot:
             self._me = self.cache.upsert_user(event["user"])
 
         self._ready.set()
+        import time as _time
+        self._start_time = _time.monotonic()
         self.logger.info(f"[Bot] Ready as {self._me.username if self._me else 'unknown'}")
         # Sync public commands to Nerimity API
         await self._sync_commands()
@@ -334,6 +392,8 @@ class Bot:
             msg = Message.from_dict(event.get("message", event))
         else:
             return
+
+        self._messages_seen += 1
 
         prefix = await self.prefix_resolver.resolve(msg.server_id)
         ctx = Context(msg, self.rest, self.cache, [], {},
@@ -381,7 +441,10 @@ class Bot:
 
     async def _dispatch_command(self, ctx) -> bool:
         try:
-            return await self.router.dispatch(ctx)
+            handled = await self.router.dispatch(ctx)
+            if handled:
+                self._commands_dispatched += 1
+            return handled
         except Exception as exc:
             if self._command_error_handler:
                 await self._command_error_handler(ctx, exc)
