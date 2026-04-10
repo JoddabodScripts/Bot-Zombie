@@ -78,6 +78,12 @@ Accepts: `no`, `n`, `nope`, `cancel`, `abort` → `False`
 ### `await ctx.fetch_messages(limit=50, before=None, after=None)`
 Fetch messages from the channel. Returns `list[Message]`.
 
+### `await ctx.delete()`
+Delete the triggering message.
+
+### `await ctx.reply_paginated(text, max_length=1800)`
+Auto-split long text into multiple messages.
+
 ### `await ctx.forward(channel_id)`
 Re-post the triggering message content to another channel. Returns `Message`.
 

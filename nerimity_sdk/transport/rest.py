@@ -37,6 +37,7 @@ class RESTClient:
         self._global_lock = asyncio.Lock()
         self._global_reset: float = 0.0
         self.rate_limit_hits: int = 0
+        self._ratelimit_callback = None  # set by Bot after construction
 
     async def _get_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
@@ -74,6 +75,11 @@ class RESTClient:
                     data = await resp.json()
                     retry_after = data.get("retry_after", 1.0)
                     self.rate_limit_hits += 1
+                    if self._ratelimit_callback:
+                        try:
+                            await self._ratelimit_callback(path, retry_after)
+                        except Exception:
+                            pass
                     if data.get("global"):
                         self._global_reset = time.monotonic() + retry_after
                     else:
@@ -131,6 +137,30 @@ class RESTClient:
             "permissions": permissions,
             "hideRole": hide_role,
         })
+
+    async def set_nickname(self, server_id: str, user_id: str,
+                       nickname: str | None) -> dict:
+        """Set or clear a member's nickname. Pass None to clear."""
+        return await self.request(
+            "PATCH", f"/servers/{server_id}/members/{user_id}",
+            json={"nickname": nickname},
+        )
+
+    async def fetch_bans(self, server_id: str) -> list:
+        """Fetch the list of banned users for a server."""
+        return await self.request("GET", f"/servers/{server_id}/bans")
+
+    async def create_channel(self, server_id: str, name: str,
+                              channel_type: int = 0) -> dict:
+        """Create a new channel in a server."""
+        return await self.request(
+            "POST", f"/servers/{server_id}/channels",
+            json={"name": name, "type": channel_type},
+        )
+
+    async def delete_channel(self, channel_id: str) -> dict:
+        """Delete a channel."""
+        return await self.request("DELETE", f"/channels/{channel_id}")
 
     async def close(self) -> None:
         if self._session and not self._session.closed:

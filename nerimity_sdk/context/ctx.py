@@ -218,6 +218,21 @@ class Context:
         """Pin the triggering message in this channel."""
         await self.rest.pin_message(self.channel_id, self.message.id)
 
+    async def delete(self) -> None:
+        """Delete the triggering message."""
+        await self.rest.delete_message(self.channel_id, self.message.id)
+
+    async def reply_paginated(self, text: str, max_length: int = 1800) -> None:
+        """Split long text into pages and send each as a separate message.
+
+        Usage::
+
+            await ctx.reply_paginated(very_long_string)
+        """
+        chunks = [text[i:i + max_length] for i in range(0, len(text), max_length)]
+        for chunk in chunks:
+            await self.reply(chunk)
+
     async def forward(self, channel_id: str) -> "Message":
         """Re-post the triggering message content to another channel."""
         from nerimity_sdk.models import Message

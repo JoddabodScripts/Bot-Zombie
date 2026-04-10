@@ -27,7 +27,7 @@ from nerimity_sdk.storage import MemoryStore, Store
 from nerimity_sdk.utils.logging import configure_logger, get_logger
 from nerimity_sdk.models import Message, User
 
-__version__ = "1.0.5"
+__version__ = "1.0.6"
 
 
 class Bot:
@@ -94,6 +94,12 @@ class Bot:
 
         self.emitter = EventEmitter()
         self.rest = RESTClient(token)
+        # Wire ratelimit callback (set after _ratelimit_handler is defined)
+        _bot_ref = self
+        async def _rl_cb(route: str, retry_after: float) -> None:
+            if _bot_ref._ratelimit_handler:
+                await _bot_ref._ratelimit_handler(route, retry_after)
+        self.rest._ratelimit_callback = _rl_cb
         self.cache = Cache(max_size=cache_size, ttl=cache_ttl)
         self.prefix_resolver = PrefixResolver(default=prefix, store=prefix_store)
         self.router = CommandRouter(prefix=prefix)
@@ -112,6 +118,7 @@ class Bot:
         self._command_error_handler: Optional[Callable] = None
         self._slash_error_handler: Optional[Callable] = None
         self._button_error_handler: Optional[Callable] = None
+        self._ratelimit_handler: Optional[Callable] = None
 
         # Wire internal gateway events
         self.emitter.on("user:authenticated", self._on_authenticated)
@@ -337,8 +344,8 @@ class Bot:
             try:
                 return await asyncio.wait_for(future_n, timeout=timeout)
             except asyncio.TimeoutError:
-                self.emitter.off(event, _listener_n)
-                raise
+                # Return whatever was collected instead of raising
+                return collected if collected else []
             finally:
                 self.emitter.off(event, _listener_n)
 
@@ -383,6 +390,20 @@ class Bot:
         """Decorator: @bot.on_button_error async def handler(bctx, error): ..."""
         def decorator(fn):
             self._button_error_handler = fn
+            return fn
+        return decorator
+
+    @property
+    def on_ratelimit(self):
+        """Decorator: fires when the bot hits a 429 rate limit.
+
+        Usage::
+
+            @bot.on_ratelimit
+            async def handler(route: str, retry_after: float): ...
+        """
+        def decorator(fn):
+            self._ratelimit_handler = fn
             return fn
         return decorator
 
@@ -461,11 +482,20 @@ class Bot:
 
     async def _sync_commands(self) -> None:
         """Register all public commands with the Nerimity API."""
-        public = [
-            {"name": cmd.name, "description": cmd.description, "args": cmd.usage}
-            for cmd in self.router._commands.values()
-            if cmd.public
-        ]
+        seen: set[str] = set()
+        public = []
+        for cmd in self.router._commands.values():
+            if not cmd.public:
+                continue
+            entry = {"name": cmd.name, "description": cmd.description, "args": cmd.usage}
+            if cmd.name not in seen:
+                seen.add(cmd.name)
+                public.append(entry)
+            # Also sync aliases as separate slash commands
+            for alias in cmd.aliases:
+                if alias not in seen:
+                    seen.add(alias)
+                    public.append({"name": alias, "description": cmd.description, "args": cmd.usage})
         if not public:
             return
         try:

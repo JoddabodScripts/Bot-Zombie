@@ -40,6 +40,10 @@ async def on_ready(me):
 | `ReactionRolesPlugin` | Persistent reaction roles (survives restarts) | loaded once, then `await plugin.add(message_id, emoji, role_id, server_id)` |
 | `BirthdayPlugin` | Users set birthday with `/birthday MM-DD`, bot announces on the day | `announce_channel_id`, `message` |
 | `CounterPlugin` | Keeps a channel name updated with a live count | `server_id`, `channel_id`, `label`, `interval`, `count_fn` |
+| `ModerationLogPlugin` | Logs mod actions (kicks, bans, role changes) to a channel | `log_channel_id` |
+| `SlowmodePlugin` | Per-channel message rate limiting enforced by the bot | loaded once, then `/slowmode set <channel_id> <seconds>` |
+| `AFKPlugin` | `/afk <reason>` — bot replies to mentions with the AFK message | loaded once |
+| `SuggestionPlugin` | `/suggest <idea>` — posts to suggestions channel with 👍/👎 reactions | `channel_id`, `upvote`, `downvote` |
 
 ---
 

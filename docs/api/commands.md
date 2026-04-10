@@ -115,9 +115,10 @@ Quoted arguments are kept together:
     description="Kick a member",   # shown in !help
     usage="<@member> [reason]",     # shown in !help
     category="Moderation",          # groups commands in !help
-    aliases=["k"],                  # !k works too
+    aliases=["k"],                  # /k works too — also synced to slash menu
     guild_only=True,                # DMs get a friendly error
     cooldown=5.0,                   # 5 second per-user cooldown
+    cooldown_scope="user",          # "user" (default), "server", or "channel"
     args=[MemberConverter],         # auto-convert first arg to Member
 )
 async def kick(ctx):

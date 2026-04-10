@@ -28,6 +28,7 @@ class CommandDef:
     converters: list = field(default_factory=list)
     public: bool = True  # if True, registered with Nerimity API as a slash command
     requires: list = field(default_factory=list)  # shortcut permission flags
+    cooldown_scope: str = "user"  # "user", "server", or "channel"
 
 
 def _parse_args(text: str) -> tuple[list[str], dict[str, Any]]:
@@ -74,6 +75,7 @@ class CommandRouter:
         required_bot_perms: list | None = None,
         middleware: list[Middleware] | None = None,
         cooldown: float = 0.0,
+        cooldown_scope: str = "user",
         args: list | None = None,
         public: bool = True,
         requires=None,
@@ -94,6 +96,7 @@ class CommandRouter:
                 required_user_perms=required_user_perms or [],
                 required_bot_perms=required_bot_perms or [],
                 middleware=middleware or [], cooldown=cooldown,
+                cooldown_scope=cooldown_scope,
                 converters=_converters, public=public,
                 requires=_requires,
             )
@@ -175,7 +178,13 @@ class CommandRouter:
 
         # Cooldown check
         if cmd.cooldown > 0:
-            key = f"{ctx.author.id}:{cmd.name}"
+            if cmd.cooldown_scope == "server":
+                scope_key = ctx.message.server_id or ctx.author.id
+            elif cmd.cooldown_scope == "channel":
+                scope_key = ctx.channel_id
+            else:
+                scope_key = ctx.author.id
+            key = f"{scope_key}:{cmd.name}"
             last = self._cooldowns.get(key, 0)
             remaining = cmd.cooldown - (time.monotonic() - last)
             if remaining > 0:

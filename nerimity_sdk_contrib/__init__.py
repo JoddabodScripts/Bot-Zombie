@@ -36,8 +36,12 @@ from nerimity_sdk_contrib.autorole import AutoRolePlugin
 from nerimity_sdk_contrib.reaction_roles import ReactionRolesPlugin
 from nerimity_sdk_contrib.birthday import BirthdayPlugin
 from nerimity_sdk_contrib.counter import CounterPlugin
+from nerimity_sdk_contrib.moderation_log import ModerationLogPlugin
+from nerimity_sdk_contrib.slowmode import SlowmodePlugin
+from nerimity_sdk_contrib.afk import AFKPlugin
+from nerimity_sdk_contrib.suggestions import SuggestionPlugin
 
-__version__ = "1.0.5"
+__version__ = "1.0.6"
 
 __all__ = [
     "WelcomePlugin",
@@ -56,4 +60,8 @@ __all__ = [
     "ReactionRolesPlugin",
     "BirthdayPlugin",
     "CounterPlugin",
+    "ModerationLogPlugin",
+    "SlowmodePlugin",
+    "AFKPlugin",
+    "SuggestionPlugin",
 ]

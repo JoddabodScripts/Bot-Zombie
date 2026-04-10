@@ -97,5 +97,14 @@ bot.run()
 | Float/bool converters | `async def cmd(ctx, ratio: float, silent: bool)` |
 | Command groups | `@bot.group("mod")` → `/mod ban`, `/mod kick` |
 | Disable/enable commands | `bot.disable_command("ping")` / `bot.enable_command("ping", server_id)` |
+| Delete triggering message | `await ctx.delete()` |
+| Paginate long replies | `await ctx.reply_paginated(long_text)` |
+| Set nickname | `await bot.rest.set_nickname(server_id, user_id, nickname)` |
+| Fetch bans | `await bot.rest.fetch_bans(server_id)` |
+| Create/delete channel | `await bot.rest.create_channel(server_id, name)` / `delete_channel(id)` |
+| Cooldown scope | `@bot.command("x", cooldown=5.0, cooldown_scope="server")` |
+| Alias slash sync | aliases are now synced to the slash menu automatically |
+| Partial wait_for results | `wait_for(count=3)` returns collected events on timeout instead of raising |
+| Rate limit hook | `@bot.on_ratelimit async def handler(route, retry_after)` |
 
 See the [Getting Started guide](guide/installation.md) or the [Example Bot](example.md) for a full working example.
