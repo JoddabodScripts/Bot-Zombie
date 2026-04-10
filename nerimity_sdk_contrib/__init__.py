@@ -33,7 +33,7 @@ from nerimity_sdk_contrib.giveaway import GiveawayPlugin
 from nerimity_sdk_contrib.reminders import ReminderPlugin
 from nerimity_sdk_contrib.translate import TranslatePlugin
 
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 
 __all__ = [
     "WelcomePlugin",
