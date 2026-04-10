@@ -2,6 +2,7 @@
 from __future__ import annotations
 import asyncio
 import logging
+import os
 import signal
 from typing import Any, Callable, Coroutine, Literal, Optional, TYPE_CHECKING, overload
 
@@ -488,7 +489,18 @@ class Bot:
         await self.rest.close()
         self.logger.info("[Bot] Goodbye.")
 
-    def run(self) -> None:
+    def run(self, auto_restart: bool = True) -> None:
+        # If we're the parent process, hand off to the watchdog runner.
+        # The runner re-executes this same script as a child with NERIMITY_CHILD=1,
+        # restarting it on crash or .py file changes.
+        if auto_restart and os.environ.get("NERIMITY_CHILD") != "1":
+            import __main__
+            script = getattr(__main__, "__file__", None)
+            if script:
+                from nerimity_sdk._runner import launch
+                launch(script)
+                return
+
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
 
