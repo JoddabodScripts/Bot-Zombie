@@ -78,7 +78,17 @@ Accepts: `no`, `n`, `nope`, `cancel`, `abort` → `False`
 ### `await ctx.fetch_messages(limit=50, before=None, after=None)`
 Fetch messages from the channel. Returns `list[Message]`.
 
-### `await ctx.fetch_member(user_id)`
+### `await ctx.forward(channel_id)`
+Re-post the triggering message content to another channel. Returns `Message`.
+
+### `ctx.rest_text`
+All remaining `ctx.args` joined as a single string — useful for "rest of message" commands.
+
+```python
+@bot.command("say")
+async def say(ctx):
+    await ctx.reply(ctx.rest_text)  # everything after /say
+```
 Look up a member by user ID. Checks cache first, falls back to the API if not found. Returns `Member | None`.
 
 ### `await ctx.send_typing()`

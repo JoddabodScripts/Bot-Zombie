@@ -54,11 +54,35 @@ class _Channel:
         raise ConversionError(f"Could not find channel `{value}`.")
 
 
+class _Float:
+    name = "float"
+    async def convert(self, ctx: "Context", value: str) -> float:
+        try:
+            return float(value)
+        except ValueError:
+            raise ConversionError(f"`{value}` is not a valid number.")
+
+
+class _Bool:
+    name = "bool"
+    _TRUE = {"true", "yes", "1", "on", "y"}
+    _FALSE = {"false", "no", "0", "off", "n"}
+    async def convert(self, ctx: "Context", value: str) -> bool:
+        v = value.lower()
+        if v in self._TRUE:
+            return True
+        if v in self._FALSE:
+            return False
+        raise ConversionError(f"`{value}` is not a valid yes/no value.")
+
+
 # Singleton instances used as type annotations in @bot.command(args=[Int, Member])
 Int = _Int()
 Member = _Member()
 User = _User()
 Channel = _Channel()
+Float = _Float()
+Bool = _Bool()
 
 
 async def convert_args(ctx: "Context", converters: list) -> list:
@@ -86,7 +110,7 @@ def converters_from_annotations(fn) -> list:
     """
     import inspect
     sig = inspect.signature(fn)
-    _type_map = {int: Int, str: None}  # None = no conversion needed
+    _type_map = {int: Int, float: Float, bool: Bool, str: None}  # None = no conversion needed
     converters = []
     params = list(sig.parameters.values())
     # Skip the first param (ctx)

@@ -36,6 +36,10 @@ async def on_ready(me):
 | `GiveawayPlugin` | React-to-enter giveaway with random winner after a duration | loaded once, then `await plugin.start(ctx, prize, duration, emoji)` |
 | `ReminderPlugin` | `!remind 10m take a break` — DMs the user after the time | loaded once, then `await plugin.set(ctx)` |
 | `TranslatePlugin` | Auto-translate messages in a channel (MyMemory, no API key needed) | `watch_channel_id`, `target_lang` |
+| `AutoRolePlugin` | Assigns a role automatically when a member joins | `server_id`, `role_id` |
+| `ReactionRolesPlugin` | Persistent reaction roles (survives restarts) | loaded once, then `await plugin.add(message_id, emoji, role_id, server_id)` |
+| `BirthdayPlugin` | Users set birthday with `/birthday MM-DD`, bot announces on the day | `announce_channel_id`, `message` |
+| `CounterPlugin` | Keeps a channel name updated with a live count | `server_id`, `channel_id`, `label`, `interval`, `count_fn` |
 
 ---
 

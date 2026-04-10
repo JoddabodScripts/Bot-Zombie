@@ -117,6 +117,21 @@ class RESTClient:
             self.add_role(server_id, user_id, rid) for rid in role_ids
         ])
 
+    async def fetch_server_members(self, server_id: str) -> list:
+        """Fetch all members of a server."""
+        return await self.request("GET", f"/servers/{server_id}/members")
+
+    async def create_role(self, server_id: str, name: str,
+                          hex_color: str = "", permissions: int = 0,
+                          hide_role: bool = False) -> dict:
+        """Create a new role in a server."""
+        return await self.request("POST", f"/servers/{server_id}/roles", json={
+            "name": name,
+            "hexColor": hex_color,
+            "permissions": permissions,
+            "hideRole": hide_role,
+        })
+
     async def close(self) -> None:
         if self._session and not self._session.closed:
             await self._session.close()

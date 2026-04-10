@@ -90,5 +90,12 @@ bot.run()
 | Auto-delete reply | `await ctx.reply_then_delete("done", delay=5)` |
 | Fetch user by ID | `await bot.rest.fetch_user(user_id)` |
 | Bulk role assign | `await bot.rest.add_roles(server_id, user_id, [role1, role2])` |
+| Create role | `await bot.rest.create_role(server_id, name, hex_color, permissions)` |
+| Fetch all members | `await bot.rest.fetch_server_members(server_id)` |
+| Forward message | `await ctx.forward(channel_id)` |
+| Rest of args as string | `ctx.rest_text` |
+| Float/bool converters | `async def cmd(ctx, ratio: float, silent: bool)` |
+| Command groups | `@bot.group("mod")` → `/mod ban`, `/mod kick` |
+| Disable/enable commands | `bot.disable_command("ping")` / `bot.enable_command("ping", server_id)` |
 
 See the [Getting Started guide](guide/installation.md) or the [Example Bot](example.md) for a full working example.

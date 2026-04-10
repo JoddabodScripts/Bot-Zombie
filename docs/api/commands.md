@@ -68,6 +68,8 @@ No `args=` needed. The SDK reads the annotations and applies the right converter
 | Converter | What it accepts | What you get |
 |---|---|---|
 | `Int` | `42`, `-5` | `int` |
+| `Float` | `3.14`, `-0.5` | `float` |
+| `Bool` | `yes`/`true`/`1`/`on` or `no`/`false`/`0`/`off` | `bool` |
 | `MemberConverter` | `[@:id]`, user ID, username | `Member` object |
 | `UserConverter` | `[@:id]`, user ID | `User` object |
 | `ChannelConverter` | channel ID | `Channel` object |
@@ -238,6 +240,36 @@ from nerimity_sdk import Paginator
 async def help_cmd(ctx):
     pages = bot.router.help_text().split("\n\n")
     await Paginator(pages).send(ctx)
+```
+
+---
+
+## Command groups
+
+Group related commands under a common prefix:
+
+```python
+mod = bot.group("mod", description="Moderation commands")
+
+@mod.command("ban", description="Ban a user")
+async def mod_ban(ctx): ...
+
+@mod.command("kick", description="Kick a user")
+async def mod_kick(ctx): ...
+```
+
+Users invoke them as `/mod ban` or `/mod kick`.
+
+---
+
+## Disabling commands
+
+Disable a command globally or per-server without removing it:
+
+```python
+bot.disable_command("ping")                    # globally
+bot.disable_command("ping", server_id="123")   # just in one server
+bot.enable_command("ping")                     # re-enable
 ```
 
 ---

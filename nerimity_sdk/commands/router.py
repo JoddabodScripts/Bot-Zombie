@@ -58,6 +58,8 @@ class CommandRouter:
         self._aliases: dict[str, str] = {}
         self._global_middleware: list[Middleware] = []
         self._cooldowns: dict[str, float] = {}  # "user_id:cmd" -> last_used
+        self._disabled: set[str] = set()  # globally disabled command names
+        self._disabled_per_server: dict[str, set[str]] = {}  # server_id -> set of cmd names
 
     def command(
         self,
@@ -105,9 +107,28 @@ class CommandRouter:
         """Register a prefix-only command — never synced to the Nerimity API."""
         return self.command(name, public=False, **kwargs)
 
+    def group(self, name: str, description: str = "") -> "CommandGroup":
+        """Create a command group. Subcommands are invoked as `/<group> <sub>`."""
+        g = CommandGroup(name=name, description=description, router=self)
+        return g
+
     def use(self, middleware: Middleware) -> None:
         """Register a global middleware applied to every command."""
         self._global_middleware.append(middleware)
+
+    def disable(self, name: str, server_id: str | None = None) -> None:
+        """Disable a command globally or for a specific server."""
+        if server_id:
+            self._disabled_per_server.setdefault(server_id, set()).add(name)
+        else:
+            self._disabled.add(name)
+
+    def enable(self, name: str, server_id: str | None = None) -> None:
+        """Re-enable a previously disabled command."""
+        if server_id:
+            self._disabled_per_server.get(server_id, set()).discard(name)
+        else:
+            self._disabled.discard(name)
 
     def get_command(self, name: str) -> Optional[CommandDef]:
         canonical = self._aliases.get(name, name)
@@ -125,8 +146,22 @@ class CommandRouter:
 
         cmd_name = parts[0].lower()
         rest = parts[1] if len(parts) > 1 else ""
-        cmd = self.get_command(cmd_name)
+        # Check for group subcommand: "<group> <sub> [args]"
+        cmd = None
+        if rest:
+            sub_parts = rest.split(None, 1)
+            group_key = f"{cmd_name} {sub_parts[0].lower()}"
+            cmd = self.get_command(group_key)
+            if cmd:
+                rest = sub_parts[1] if len(sub_parts) > 1 else ""
         if not cmd:
+            cmd = self.get_command(cmd_name)
+        if not cmd:
+            return False
+
+        # Check if command is disabled
+        server_disabled = self._disabled_per_server.get(ctx.message.server_id or "", set())
+        if cmd.name in self._disabled or cmd.name in server_disabled:
             return False
 
         args, flags = _parse_args(rest)
@@ -214,3 +249,44 @@ class CommandRouter:
                 usage = f" `{cmd.usage}`" if cmd.usage else ""
                 lines.append(f"  `{self.prefix}{cmd.name}`{usage}{aliases} — {cmd.description}")
         return "\n".join(lines) or "No commands found."
+
+
+class CommandGroup:
+    """A group of subcommands invoked as `/<group> <sub> [args]`.
+
+    Usage::
+
+        mod = bot.group("mod", description="Moderation commands")
+
+        @mod.command("ban")
+        async def mod_ban(ctx): ...
+
+        @mod.command("kick")
+        async def mod_kick(ctx): ...
+    """
+    def __init__(self, name: str, description: str = "",
+                 router: "CommandRouter | None" = None) -> None:
+        self.name = name
+        self.description = description
+        self._router = router
+        self._subcommands: dict[str, CommandDef] = {}
+
+    def command(self, name: str, **kwargs):
+        """Register a subcommand on this group."""
+        def decorator(fn):
+            sub = CommandDef(
+                name=f"{self.name} {name}",
+                handler=fn,
+                description=kwargs.get("description", ""),
+                usage=kwargs.get("usage", ""),
+                category=kwargs.get("category", self.name.capitalize()),
+                cooldown=kwargs.get("cooldown", 0.0),
+                converters=kwargs.get("args") or [],
+                public=kwargs.get("public", True),
+                requires=kwargs.get("requires") or [],
+            )
+            self._subcommands[name] = sub
+            if self._router:
+                self._router._commands[f"{self.name} {name}"] = sub
+            return fn
+        return decorator

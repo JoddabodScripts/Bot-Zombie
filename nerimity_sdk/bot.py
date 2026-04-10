@@ -27,7 +27,7 @@ from nerimity_sdk.storage import MemoryStore, Store
 from nerimity_sdk.utils.logging import configure_logger, get_logger
 from nerimity_sdk.models import Message, User
 
-__version__ = "1.0.4"
+__version__ = "1.0.5"
 
 
 class Bot:
@@ -250,6 +250,20 @@ class Bot:
                 await bot.rest.create_message("CHANNEL_ID", "Good morning!")
         """
         return self.scheduler.cron(expr)
+
+    def disable_command(self, name: str, server_id: str | None = None) -> None:
+        """Disable a command globally or for a specific server.
+
+        Usage::
+
+            bot.disable_command("ping")              # globally
+            bot.disable_command("ping", server_id)   # per-server
+        """
+        self.router.disable(name, server_id)
+
+    def enable_command(self, name: str, server_id: str | None = None) -> None:
+        """Re-enable a previously disabled command."""
+        self.router.enable(name, server_id)
 
     @overload
     async def wait_for(self, event: Literal["message:created"], *, check=None, timeout: float=60.0) -> "MessageCreatedEvent": ...

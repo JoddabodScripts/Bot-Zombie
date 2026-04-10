@@ -79,6 +79,11 @@ class Context:
         from nerimity_sdk.utils.mentions import resolve_mentions
         return resolve_mentions(self.message.content, self.cache)
 
+    @property
+    def rest_text(self) -> str:
+        """All remaining args joined as a single string."""
+        return " ".join(self.args)
+
     # ── Messaging ─────────────────────────────────────────────────────────────
 
     async def reply(self, content: str, buttons: list | None = None) -> "Message":
@@ -206,12 +211,18 @@ class Context:
             await ctx.reply_embed(Embed().title("Hello").description("World"))
         """
         from nerimity_sdk.models import Message
-        data = await self.rest.create_message(self.channel_id, "", embed=embed.to_dict())
+        data = await self.rest.create_message(self.channel_id, "\u200b", embed=embed.to_dict())
         return Message.from_dict(data)
 
     async def pin(self) -> None:
         """Pin the triggering message in this channel."""
         await self.rest.pin_message(self.channel_id, self.message.id)
+
+    async def forward(self, channel_id: str) -> "Message":
+        """Re-post the triggering message content to another channel."""
+        from nerimity_sdk.models import Message
+        data = await self.rest.create_message(channel_id, self.message.content or "\u200b")
+        return Message.from_dict(data)
 
     async def reply_dm(self, content: str) -> "Message":
         """Send a DM to the command author instead of replying in the channel."""

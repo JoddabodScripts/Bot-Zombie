@@ -32,8 +32,12 @@ from nerimity_sdk_contrib.tickets import TicketPlugin
 from nerimity_sdk_contrib.giveaway import GiveawayPlugin
 from nerimity_sdk_contrib.reminders import ReminderPlugin
 from nerimity_sdk_contrib.translate import TranslatePlugin
+from nerimity_sdk_contrib.autorole import AutoRolePlugin
+from nerimity_sdk_contrib.reaction_roles import ReactionRolesPlugin
+from nerimity_sdk_contrib.birthday import BirthdayPlugin
+from nerimity_sdk_contrib.counter import CounterPlugin
 
-__version__ = "1.0.4"
+__version__ = "1.0.5"
 
 __all__ = [
     "WelcomePlugin",
@@ -48,4 +52,8 @@ __all__ = [
     "GiveawayPlugin",
     "ReminderPlugin",
     "TranslatePlugin",
+    "AutoRolePlugin",
+    "ReactionRolesPlugin",
+    "BirthdayPlugin",
+    "CounterPlugin",
 ]
