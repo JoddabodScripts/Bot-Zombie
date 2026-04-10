@@ -21,13 +21,28 @@ Everything your handlers need is in the `ctx` object passed to them.
 
 **Get a token:** [nerimity.com/app/settings/developer/applications](https://nerimity.com/app/settings/developer/applications) → create app → add Bot → copy token.
 
-```bash
+Open **Command Prompt** and run:
+
+```
+pip install nerimity-sdk
 nerimity create my-bot
-cd my-bot && cp .env.example .env   # open .env and paste token
+cd my-bot
+copy .env.example .env
+```
+
+Open `.env` in Notepad and paste your token:
+
+```
+NERIMITY_TOKEN=paste_your_token_here
+```
+
+Then start your bot:
+
+```
 python bot.py
 ```
 
-Or manually:
+Or set it up manually — create `bot.py`:
 
 ```python
 import os
@@ -35,18 +50,26 @@ from dotenv import load_dotenv
 from nerimity_sdk import Bot
 
 load_dotenv()
-bot = Bot(token=os.environ["NERIMITY_TOKEN"]) # or make a .env file with this in it NERIMITY_TOKEN=your_token
+bot = Bot(token=os.environ["NERIMITY_TOKEN"])
 
 @bot.on("ready")
 async def on_ready(me):
-    print(f"Logged in as {me.username}#{me.tag}")
+    print(f"✅ Logged in as {me.username}!")
 
 @bot.command("ping", description="Replies with Pong!")
 async def ping(ctx):
-    await ctx.reply("Pong!")
+    await ctx.reply("Pong! 🏓")
 
 bot.run()
 ```
+
+And a `.env` file in the same folder:
+
+```
+NERIMITY_TOKEN=paste_your_token_here
+```
+
+> **Linux:** use `cp .env.example .env` instead of `copy`.
 
 ## What's available
 

@@ -1,23 +1,68 @@
 # nerimity-sdk
 
-A fully-featured Python SDK for building bots on [Nerimity](https://nerimity.com).
-
-```bash
-pip install nerimity-sdk
-pip install nerimity-sdk-contrib   # optional: ready-made plugins
-```
+A Python library for building bots on [Nerimity](https://nerimity.com). Don't worry if you're new to Python — this guide will walk you through everything step by step! 🐱
 
 ---
 
-## Quickstart
+## Before you start — install Python (Windows)
 
-```bash
+If you've never used Python before, that's totally fine! Here's how to get set up:
+
+1. Go to [python.org/downloads](https://www.python.org/downloads/) and download the latest version
+2. Run the installer — **make sure to check "Add Python to PATH"** before clicking Install
+3. Open **Command Prompt** (press `Win + R`, type `cmd`, hit Enter)
+4. Type `python --version` and press Enter — if you see a version number, you're good to go! ✅
+
+---
+
+## Install the SDK
+
+Open **Command Prompt** and run:
+
+```
+pip install nerimity-sdk
+pip install nerimity-sdk-contrib
+```
+
+> `nerimity-sdk-contrib` is optional — it adds ready-made plugins like welcome messages, leveling, polls, and more.
+
+---
+
+## Get your bot token
+
+1. Go to [nerimity.com/app/settings/developer/applications](https://nerimity.com/app/settings/developer/applications)
+2. Create a new app → add a Bot → copy the token
+3. Keep it secret! Never share your token with anyone 🔒
+
+---
+
+## Make your first bot
+
+The easiest way is with the CLI:
+
+```
 nerimity create my-bot
-cd my-bot && cp .env.example .env   # paste your token
+cd my-bot
+copy .env.example .env
+```
+
+Open `.env` in Notepad and paste your token:
+```
+NERIMITY_TOKEN=paste_your_token_here
+```
+
+Then run your bot:
+```
 python bot.py
 ```
 
-Or manually:
+That's it! Your bot is online 🎉
+
+---
+
+## Or set it up manually
+
+Create a new folder, open it in Command Prompt, and make a file called `bot.py`:
 
 ```python
 import os
@@ -35,7 +80,17 @@ async def on_ready(me):
 async def ping(ctx):
     await ctx.reply("Pong! 🏓")
 
-bot.run()   # auto-restarts on crash and on file save
+bot.run()
+```
+
+Create a `.env` file in the same folder:
+```
+NERIMITY_TOKEN=paste_your_token_here
+```
+
+Then run:
+```
+python bot.py
 ```
 
 ---
@@ -85,7 +140,7 @@ bot.run()   # auto-restarts on crash and on file save
 
 ## Contrib plugins
 
-```bash
+```
 pip install nerimity-sdk-contrib
 ```
 
@@ -117,9 +172,9 @@ pip install nerimity-sdk-contrib
 
 ---
 
-## CLI
+## CLI commands
 
-```bash
+```
 nerimity create my-bot    # scaffold a new project
 nerimity dev bot.py       # dev mode: pretty logs + live dashboard
 nerimity lint             # check for common mistakes
@@ -131,6 +186,19 @@ nerimity version          # show SDK version
 ## Full docs
 
 [https://nerimitysdk.readthedocs.io](https://nerimitysdk.readthedocs.io)
+
+---
+
+## Linux install
+
+Open a terminal and run:
+
+```bash
+pip install nerimity-sdk
+pip install nerimity-sdk-contrib  # optional
+```
+
+Then follow the same steps above — just use `cp .env.example .env` instead of `copy`.
 
 ---
 
