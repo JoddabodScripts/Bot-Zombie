@@ -40,8 +40,10 @@ from nerimity_sdk_contrib.moderation_log import ModerationLogPlugin
 from nerimity_sdk_contrib.slowmode import SlowmodePlugin
 from nerimity_sdk_contrib.afk import AFKPlugin
 from nerimity_sdk_contrib.suggestions import SuggestionPlugin
+from nerimity_sdk_contrib.warn import WarnPlugin
+from nerimity_sdk_contrib.message_filter import MessageFilterPlugin
 
-__version__ = "1.0.6"
+__version__ = "1.0.7"
 
 __all__ = [
     "WelcomePlugin",
@@ -64,4 +66,6 @@ __all__ = [
     "SlowmodePlugin",
     "AFKPlugin",
     "SuggestionPlugin",
+    "WarnPlugin",
+    "MessageFilterPlugin",
 ]

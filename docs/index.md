@@ -106,5 +106,12 @@ bot.run()
 | Alias slash sync | aliases are now synced to the slash menu automatically |
 | Partial wait_for results | `wait_for(count=3)` returns collected events on timeout instead of raising |
 | Rate limit hook | `@bot.on_ratelimit async def handler(route, retry_after)` |
+| Embed fields | `Embed().field("Name", "Value", inline=True)` |
+| Raw dict embed | `await ctx.reply_embed({"title": "hi"})` |
+| Fetch message by ID | `await bot.rest.fetch_message(channel_id, message_id)` |
+| Fetch server from API | `await bot.rest.fetch_server(server_id)` |
+| ctx.ensure_member() | API fallback for the command author's member object |
+| Request timeout | `bot.rest.timeout = 30.0` (default) |
+| Disable built-in /stats | `Bot(disable_builtin_stats=True)` |
 
 See the [Getting Started guide](guide/installation.md) or the [Example Bot](example.md) for a full working example.

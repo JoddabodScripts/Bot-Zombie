@@ -38,6 +38,7 @@ class RESTClient:
         self._global_reset: float = 0.0
         self.rate_limit_hits: int = 0
         self._ratelimit_callback = None  # set by Bot after construction
+        self.timeout: float = 30.0  # request timeout in seconds
 
     async def _get_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
@@ -68,7 +69,9 @@ class RESTClient:
                 "Authorization": self._token,
                 "Content-Type": "application/json",
             }
-            async with session.request(method, url, headers=req_headers, **kwargs) as resp:
+            async with session.request(method, url, headers=req_headers,
+                                       timeout=aiohttp.ClientTimeout(total=self.timeout),
+                                       **kwargs) as resp:
                 bucket.update(dict(resp.headers))
 
                 if resp.status == 429:
@@ -161,6 +164,14 @@ class RESTClient:
     async def delete_channel(self, channel_id: str) -> dict:
         """Delete a channel."""
         return await self.request("DELETE", f"/channels/{channel_id}")
+
+    async def fetch_message(self, channel_id: str, message_id: str) -> dict:
+        """Fetch a single message by ID."""
+        return await self.request("GET", f"/channels/{channel_id}/messages/{message_id}")
+
+    async def fetch_server(self, server_id: str) -> dict:
+        """Fetch server info from the API."""
+        return await self.request("GET", f"/servers/{server_id}")
 
     async def close(self) -> None:
         if self._session and not self._session.closed:

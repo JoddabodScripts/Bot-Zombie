@@ -27,7 +27,7 @@ from nerimity_sdk.storage import MemoryStore, Store
 from nerimity_sdk.utils.logging import configure_logger, get_logger
 from nerimity_sdk.models import Message, User
 
-__version__ = "1.0.6"
+__version__ = "1.0.7"
 
 
 class Bot:
@@ -74,6 +74,7 @@ class Bot:
         logger=None,
         json_logs: bool = False,
         health_port: Optional[int] = None,
+        disable_builtin_stats: bool = False,
     ) -> None:
         configure_logger(
             level=logging.DEBUG if debug else logging.INFO,
@@ -134,23 +135,24 @@ class Bot:
         self.emitter.on("inbox:opened", self._on_inbox_opened)
 
         # Built-in /stats command
-        @self.router.command("stats", description="Show bot runtime stats", public=True)
-        async def _builtin_stats(ctx):
-            s = self.stats
-            up = s["uptime_seconds"]
-            h, rem = divmod(int(up), 3600)
-            m, sec = divmod(rem, 60)
-            await ctx.reply(
-                f"📊 **Bot Stats**\n"
-                f"⏱ Uptime: `{h:02d}:{m:02d}:{sec:02d}`\n"
-                f"💬 Messages seen: `{s['messages_seen']}`\n"
-                f"⚡ Commands dispatched: `{s['commands_dispatched']}`\n"
-                f"🚦 Rate limit hits: `{s['rate_limit_hits']}`\n"
-                f"🗄 Cache — users: `{s['cached_users']}` "
-                f"servers: `{s['cached_servers']}` "
-                f"channels: `{s['cached_channels']}` "
-                f"members: `{s['cached_members']}`"
-            )
+        if not disable_builtin_stats:
+            @self.router.command("stats", description="Show bot runtime stats", public=True)
+            async def _builtin_stats(ctx):
+                s = self.stats
+                up = s["uptime_seconds"]
+                h, rem = divmod(int(up), 3600)
+                m, sec = divmod(rem, 60)
+                await ctx.reply(
+                    f"📊 **Bot Stats**\n"
+                    f"⏱ Uptime: `{h:02d}:{m:02d}:{sec:02d}`\n"
+                    f"💬 Messages seen: `{s['messages_seen']}`\n"
+                    f"⚡ Commands dispatched: `{s['commands_dispatched']}`\n"
+                    f"🚦 Rate limit hits: `{s['rate_limit_hits']}`\n"
+                    f"🗄 Cache — users: `{s['cached_users']}` "
+                    f"servers: `{s['cached_servers']}` "
+                    f"channels: `{s['cached_channels']}` "
+                    f"members: `{s['cached_members']}`"
+                )
 
     # ── Decorators ────────────────────────────────────────────────────────────
 

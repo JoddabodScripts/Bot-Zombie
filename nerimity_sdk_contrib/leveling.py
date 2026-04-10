@@ -80,6 +80,29 @@ class LevelingPlugin(PluginBase):
     async def on_load(self) -> None:
         plugin = self
 
+        @self.bot.command("leaderboard", description="Show the top 10 XP leaderboard")
+        async def leaderboard_cmd(ctx):
+            if not ctx.server_id:
+                return await ctx.reply("This command only works in a server.")
+            keys = await plugin.bot.store.keys(f"xp:{ctx.server_id}:*")
+            if not keys:
+                return await ctx.reply("No XP data yet!")
+            entries = []
+            for key in keys:
+                uid = key.split(":", 2)[2]
+                xp = int((await plugin.bot.store.get(key)) or 0)
+                entries.append((uid, xp))
+            entries.sort(key=lambda x: -x[1])
+            lines = ["🏆 **XP Leaderboard**"]
+            medals = ["🥇", "🥈", "🥉"]
+            for i, (uid, xp) in enumerate(entries[:10]):
+                medal = medals[i] if i < 3 else f"`#{i+1}`"
+                lvl = _level_for_xp(xp)
+                user = plugin.bot.cache.users.get(uid)
+                name = user.username if user else uid
+                lines.append(f"{medal} **{name}** — Level {lvl} ({xp} XP)")
+            await ctx.reply("\n".join(lines))
+
         @self.bot.command("level", description="Show your current level and XP")
         async def level_cmd(ctx):
             if not ctx.server_id:

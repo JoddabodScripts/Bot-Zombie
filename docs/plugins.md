@@ -44,6 +44,8 @@ async def on_ready(me):
 | `SlowmodePlugin` | Per-channel message rate limiting enforced by the bot | loaded once, then `/slowmode set <channel_id> <seconds>` |
 | `AFKPlugin` | `/afk <reason>` — bot replies to mentions with the AFK message | loaded once |
 | `SuggestionPlugin` | `/suggest <idea>` — posts to suggestions channel with 👍/👎 reactions | `channel_id`, `upvote`, `downvote` |
+| `WarnPlugin` | `/warn @user <reason>` — stores warnings, auto-kicks at threshold | `threshold`, `log_channel_id` |
+| `MessageFilterPlugin` | Block links, invites, or custom regex patterns | `block_links`, `block_invites`, `patterns`, `log_channel_id`, `exempt_roles` |
 
 ---
 

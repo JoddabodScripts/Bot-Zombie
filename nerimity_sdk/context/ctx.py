@@ -69,9 +69,14 @@ class Context:
 
     @property
     def member(self) -> Optional["Member"]:
+        """Author's server member from cache. Use await ctx.fetch_member(id) for API fallback."""
         if self.server_id:
             return self.cache.members.get(f"{self.server_id}:{self.author.id}")
         return None
+
+    async def ensure_member(self) -> Optional["Member"]:
+        """Like ctx.member but falls back to the API if not cached."""
+        return await self.fetch_member(self.author.id)
 
     @property
     def mentions(self) -> list["User"]:
@@ -203,15 +208,10 @@ class Context:
         return None
 
     async def reply_embed(self, embed: "Any") -> "Message":
-        """Send an embed in this channel.
-
-        Usage::
-
-            from nerimity_sdk import Embed
-            await ctx.reply_embed(Embed().title("Hello").description("World"))
-        """
+        """Send an embed. Accepts an Embed builder object or a raw dict."""
         from nerimity_sdk.models import Message
-        data = await self.rest.create_message(self.channel_id, "\u200b", embed=embed.to_dict())
+        embed_dict = embed if isinstance(embed, dict) else embed.to_dict()
+        data = await self.rest.create_message(self.channel_id, "\u200b", embed=embed_dict)
         return Message.from_dict(data)
 
     async def pin(self) -> None:

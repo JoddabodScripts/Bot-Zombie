@@ -243,7 +243,7 @@ class CommandRouter:
         return True
 
     def help_text(self, category: Optional[str] = None) -> str:
-        """Generate help text from command metadata."""
+        """Generate help text from command metadata, including group subcommands."""
         lines = []
         cats: dict[str, list[CommandDef]] = {}
         for cmd in self._commands.values():
@@ -253,10 +253,12 @@ class CommandRouter:
             if category and cat.lower() != category.lower():
                 continue
             lines.append(f"**{cat}**")
-            for cmd in cmds:
+            for cmd in sorted(cmds, key=lambda c: c.name):
                 aliases = f" (aliases: {', '.join(cmd.aliases)})" if cmd.aliases else ""
                 usage = f" `{cmd.usage}`" if cmd.usage else ""
-                lines.append(f"  `{self.prefix}{cmd.name}`{usage}{aliases} — {cmd.description}")
+                # Show group subcommands with their full name
+                display = f"{self.prefix}{cmd.name}"
+                lines.append(f"  `{display}`{usage}{aliases} \u2014 {cmd.description}")
         return "\n".join(lines) or "No commands found."
 
 

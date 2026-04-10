@@ -22,6 +22,7 @@ class Embed:
     _url: Optional[str] = field(default=None, repr=False)
     _image_url: Optional[str] = field(default=None, repr=False)
     _color: Optional[str] = field(default=None, repr=False)  # hex string
+    _fields: list = field(default_factory=list, repr=False)
 
     def title(self, value: str) -> "Embed":
         self._title = value
@@ -46,6 +47,10 @@ class Embed:
             self._color = value
         return self
 
+    def field(self, name: str, value: str, inline: bool = False) -> "Embed":
+        self._fields.append({"name": name, "value": value, "inline": inline})
+        return self
+
     def to_dict(self) -> dict:
         d: dict = {}
         if self._title:
@@ -58,6 +63,8 @@ class Embed:
             d["imageUrl"] = self._image_url
         if self._color:
             d["hexColor"] = self._color
+        if self._fields:
+            d["fields"] = self._fields
         return d
 
 
