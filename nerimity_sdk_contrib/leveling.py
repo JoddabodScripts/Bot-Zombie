@@ -76,3 +76,24 @@ class LevelingPlugin(PluginBase):
 
     async def get_level(self, server_id: str, user_id: str) -> int:
         return _level_for_xp(await self.get_xp(server_id, user_id))
+
+    async def on_load(self) -> None:
+        plugin = self
+
+        @self.bot.command("level", description="Show your current level and XP")
+        async def level_cmd(ctx):
+            if not ctx.server_id:
+                return await ctx.reply("This command only works in a server.")
+            # Allow checking another user: /level @user
+            target = ctx.mentions[0] if ctx.mentions else ctx.author
+            xp = await plugin.get_xp(ctx.server_id, target.id)
+            lvl = _level_for_xp(xp)
+            next_xp = _xp_for_level(lvl + 1)
+            needed = next_xp - xp
+            bar_filled = int((xp - _xp_for_level(lvl)) / (next_xp - _xp_for_level(lvl)) * 10)
+            bar = "█" * bar_filled + "░" * (10 - bar_filled)
+            await ctx.reply(
+                f"⭐ **{target.username}** — Level **{lvl}**\n"
+                f"{bar} {xp} / {next_xp} XP\n"
+                f"_{needed} XP to level {lvl + 1}_"
+            )
