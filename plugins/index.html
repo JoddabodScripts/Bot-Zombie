@@ -1212,6 +1212,21 @@
 <td>Timed reaction poll with automatic result tallying</td>
 <td>loaded once, then <code>await plugin.create(ctx, question, options, duration)</code></td>
 </tr>
+<tr>
+<td><code>AntiSpamPlugin</code></td>
+<td>Rate-limits messages per user, auto-kicks/bans/deletes on threshold</td>
+<td><code>max_messages</code>, <code>window</code>, <code>action</code> (<code>"kick"</code>, <code>"ban"</code>, <code>"delete"</code>), <code>log_channel_id</code></td>
+</tr>
+<tr>
+<td><code>LevelingPlugin</code></td>
+<td>XP per message with cooldown, level-up announcements, persistent storage</td>
+<td><code>announce_channel_id</code>, <code>xp_per_message</code>, <code>xp_cooldown</code></td>
+</tr>
+<tr>
+<td><code>TicketPlugin</code></td>
+<td>DM-based support tickets — users DM the bot, staff reply via a channel</td>
+<td><code>staff_channel_id</code>, <code>open_message</code>, <code>close_message</code></td>
+</tr>
 </tbody>
 </table>
 <hr />

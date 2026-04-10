@@ -780,10 +780,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#botrun" class="md-nav__link">
+  <a href="#botrunauto_restarttrue" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bot.run()
+        bot.run(auto_restart=True)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#await-botwait_forevent-checknone-timeout600-count1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        await bot.wait_for(event, check=None, timeout=60.0, count=1)
       
     </span>
   </a>
@@ -1372,10 +1383,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#botrun" class="md-nav__link">
+  <a href="#botrunauto_restarttrue" class="md-nav__link">
     <span class="md-ellipsis">
       
-        bot.run()
+        bot.run(auto_restart=True)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#await-botwait_forevent-checknone-timeout600-count1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        await bot.wait_for(event, check=None, timeout=60.0, count=1)
       
     </span>
   </a>
@@ -1534,17 +1556,46 @@
 <td><code>ButtonRouter</code></td>
 <td>Button handler router</td>
 </tr>
+<tr>
+<td><code>bot.stats</code></td>
+<td><code>dict</code></td>
+<td>Runtime stats: uptime, messages seen, commands dispatched, cache sizes</td>
+</tr>
 </tbody>
 </table>
 <h2 id="methods">Methods</h2>
-<h3 id="botrun"><code>bot.run()</code></h3>
-<p>Blocking entry point. Handles <code>SIGINT</code>/<code>SIGTERM</code> gracefully.</p>
+<h3 id="botrunauto_restarttrue"><code>bot.run(auto_restart=True)</code></h3>
+<p>Blocking entry point. By default, wraps the bot in a watchdog that:
+- Restarts automatically on crash
+- Restarts when any <code>.py</code> file in the project is saved</p>
+<p>Pass <code>auto_restart=False</code> to disable this behaviour.</p>
+<h3 id="await-botwait_forevent-checknone-timeout600-count1"><code>await bot.wait_for(event, check=None, timeout=60.0, count=1)</code></h3>
+<p>Wait for a gateway event matching an optional check function.</p>
+<ul>
+<li>Returns the typed event payload when <code>count=1</code> (default)</li>
+<li>Returns a <code>list</code> of payloads when <code>count &gt; 1</code></li>
+<li>Raises <code>asyncio.TimeoutError</code> if the timeout expires</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Wait for one event</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">event</span> <span class="o">=</span> <span class="k">await</span> <span class="n">bot</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="s2">&quot;server:member_joined&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">check</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">server_id</span> <span class="o">==</span> <span class="s2">&quot;123&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">)</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># Collect 3 reactions</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="n">reactions</span> <span class="o">=</span> <span class="k">await</span> <span class="n">bot</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="s2">&quot;message:reaction_added&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">check</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">message_id</span> <span class="o">==</span> <span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="n">count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="p">)</span>
+</code></pre></div>
 <h3 id="await-botstart"><code>await bot.start()</code></h3>
 <p>Async version — use if you need to run alongside other async code.</p>
 <h3 id="await-botclose"><code>await bot.close()</code></h3>
 <p>Flush queues, stop scheduler, disconnect gateway, close HTTP session.</p>
 <h3 id="botfrom_shardtoken-shard_id-shard_count-kwargs"><code>Bot.from_shard(token, shard_id, shard_count, **kwargs)</code></h3>
-<p>Create a bot instance for a specific shard (architecture is ready; Nerimity sharding is a stub).</p>
+<p>Create a bot instance for a specific shard.</p>
 
 
 

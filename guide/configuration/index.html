@@ -554,6 +554,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#auto-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-restart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#per-guild-prefix" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -587,10 +598,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#watch-mode" class="md-nav__link">
+  <a href="#json-logging" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Watch mode
+        JSON logging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-stats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime stats
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#watch-mode-legacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Watch mode (legacy)
       
     </span>
   </a>
@@ -1089,6 +1122,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#auto-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-restart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#per-guild-prefix" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1122,10 +1166,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#watch-mode" class="md-nav__link">
+  <a href="#json-logging" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Watch mode
+        JSON logging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime-stats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime stats
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#watch-mode-legacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Watch mode (legacy)
       
     </span>
   </a>
@@ -1156,44 +1222,68 @@
 <p>All options are passed to the <code>Bot</code> constructor.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">token</span><span class="o">=</span><span class="s2">&quot;YOUR_TOKEN&quot;</span><span class="p">,</span>          <span class="c1"># required</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;!&quot;</span><span class="p">,</span>                  <span class="c1"># default command prefix</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="p">,</span>                  <span class="c1"># default command prefix (/ = native slash)</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">prefix_store</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>           <span class="c1"># pluggable per-guild prefix backend</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">cache_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>             <span class="c1"># max objects per cache type</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">cache_ttl</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>                 <span class="c1"># TTL in seconds (0 = no expiry)</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">cache_invalidate_on_disconnect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># wipe cache on disconnect</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>                 <span class="c1"># pretty-print all gateway payloads</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">watch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>                 <span class="c1"># auto-reload plugins on file save</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">watch_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;plugins&quot;</span><span class="p">],</span>     <span class="c1"># directories to watch</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">store</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>                  <span class="c1"># persistent storage backend</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">shard_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>                  <span class="c1"># shard index (future use)</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">shard_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>               <span class="c1"># total shards (future use)</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">)</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">json_logs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>             <span class="c1"># structured JSON log output (for Docker/cloud)</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">watch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>                 <span class="c1"># hot-reload plugins on file save (legacy)</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">watch_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;plugins&quot;</span><span class="p">],</span>     <span class="c1"># directories to watch</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">store</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>                  <span class="c1"># persistent storage backend</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">shard_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>                  <span class="c1"># shard index (future use)</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">shard_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>               <span class="c1"># total shards (future use)</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p">)</span>
+</code></pre></div>
+<h2 id="auto-restart">Auto-restart</h2>
+<p><code>bot.run()</code> automatically wraps your script in a watchdog process that:
+- Restarts the bot if it crashes
+- Restarts the bot when any <code>.py</code> file in the project is saved</p>
+<p>To disable:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">bot</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">auto_restart</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="per-guild-prefix">Per-guild prefix</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nerimity_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryPrefixStore</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;!&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># At runtime:</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">await</span> <span class="n">bot</span><span class="o">.</span><span class="n">prefix_resolver</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;guild_id&quot;</span><span class="p">,</span> <span class="s2">&quot;?&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">await</span> <span class="n">bot</span><span class="o">.</span><span class="n">prefix_resolver</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="s2">&quot;guild_id&quot;</span><span class="p">)</span>   <span class="c1"># back to default</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nerimity_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryPrefixStore</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;!&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># At runtime:</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">await</span> <span class="n">bot</span><span class="o">.</span><span class="n">prefix_resolver</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;guild_id&quot;</span><span class="p">,</span> <span class="s2">&quot;?&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">await</span> <span class="n">bot</span><span class="o">.</span><span class="n">prefix_resolver</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="s2">&quot;guild_id&quot;</span><span class="p">)</span>   <span class="c1"># back to default</span>
 </code></pre></div>
 <h2 id="storage-backends">Storage backends</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nerimity_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonStore</span><span class="p">,</span> <span class="n">SqliteStore</span><span class="p">,</span> <span class="n">RedisStore</span><span class="p">,</span> <span class="n">MemoryStore</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="n">JsonStore</span><span class="p">(</span><span class="s2">&quot;data.json&quot;</span><span class="p">))</span>   <span class="c1"># default</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="n">SqliteStore</span><span class="p">(</span><span class="s2">&quot;bot.db&quot;</span><span class="p">))</span>    <span class="c1"># pip install aiosqlite</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="n">RedisStore</span><span class="p">(</span><span class="n">redis_client</span><span class="p">))</span> <span class="c1"># pip install redis</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="n">MemoryStore</span><span class="p">())</span>            <span class="c1"># no persistence</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nerimity_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonStore</span><span class="p">,</span> <span class="n">SqliteStore</span><span class="p">,</span> <span class="n">RedisStore</span><span class="p">,</span> <span class="n">MemoryStore</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="n">JsonStore</span><span class="p">(</span><span class="s2">&quot;data.json&quot;</span><span class="p">))</span>   <span class="c1"># default</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="n">SqliteStore</span><span class="p">(</span><span class="s2">&quot;bot.db&quot;</span><span class="p">))</span>    <span class="c1"># pip install aiosqlite</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="n">RedisStore</span><span class="p">(</span><span class="n">redis_client</span><span class="p">))</span> <span class="c1"># pip install redis</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">store</span><span class="o">=</span><span class="n">MemoryStore</span><span class="p">())</span>            <span class="c1"># no persistence</span>
 </code></pre></div>
 <h2 id="debug-mode">Debug mode</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 <p>Logs every raw gateway payload with pretty JSON formatting. Useful when reverse-engineering undocumented events.</p>
-<h2 id="watch-mode">Watch mode</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">watch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">watch_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;plugins&quot;</span><span class="p">])</span>
+<h2 id="json-logging">JSON logging</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">json_logs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
-<p>Requires <code>pip install watchfiles</code>. Automatically reloads plugins when their <code>.py</code> file changes on disk.</p>
+<p>Outputs every log line as a JSON object — useful for bots running in Docker or cloud environments where logs are piped to a collector (Datadog, CloudWatch, etc.).</p>
+<h2 id="runtime-stats">Runtime stats</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">bot</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># {</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1">#   &quot;uptime_seconds&quot;: 3600.0,</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1">#   &quot;messages_seen&quot;: 1234,</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1">#   &quot;commands_dispatched&quot;: 56,</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1">#   &quot;cached_users&quot;: 200,</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1">#   &quot;cached_servers&quot;: 5,</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="c1">#   &quot;cached_channels&quot;: 40,</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="c1">#   &quot;cached_members&quot;: 300,</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># }</span>
+</code></pre></div>
+<h2 id="watch-mode-legacy">Watch mode (legacy)</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">watch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">watch_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;plugins&quot;</span><span class="p">])</span>
+</code></pre></div>
+<p>Requires <code>pip install watchfiles</code>. Hot-reloads plugin classes when their <code>.py</code> file changes. For full process restart on any file change, <code>bot.run()</code> handles this automatically without any extra config.</p>
 
 
 

@@ -1145,7 +1145,7 @@ The bot connects over a WebSocket, receives events, and dispatches them to your 
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nerimity_sdk</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bot</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">load_dotenv</span><span class="p">()</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;NERIMITY_TOKEN&quot;</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;!&quot;</span><span class="p">)</span> <span class="c1"># or make a .env file with this in it NERIMITY_TOKEN=your_token</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">bot</span> <span class="o">=</span> <span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;NERIMITY_TOKEN&quot;</span><span class="p">])</span> <span class="c1"># or make a .env file with this in it NERIMITY_TOKEN=your_token</span>
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="nd">@bot</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;ready&quot;</span><span class="p">)</span>
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_ready</span><span class="p">(</span><span class="n">me</span><span class="p">):</span>
@@ -1172,7 +1172,7 @@ The bot connects over a WebSocket, receives events, and dispatches them to your 
 </tr>
 <tr>
 <td>Prefix + slash commands</td>
-<td><code>@bot.command("ping")</code> — works as <code>!ping</code> and <code>/ping</code></td>
+<td><code>@bot.command("ping")</code> — works as <code>/ping</code> (default)</td>
 </tr>
 <tr>
 <td>Prefix-only commands</td>
@@ -1180,7 +1180,15 @@ The bot connects over a WebSocket, receives events, and dispatches them to your 
 </tr>
 <tr>
 <td>Argument converters</td>
-<td><code>args=[Int, MemberConverter]</code></td>
+<td><code>args=[Int, MemberConverter]</code> or type annotations</td>
+</tr>
+<tr>
+<td>Type annotation converters</td>
+<td><code>async def add(ctx, a: int, b: int)</code> — no <code>args=</code> needed</td>
+</tr>
+<tr>
+<td>Permission shortcut</td>
+<td><code>@bot.command("ban", requires=Permissions.BAN_MEMBERS)</code></td>
 </tr>
 <tr>
 <td>Confirmation prompts</td>
@@ -1201,6 +1209,14 @@ The bot connects over a WebSocket, receives events, and dispatches them to your 
 <tr>
 <td>File uploads</td>
 <td><code>await ctx.reply_file("image.png")</code></td>
+</tr>
+<tr>
+<td>Embeds</td>
+<td><code>await ctx.reply_embed(Embed().title("Hi"))</code></td>
+</tr>
+<tr>
+<td>Pin messages</td>
+<td><code>await ctx.pin()</code></td>
 </tr>
 <tr>
 <td>Paginator</td>
@@ -1225,6 +1241,10 @@ The bot connects over a WebSocket, receives events, and dispatches them to your 
 <tr>
 <td>Event waiting (typed)</td>
 <td><code>await bot.wait_for("member_joined", ...)</code></td>
+</tr>
+<tr>
+<td>Collect N events</td>
+<td><code>await bot.wait_for("reaction_added", count=3)</code></td>
 </tr>
 <tr>
 <td>Plugins (hot-reload)</td>
@@ -1255,8 +1275,20 @@ The bot connects over a WebSocket, receives events, and dispatches them to your 
 <td><code>Bot(debug=True)</code></td>
 </tr>
 <tr>
-<td>Auto-reload on save</td>
-<td><code>Bot(watch=True)</code></td>
+<td>JSON structured logs</td>
+<td><code>Bot(json_logs=True)</code></td>
+</tr>
+<tr>
+<td>Runtime stats</td>
+<td><code>bot.stats</code> — uptime, messages, commands, cache sizes</td>
+</tr>
+<tr>
+<td>Auto-restart on crash</td>
+<td>enabled by default in <code>bot.run()</code></td>
+</tr>
+<tr>
+<td>Auto-restart on file save</td>
+<td>enabled by default in <code>bot.run()</code></td>
 </tr>
 </tbody>
 </table>
