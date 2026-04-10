@@ -27,7 +27,7 @@ from nerimity_sdk_contrib.server_logging import LoggingPlugin
 from nerimity_sdk_contrib.role_menu import RoleMenuPlugin
 from nerimity_sdk_contrib.poll import PollPlugin
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 __all__ = [
     "WelcomePlugin",
