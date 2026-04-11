@@ -8,18 +8,18 @@ Nothing yet.
 
 ## [1.1.0] — 2026-04-11
 
-### Added
+### Added in 1.1.0
 - `RedisRateLimiter` — Redis-backed distributed rate limiter for multi-shard / multi-process bots. All processes sharing a Redis instance coordinate rate limit buckets automatically
 - `RateLimitBackend` abstract base class — implement your own rate limit backend by subclassing it
 - `LocalRateLimitBackend` — the default in-process backend, same behaviour as before
 - `Bot(rate_limiter=...)` — pass any `RateLimitBackend` instance to swap the rate limiter
 
-### Changed
+### Changed in 1.1.0
 - `RESTClient` now uses the `RateLimitBackend` interface internally instead of a hardcoded dict of buckets. No behaviour change for existing bots.
 
 ## [0.9.0] — 2026-04-10
 
-### Added
+### Added in 0.9.0
 - `OAuth2Client` — full authorization code flow with token refresh
 - `Webhook` — send messages, embeds, and files to channels without a bot
 - `ctx.reply_silent()` — send a message that doesn't trigger notifications
@@ -31,13 +31,13 @@ Nothing yet.
 - Rate limit hook — `@bot.on_ratelimit async def handler(route, retry_after)`
 - Alias slash sync — command aliases are now registered in the slash menu automatically
 
-### Changed
+### Changed in 0.9.0
 - `bot.run()` now auto-restarts on both crash and file save by default
 - `Embed` now supports raw dict input in `ctx.reply_embed()`
 
 ## [0.8.0] — 2026-03-01
 
-### Added
+### Added in 0.8.0
 - `nerimity dev bot.py` — live dev dashboard with pretty logs
 - `Bot(health_port=8080)` — health check endpoint (`GET /health`, `GET /stats`)
 - `Bot(json_logs=True)` — structured JSON logging
@@ -51,12 +51,12 @@ Nothing yet.
 - Per-guild prefix — `bot.prefix_resolver.set(server_id, "?")`
 - Cooldown scopes — `cooldown_scope="server"` or `"user"` (default)
 
-### Fixed
+### Fixed in 0.8.0
 - Stale cache entries now marked with `user.stale = True` after reconnect instead of raising
 
 ## [0.7.0] — 2026-01-15
 
-### Added
+### Added in 0.7.0
 - Buttons — `Button`, `@bot.button("id_{param}")`
 - `ctx.confirm()` — yes/no confirmation prompt
 - `ctx.ask()` — wait for a follow-up message
@@ -68,12 +68,12 @@ Nothing yet.
 - Embed builder — `Embed().title().description().field().color()`
 - `nerimity lint` — static analysis for common mistakes
 
-### Changed
+### Changed in 0.7.0
 - Type annotation converters — `async def add(ctx, a: int, b: int)` now works without `args=`
 
 ## [0.6.0] — 2025-11-20
 
-### Added
+### Added in 0.6.0
 - Plugin system — `PluginBase`, `@listener`, hot-reload via `bot.plugins.load()`
 - `nerimity create my-bot` — project scaffolding CLI
 - `nerimity version` — show SDK version
