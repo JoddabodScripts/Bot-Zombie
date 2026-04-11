@@ -1,0 +1,147 @@
+{%- extends "main.html" %}
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    .md-content__inner { padding: 0 !important; }
+
+    .pg404 {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 70vh;
+      padding: 1rem 0 0;
+    }
+
+    .pg404-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.2);
+      text-transform: uppercase;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .pg404-big {
+      font-size: clamp(5rem, 18vw, 12rem);
+      font-weight: 700;
+      letter-spacing: -0.05em;
+      line-height: 0.9;
+      background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      user-select: none;
+      margin-bottom: 1.2rem;
+    }
+
+    .pg404-msg {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.4);
+      max-width: 420px;
+      line-height: 1.5;
+      margin-bottom: 2rem;
+    }
+
+    .pg404-msg strong { color: #e2e8f0; font-weight: 500; }
+
+    .pg404-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 3rem; }
+
+    .pg404-btn {
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.6rem 1.4rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .pg404-btn:hover { opacity: 0.8; }
+
+    .pg404-btn-primary {
+      background: linear-gradient(135deg, #a78bfa, #f472b6);
+      color: white !important;
+    }
+
+    .pg404-btn-ghost {
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.4) !important;
+    }
+
+    .pg404-marquee {
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 0.9rem 0;
+      white-space: nowrap;
+    }
+
+    .pg404-track {
+      display: inline-flex;
+      gap: 2.5rem;
+      animation: pg404marquee 18s linear infinite;
+    }
+
+    .pg404-track span {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.18);
+    }
+
+    .pg404-track .dot { color: #a78bfa; }
+
+    @keyframes pg404marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="pg404">
+  <div>
+    <div class="pg404-top">
+      <div>
+        <div>ERR // 404 // PAGE</div>
+        <div id="pg404ts"></div>
+      </div>
+      <div style="text-align:right">
+        <div>nerimity-sdk</div>
+        <div>docs</div>
+      </div>
+    </div>
+
+    <div class="pg404-big">404</div>
+
+    <p class="pg404-msg">
+      This page <strong>doesn't exist</strong> or it moved.<br>
+      The rest of the docs are fine though.
+    </p>
+
+    <div class="pg404-actions">
+      <a class="pg404-btn pg404-btn-primary" href="{{ config.site_url }}">Go home</a>
+      <a class="pg404-btn pg404-btn-ghost" href="{{ config.site_url }}guide/quickstart/">Quick start</a>
+      <a class="pg404-btn pg404-btn-ghost" href="{{ config.site_url }}guide/installation/">Installation</a>
+    </div>
+  </div>
+
+  <div class="pg404-marquee">
+    <div class="pg404-track" id="pg404track"></div>
+  </div>
+</div>
+
+<script>
+  const ts = document.getElementById('pg404ts');
+  const pad = n => String(n).padStart(2,'0');
+  const tick = () => { const d = new Date(); ts.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; };
+  tick(); setInterval(tick, 1000);
+
+  const items = ['page not found','·','nerimity-sdk','·','404','·','lost in the void','·','check the url','·','nerimity-sdk','·'];
+  const track = document.getElementById('pg404track');
+  const html = items.map(t => t==='·' ? `<span class="dot">·</span>` : `<span>${t}</span>`).join('');
+  track.innerHTML = html + html;
+</script>
+{% endblock %}
