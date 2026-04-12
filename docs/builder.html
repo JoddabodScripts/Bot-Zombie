@@ -396,6 +396,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div class="pal-item" draggable="true" data-type="trigger_leave"><span class="pal-dot" style="background:#f87171"></span>Member left</div>
         <div class="pal-item" draggable="true" data-type="trigger_reaction"><span class="pal-dot" style="background:#fbbf24"></span>Reaction added</div>
         <div class="pal-item" draggable="true" data-type="trigger_cron"><span class="pal-dot" style="background:#fb923c"></span>Scheduler (cron)</div>
+        <div class="pal-item" draggable="true" data-type="trigger_msg_update"><span class="pal-dot" style="background:#60a5fa"></span>Message updated</div>
+        <div class="pal-item" draggable="true" data-type="trigger_msg_delete"><span class="pal-dot" style="background:#f87171"></span>Message deleted</div>
+        <div class="pal-item" draggable="true" data-type="trigger_typing"><span class="pal-dot" style="background:#94a3b8"></span>User typing</div>
       </div>
 
       <!-- Actions -->
@@ -414,6 +417,20 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div class="pal-item" draggable="true" data-type="action_store_set"><span class="pal-dot" style="background:#34d399"></span>Store: set</div>
         <div class="pal-item" draggable="true" data-type="action_store_get"><span class="pal-dot" style="background:#34d399"></span>Store: get</div>
         <div class="pal-item" draggable="true" data-type="action_webhook"><span class="pal-dot" style="background:#60a5fa"></span>Send webhook</div>
+        <div class="pal-item" draggable="true" data-type="action_fetch_user"><span class="pal-dot" style="background:#60a5fa"></span>Fetch user</div>
+        <div class="pal-item" draggable="true" data-type="action_fetch_msg"><span class="pal-dot" style="background:#60a5fa"></span>Fetch message</div>
+        <div class="pal-item" draggable="true" data-type="action_fetch_msgs"><span class="pal-dot" style="background:#60a5fa"></span>Fetch messages</div>
+        <div class="pal-item" draggable="true" data-type="action_update_msg"><span class="pal-dot" style="background:#a78bfa"></span>Edit message</div>
+        <div class="pal-item" draggable="true" data-type="action_bulk_delete"><span class="pal-dot" style="background:#f87171"></span>Bulk delete msgs</div>
+        <div class="pal-item" draggable="true" data-type="action_add_reaction"><span class="pal-dot" style="background:#fbbf24"></span>Add reaction</div>
+        <div class="pal-item" draggable="true" data-type="action_remove_reaction"><span class="pal-dot" style="background:#fbbf24"></span>Remove reaction</div>
+        <div class="pal-item" draggable="true" data-type="action_create_role"><span class="pal-dot" style="background:#34d399"></span>Create role</div>
+        <div class="pal-item" draggable="true" data-type="action_delete_role"><span class="pal-dot" style="background:#f87171"></span>Delete role</div>
+        <div class="pal-item" draggable="true" data-type="action_set_nickname"><span class="pal-dot" style="background:#a78bfa"></span>Set nickname</div>
+        <div class="pal-item" draggable="true" data-type="action_create_channel"><span class="pal-dot" style="background:#34d399"></span>Create channel</div>
+        <div class="pal-item" draggable="true" data-type="action_send_typing"><span class="pal-dot" style="background:#94a3b8"></span>Send typing</div>
+        <div class="pal-item" draggable="true" data-type="action_upload_file"><span class="pal-dot" style="background:#60a5fa"></span>Upload file</div>
+        <div class="pal-item" draggable="true" data-type="action_unpin"><span class="pal-dot" style="background:#94a3b8"></span>Unpin message</div>
       </div>
 
       <!-- Logic -->
@@ -450,6 +467,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div class="pal-item" draggable="true" data-type="plugin_tickets"><span class="pal-dot" style="background:#60a5fa"></span>TicketPlugin</div>
         <div class="pal-item" draggable="true" data-type="plugin_economy"><span class="pal-dot" style="background:#34d399"></span>EconomyPlugin</div>
         <div class="pal-item" draggable="true" data-type="plugin_quiz"><span class="pal-dot" style="background:#f472b6"></span>QuizPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_afk"><span class="pal-dot" style="background:#94a3b8"></span>AFKPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_autorole"><span class="pal-dot" style="background:#34d399"></span>AutoRolePlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_birthday"><span class="pal-dot" style="background:#f472b6"></span>BirthdayPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_counter"><span class="pal-dot" style="background:#60a5fa"></span>CounterPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_custom_cmd"><span class="pal-dot" style="background:#a78bfa"></span>CustomCommandPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_giveaway"><span class="pal-dot" style="background:#fbbf24"></span>GiveawayPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_msg_filter"><span class="pal-dot" style="background:#f87171"></span>MessageFilterPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_msg_snap"><span class="pal-dot" style="background:#60a5fa"></span>MessageSnapshotPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_mod_log"><span class="pal-dot" style="background:#fb923c"></span>ModerationLogPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_mute"><span class="pal-dot" style="background:#f87171"></span>MutePlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_pinboard"><span class="pal-dot" style="background:#60a5fa"></span>PinboardPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_poll"><span class="pal-dot" style="background:#a78bfa"></span>PollPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_raid_guard"><span class="pal-dot" style="background:#f87171"></span>RaidGuardPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_reaction_roles"><span class="pal-dot" style="background:#a78bfa"></span>ReactionRolesPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_reminders"><span class="pal-dot" style="background:#fb923c"></span>ReminderPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_role_menu"><span class="pal-dot" style="background:#60a5fa"></span>RoleMenuPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_logging"><span class="pal-dot" style="background:#94a3b8"></span>LoggingPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_server_stats"><span class="pal-dot" style="background:#60a5fa"></span>ServerStatsPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_slowmode"><span class="pal-dot" style="background:#fb923c"></span>SlowmodePlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_suggestions"><span class="pal-dot" style="background:#fbbf24"></span>SuggestionPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_tags"><span class="pal-dot" style="background:#a78bfa"></span>TagPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_temp_channel"><span class="pal-dot" style="background:#fb923c"></span>TempChannelPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_translate"><span class="pal-dot" style="background:#60a5fa"></span>TranslatePlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_warn"><span class="pal-dot" style="background:#fbbf24"></span>WarnPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_auto_reply"><span class="pal-dot" style="background:#34d399"></span>AutoReplyPlugin</div>
       </div>
 
     </div>
@@ -686,6 +728,82 @@ const NODE_DEFS = {
     fields:[] },
   trigger_cron:     { label:'Scheduler (cron)',icon:'⏰',color:'#fb923c', cat:'trigger', ins:[], outs:['exec'],
     fields:[{k:'expr',l:'Cron expression',t:'text',d:'0 9 * * *'},{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'}] },
+  // Extra triggers
+  trigger_msg_update:{ label:'Message updated', icon:'✏️', color:'#60a5fa', cat:'trigger', ins:[], outs:['exec'] },
+  trigger_msg_delete:{ label:'Message deleted', icon:'🗑️', color:'#f87171', cat:'trigger', ins:[], outs:['exec'] },
+  trigger_typing:    { label:'User typing',     icon:'⌨️', color:'#94a3b8', cat:'trigger', ins:[], outs:['exec'] },
+  // Extra actions
+  action_fetch_user: { label:'Fetch user',      icon:'👤', color:'#60a5fa', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[{k:'user_id',l:'User ID (or "author")',t:'text',d:'author'},{k:'var',l:'Store in',t:'text',d:'fetched_user'}] },
+  action_fetch_msg:  { label:'Fetch message',   icon:'📨', color:'#60a5fa', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'},{k:'msg_id',l:'Message ID',t:'text',d:'MESSAGE_ID'},{k:'var',l:'Store in',t:'text',d:'fetched_msg'}] },
+  action_fetch_msgs: { label:'Fetch messages',  icon:'📋', color:'#60a5fa', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'},{k:'limit',l:'Limit',t:'text',d:'50'},{k:'var',l:'Store in',t:'text',d:'messages'}] },
+  action_update_msg: { label:'Edit message',    icon:'✏️', color:'#a78bfa', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'},{k:'msg_id',l:'Message ID',t:'text',d:'MESSAGE_ID'},{k:'text',l:'New content',t:'textarea',d:'Updated!'}] },
+  action_bulk_delete:{ label:'Bulk delete msgs',icon:'🗑️', color:'#f87171', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'},{k:'ids',l:'Message IDs (comma-sep)',t:'text',d:'ID1,ID2'}] },
+  action_add_reaction:   { label:'Add reaction',    icon:'😀', color:'#fbbf24', cat:'action', ins:['exec'], outs:['exec'],
+    fields:[{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'},{k:'msg_id',l:'Message ID',t:'text',d:'MESSAGE_ID'},{k:'emoji',l:'Emoji name',t:'text',d:'👍'}] },
+  action_remove_reaction:{ label:'Remove reaction', icon:'😶', color:'#fbbf24', cat:'action', ins:['exec'], outs:['exec'],
+    fields:[{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'},{k:'msg_id',l:'Message ID',t:'text',d:'MESSAGE_ID'},{k:'emoji',l:'Emoji name',t:'text',d:'👍'}] },
+  action_create_role:{ label:'Create role',     icon:'🏷️', color:'#34d399', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[{k:'name',l:'Role name',t:'text',d:'New Role'},{k:'color',l:'Hex color',t:'text',d:'#a78bfa'}] },
+  action_delete_role:{ label:'Delete role',     icon:'🏷️', color:'#f87171', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[{k:'role_id',l:'Role ID',t:'text',d:'YOUR_ROLE_ID'}] },
+  action_set_nickname:{ label:'Set nickname',   icon:'📝', color:'#a78bfa', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[{k:'user_id',l:'User ID (or "author")',t:'text',d:'author'},{k:'nick',l:'Nickname (blank to clear)',t:'text',d:''}] },
+  action_create_channel:{ label:'Create channel',icon:'#️⃣', color:'#34d399', cat:'action', ins:['exec'], outs:['exec'],
+    fields:[{k:'name',l:'Channel name',t:'text',d:'new-channel'},{k:'type',l:'Type (0=text)',t:'text',d:'0'}] },
+  action_send_typing:{ label:'Send typing',     icon:'⌨️', color:'#94a3b8', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'}] },
+  action_upload_file:{ label:'Upload file',     icon:'📎', color:'#60a5fa', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[{k:'path',l:'File path',t:'text',d:'./file.png'},{k:'var',l:'Store file ID in',t:'text',d:'file_id'}] },
+  action_unpin:      { label:'Unpin message',   icon:'📌', color:'#94a3b8', cat:'action',  ins:['exec'], outs:['exec'],
+    fields:[] },
+  // Extra plugins
+  plugin_afk:        { label:'AFKPlugin',       icon:'💤', color:'#94a3b8', cat:'plugin', ins:[], outs:[], fields:[] },
+  plugin_autorole:   { label:'AutoRolePlugin',  icon:'🏷️', color:'#34d399', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'role_id',l:'Role ID to assign',t:'text',d:'YOUR_ROLE_ID'}] },
+  plugin_birthday:   { label:'BirthdayPlugin',  icon:'🎂', color:'#f472b6', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'channel',l:'Announce channel',t:'text',d:'YOUR_CHANNEL_ID'}] },
+  plugin_counter:    { label:'CounterPlugin',   icon:'🔢', color:'#60a5fa', cat:'plugin', ins:[], outs:[], fields:[] },
+  plugin_custom_cmd: { label:'CustomCommandPlugin',icon:'⚡',color:'#a78bfa',cat:'plugin', ins:[], outs:[], fields:[] },
+  plugin_giveaway:   { label:'GiveawayPlugin',  icon:'🎉', color:'#fbbf24', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'}] },
+  plugin_msg_filter: { label:'MessageFilterPlugin',icon:'🔍',color:'#f87171',cat:'plugin',ins:[], outs:[],
+    fields:[{k:'words',l:'Blocked words (comma-sep)',t:'text',d:'badword'}] },
+  plugin_msg_snap:   { label:'MessageSnapshotPlugin',icon:'📸',color:'#60a5fa',cat:'plugin',ins:[],outs:[],fields:[] },
+  plugin_mod_log:    { label:'ModerationLogPlugin',icon:'📋',color:'#fb923c',cat:'plugin',ins:[],outs:[],
+    fields:[{k:'channel',l:'Log channel ID',t:'text',d:'YOUR_LOG_CHANNEL_ID'}] },
+  plugin_mute:       { label:'MutePlugin',      icon:'🔇', color:'#f87171', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'channel',l:'Log channel ID',t:'text',d:'YOUR_LOG_CHANNEL_ID'}] },
+  plugin_pinboard:   { label:'PinboardPlugin',  icon:'📌', color:'#60a5fa', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'channel',l:'Pinboard channel',t:'text',d:'YOUR_CHANNEL_ID'},{k:'threshold',l:'Reactions needed',t:'text',d:'3'}] },
+  plugin_poll:       { label:'PollPlugin',      icon:'📊', color:'#a78bfa', cat:'plugin', ins:[], outs:[], fields:[] },
+  plugin_raid_guard: { label:'RaidGuardPlugin', icon:'🚨', color:'#f87171', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'channel',l:'Alert channel',t:'text',d:'YOUR_CHANNEL_ID'},{k:'threshold',l:'Join threshold',t:'text',d:'10'}] },
+  plugin_reaction_roles:{ label:'ReactionRolesPlugin',icon:'🎭',color:'#a78bfa',cat:'plugin',ins:[],outs:[],
+    fields:[{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'}] },
+  plugin_reminders:  { label:'ReminderPlugin',  icon:'⏰', color:'#fb923c', cat:'plugin', ins:[], outs:[], fields:[] },
+  plugin_role_menu:  { label:'RoleMenuPlugin',  icon:'📋', color:'#60a5fa', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'channel',l:'Channel ID',t:'text',d:'YOUR_CHANNEL_ID'}] },
+  plugin_logging:    { label:'LoggingPlugin',   icon:'📝', color:'#94a3b8', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'channel',l:'Log channel ID',t:'text',d:'YOUR_LOG_CHANNEL_ID'}] },
+  plugin_server_stats:{ label:'ServerStatsPlugin',icon:'📊',color:'#60a5fa',cat:'plugin',ins:[],outs:[],
+    fields:[{k:'channel',l:'Stats channel',t:'text',d:'YOUR_CHANNEL_ID'}] },
+  plugin_slowmode:   { label:'SlowmodePlugin',  icon:'🐢', color:'#fb923c', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'seconds',l:'Slowmode seconds',t:'text',d:'5'}] },
+  plugin_suggestions:{ label:'SuggestionPlugin',icon:'💡', color:'#fbbf24', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'channel',l:'Suggestions channel',t:'text',d:'YOUR_CHANNEL_ID'}] },
+  plugin_tags:       { label:'TagPlugin',       icon:'🏷️', color:'#a78bfa', cat:'plugin', ins:[], outs:[], fields:[] },
+  plugin_temp_channel:{ label:'TempChannelPlugin',icon:'⏱️',color:'#fb923c',cat:'plugin',ins:[],outs:[],
+    fields:[{k:'timeout',l:'Timeout (seconds)',t:'text',d:'300'}] },
+  plugin_translate:  { label:'TranslatePlugin', icon:'🌐', color:'#60a5fa', cat:'plugin', ins:[], outs:[], fields:[] },
+  plugin_warn:       { label:'WarnPlugin',      icon:'⚠️', color:'#fbbf24', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'threshold',l:'Warn threshold',t:'text',d:'3'},{k:'channel',l:'Log channel',t:'text',d:'YOUR_LOG_CHANNEL_ID'}] },
+  plugin_auto_reply: { label:'AutoReplyPlugin', icon:'💬', color:'#34d399', cat:'plugin', ins:[], outs:[],
+    fields:[{k:'rules',l:'Rules (keyword:reply, one per line)',t:'textarea',d:'hello:Hi there!\nthanks:You\'re welcome!'}] },
 };
 
 // ── Token screen ───────────────────────────────────────────────────────────
@@ -1471,6 +1589,25 @@ function emitTrigger(trigger, lines) {
       if (!lines[lines.length-1].trim()) lines.push('    pass');
       break;
 
+    case 'trigger_msg_update':
+      lines.push('@bot.on("message:updated")');
+      lines.push('async def on_message_update(event):');
+      emitChain(trigger.id, 'exec', lines, '    ');
+      if (!lines[lines.length-1].trim()) lines.push('    pass');
+      break;
+    case 'trigger_msg_delete':
+      lines.push('@bot.on("message:deleted")');
+      lines.push('async def on_message_delete(event):');
+      emitChain(trigger.id, 'exec', lines, '    ');
+      if (!lines[lines.length-1].trim()) lines.push('    pass');
+      break;
+    case 'trigger_typing':
+      lines.push('@bot.on("channel:typing")');
+      lines.push('async def on_typing(event):');
+      emitChain(trigger.id, 'exec', lines, '    ');
+      if (!lines[lines.length-1].trim()) lines.push('    pass');
+      break;
+
     case 'trigger_cron': {
       const expr = p.expr || '0 9 * * *';
       const ch   = p.channel || 'YOUR_CHANNEL_ID';
@@ -1675,6 +1812,54 @@ function emitAction(node, lines, indent) {
       lines.push(`${i}await bot.rest.delete_message(ctx.channel_id, ctx.message.id)`);
       emitChain(node.id, 'exec', lines, i);
       break;
+
+    case 'action_fetch_user': {
+      const uid = p.user_id==='author' ? 'ctx.author.id' : `"${esc2(p.user_id||'')}"`;
+      lines.push(`${i}${p.var||'fetched_user'} = await bot.rest.fetch_user(${uid})`);
+      emitChain(node.id, 'exec', lines, i); break;
+    }
+    case 'action_fetch_msg':
+      lines.push(`${i}${p.var||'fetched_msg'} = await bot.rest.fetch_message("${esc2(p.channel||'')}", "${esc2(p.msg_id||'')}")`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_fetch_msgs':
+      lines.push(`${i}${p.var||'messages'} = await bot.rest.fetch_messages("${esc2(p.channel||'')}", limit=${p.limit||50})`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_update_msg':
+      lines.push(`${i}await bot.rest.update_message("${esc2(p.channel||'')}", "${esc2(p.msg_id||'')}", "${esc2(p.text||'')}")`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_bulk_delete':
+      lines.push(`${i}await bot.rest.bulk_delete_messages("${esc2(p.channel||'')}", [${(p.ids||'').split(',').map(s=>`"${s.trim()}"`).join(',')}])`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_add_reaction':
+      lines.push(`${i}await bot.rest.add_reaction("${esc2(p.channel||'')}", "${esc2(p.msg_id||'')}", "${esc2(p.emoji||'👍')}")`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_remove_reaction':
+      lines.push(`${i}await bot.rest.remove_reaction("${esc2(p.channel||'')}", "${esc2(p.msg_id||'')}", "${esc2(p.emoji||'👍')}")`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_create_role':
+      lines.push(`${i}await bot.rest.create_role(ctx.server_id, "${esc2(p.name||'New Role')}", hex_color="${esc2(p.color||'')}")`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_delete_role':
+      lines.push(`${i}await bot.rest.delete_role(ctx.server_id, "${esc2(p.role_id||'')}")`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_set_nickname': {
+      const uid2 = p.user_id==='author' ? 'ctx.author.id' : `"${esc2(p.user_id||'')}"`;
+      const nick = p.nick ? `"${esc2(p.nick)}"` : 'None';
+      lines.push(`${i}await bot.rest.set_nickname(ctx.server_id, ${uid2}, ${nick})`);
+      emitChain(node.id, 'exec', lines, i); break;
+    }
+    case 'action_create_channel':
+      lines.push(`${i}await bot.rest.create_channel(ctx.server_id, "${esc2(p.name||'new-channel')}", channel_type=${p.type||0})`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_send_typing':
+      lines.push(`${i}await bot.rest.send_typing("${esc2(p.channel||'')}")`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_upload_file':
+      lines.push(`${i}${p.var||'file_id'} = await bot.rest.upload_file("${esc2(p.path||'')}")`);
+      emitChain(node.id, 'exec', lines, i); break;
+    case 'action_unpin':
+      lines.push(`${i}await bot.rest.unpin_message(ctx.channel_id, ctx.message.id)`);
+      emitChain(node.id, 'exec', lines, i); break;
   }
 }
 
@@ -1689,6 +1874,36 @@ function pluginCallCode(node) {
     case 'plugin_tickets':   return `TicketPlugin(staff_channel_id="${p.channel||'YOUR_CHANNEL_ID'}")`;
     case 'plugin_economy':   return `EconomyPlugin(daily_amount=${p.daily||100}, currency_name="${p.currency||'coins'}")`;
     case 'plugin_quiz':      return `QuizPlugin(rounds=${p.rounds||5}, answer_timeout=${p.timeout||20})`;
+    case 'plugin_afk':       return `AFKPlugin()`;
+    case 'plugin_autorole':  return `AutoRolePlugin(role_id="${p.role_id||'YOUR_ROLE_ID'}")`;
+    case 'plugin_birthday':  return `BirthdayPlugin(announce_channel_id="${p.channel||'YOUR_CHANNEL_ID'}")`;
+    case 'plugin_counter':   return `CounterPlugin()`;
+    case 'plugin_custom_cmd':return `CustomCommandPlugin()`;
+    case 'plugin_giveaway':  return `GiveawayPlugin(channel_id="${p.channel||'YOUR_CHANNEL_ID'}")`;
+    case 'plugin_msg_filter':return `MessageFilterPlugin(blocked=[${(p.words||'badword').split(',').map(w=>`"${w.trim()}"`).join(',')}])`;
+    case 'plugin_msg_snap':  return `MessageSnapshotPlugin()`;
+    case 'plugin_mod_log':   return `ModerationLogPlugin(log_channel_id="${p.channel||'YOUR_LOG_CHANNEL_ID'}")`;
+    case 'plugin_mute':      return `MutePlugin(log_channel_id="${p.channel||'YOUR_LOG_CHANNEL_ID'}")`;
+    case 'plugin_pinboard':  return `PinboardPlugin(channel_id="${p.channel||'YOUR_CHANNEL_ID'}", threshold=${p.threshold||3})`;
+    case 'plugin_poll':      return `PollPlugin()`;
+    case 'plugin_raid_guard':return `RaidGuardPlugin(alert_channel_id="${p.channel||'YOUR_CHANNEL_ID'}", threshold=${p.threshold||10})`;
+    case 'plugin_reaction_roles': return `ReactionRolesPlugin(channel_id="${p.channel||'YOUR_CHANNEL_ID'}")`;
+    case 'plugin_reminders': return `ReminderPlugin()`;
+    case 'plugin_role_menu': return `RoleMenuPlugin(channel_id="${p.channel||'YOUR_CHANNEL_ID'}")`;
+    case 'plugin_logging':   return `LoggingPlugin(channel_id="${p.channel||'YOUR_LOG_CHANNEL_ID'}")`;
+    case 'plugin_server_stats': return `ServerStatsPlugin(channel_id="${p.channel||'YOUR_CHANNEL_ID'}")`;
+    case 'plugin_slowmode':  return `SlowmodePlugin(seconds=${p.seconds||5})`;
+    case 'plugin_suggestions': return `SuggestionPlugin(channel_id="${p.channel||'YOUR_CHANNEL_ID'}")`;
+    case 'plugin_tags':      return `TagPlugin()`;
+    case 'plugin_temp_channel': return `TempChannelPlugin(timeout=${p.timeout||300})`;
+    case 'plugin_translate': return `TranslatePlugin()`;
+    case 'plugin_warn':      return `WarnPlugin(threshold=${p.threshold||3}, log_channel_id="${p.channel||'YOUR_LOG_CHANNEL_ID'}")`;
+    case 'plugin_auto_reply': {
+      const rules = (p.rules||'hello:Hi!').split('\n').map(l => {
+        const [k,...v] = l.split(':'); return k && v.length ? `("${k.trim()}", "${v.join(':').trim()}")` : null;
+      }).filter(Boolean);
+      return `AutoReplyPlugin(rules=[${rules.join(', ')}])`;
+    }
     default: return `${NODE_DEFS[node.type].label}()`;
   }
 }
