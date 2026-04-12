@@ -239,6 +239,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <div class="spacer"></div>
     <button class="tb-btn" onclick="clearCanvas()" title="Remove all nodes">Clear</button>
     <button class="tb-btn" onclick="loadExample()">Load example</button>
+    <button class="tb-btn" onclick="saveGraph()" style="margin-left:.25rem">💾 Save</button>
+    <label class="tb-btn" title="Import a .py file" style="cursor:pointer">📂 Import .py<input type="file" accept=".py" style="display:none" onchange="importPy(this)"></label>
     <button class="tb-btn" onclick="openCode()" style="margin-left:.25rem">Preview code</button>
     <button class="tb-btn primary" onclick="downloadBot()">⬇ Download bot.py</button>
   </div>
@@ -442,6 +444,7 @@ function startBuilder() {
   document.getElementById('token-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   initCanvas();
+  loadGraph();
 }
 
 // ── Canvas init ────────────────────────────────────────────────────────────
@@ -1121,6 +1124,108 @@ function downloadBot() {
   a.download = 'bot.py';
   a.click();
 }
+
+// ── Save / load graph (localStorage) ──────────────────────────────────────
+const LS_KEY = 'botzombie_graph';
+
+function saveGraph() {
+  const data = {
+    botName: document.getElementById('bot-name-input').value,
+    nodes: nodes.map(n => ({id:n.id, type:n.type, x:n.x, y:n.y, props:n.props})),
+    wires: wires.map(w => ({fromNode:w.fromNode, fromPort:w.fromPort, toNode:w.toNode, toPort:w.toPort})),
+    nodeIdSeq, wireIdSeq,
+  };
+  localStorage.setItem(LS_KEY, JSON.stringify(data));
+  const btn = [...document.querySelectorAll('.tb-btn')].find(b => b.textContent.includes('Save'));
+  if (btn) { btn.textContent = '✓ Saved'; setTimeout(() => btn.textContent = '💾 Save', 1500); }
+}
+
+function loadGraph() {
+  const raw = localStorage.getItem(LS_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    clearCanvas();
+    nodeIdSeq = data.nodeIdSeq || 0;
+    wireIdSeq = data.wireIdSeq || 0;
+    if (data.botName) document.getElementById('bot-name-input').value = data.botName;
+    // restore nodes (preserve original IDs)
+    data.nodes.forEach(n => {
+      const node = createNode(n.type, n.x, n.y, n.props);
+      // fix id to saved id
+      const oldId = node.id;
+      node.id = n.id;
+      node.el.dataset.id = n.id;
+      node.el.querySelectorAll('[data-node]').forEach(el => {
+        if (el.dataset.node == oldId) el.dataset.node = n.id;
+      });
+      nodes[nodes.indexOf(node)] = node;
+    });
+    // restore wires
+    data.wires.forEach(w => addWire(w.fromNode, w.fromPort, w.toNode, w.toPort));
+    deselectNode();
+  } catch(e) { console.error('Failed to restore graph', e); }
+}
+
+// ── Import .py ─────────────────────────────────────────────────────────────
+function importPy(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const src = e.target.result;
+    clearCanvas();
+    let y = 60;
+
+    // Extract bot token
+    const tokenMatch = src.match(/token\s*=\s*["']([^"']+)["']/);
+    if (tokenMatch) BOT_TOKEN = tokenMatch[1];
+
+    // Extract bot name from comment or variable
+    const nameMatch = src.match(/# bot[:\s]+(\w+)/i);
+    if (nameMatch) document.getElementById('bot-name-input').value = nameMatch[1];
+
+    // Detect @bot.command(...)
+    const cmdRe = /@bot\.command\(\s*["']([^"']+)["'](?:[^)]*description\s*=\s*["']([^"']*)["'])?/g;
+    let m;
+    while ((m = cmdRe.exec(src)) !== null) {
+      const replyMatch = src.slice(m.index).match(/ctx\.reply\(["']([^"']+)["']\)/);
+      createNode('trigger_command', 60, y, {name: m[1], desc: m[2]||''});
+      if (replyMatch) {
+        const cmd = nodes[nodes.length-1];
+        const reply = createNode('action_reply', 340, y, {text: replyMatch[1]});
+        addWire(cmd.id, 'exec', reply.id, 'exec');
+      }
+      y += 160;
+    }
+
+    // Detect @bot.on("ready")
+    if (src.includes('@bot.on("ready")') || src.includes("@bot.on('ready')")) {
+      createNode('trigger_ready', 60, y); y += 120;
+    }
+
+    // Detect @bot.on("message:created")
+    if (src.includes('message:created')) {
+      createNode('trigger_message', 60, y); y += 120;
+    }
+
+    // Detect plugins
+    const pluginMap = {
+      WelcomePlugin:'plugin_welcome', LevelingPlugin:'plugin_leveling',
+      AutoModPlugin:'plugin_automod', AntiSpamPlugin:'plugin_antispam',
+      StarboardPlugin:'plugin_starboard', TicketPlugin:'plugin_tickets',
+      EconomyPlugin:'plugin_economy', QuizPlugin:'plugin_quiz',
+    };
+    Object.entries(pluginMap).forEach(([cls, type]) => {
+      if (src.includes(cls)) { createNode(type, 60, y); y += 120; }
+    });
+
+    deselectNode();
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
 </script>
 </body>
 </html>
