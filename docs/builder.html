@@ -214,6 +214,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 
 <!-- ── Token screen ─────────────────────────────────────────────────── -->
 <div id="token-screen">
+  <a href="./" style="position:absolute;top:1.25rem;left:1.5rem;color:var(--text-dim);font-size:0.82rem;text-decoration:none" onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--text-dim)'">← back to docs</a>
   <h1>Bot Zombie</h1>
   <p>Enter your Nerimity bot token to start building. Your token never leaves your browser.</p>
   <div class="token-box">
@@ -876,11 +877,9 @@ function generateCode() {
 
   // imports
   lines.push('import os');
-  lines.push('from dotenv import load_dotenv');
   const sdkImports = ['Bot'];
   if (hasStore) sdkImports.push('JsonStore');
   lines.push(`from nerimity_sdk import ${sdkImports.join(', ')}`);
-
   if (hasPlugins) {
     const pluginNames = nodes
       .filter(n => n.type.startsWith('plugin_'))
@@ -890,11 +889,9 @@ function generateCode() {
   }
 
   lines.push('');
-  lines.push('load_dotenv()');
-  lines.push('');
 
   // Bot constructor
-  const botArgs = [`token=os.environ["NERIMITY_TOKEN"]`];
+  const botArgs = [`token="${BOT_TOKEN}"`];
   if (hasStore) botArgs.push('store=JsonStore("data.json")');
   if (botArgs.length > 1) {
     lines.push('bot = Bot(');
