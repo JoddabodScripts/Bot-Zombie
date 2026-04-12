@@ -199,7 +199,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 #code-panel.open{display:flex}
 #code-box{
   background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);
-  width:100%;max-width:760px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;
+  width:100%;max-width:760px;height:85vh;display:flex;flex-direction:column;overflow:hidden;
 }
 #code-box-header{
   padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;
@@ -1741,13 +1741,15 @@ function loadGraph() {
     // restore nodes (preserve original IDs)
     data.nodes.forEach(n => {
       const node = createNode(n.type, n.x, n.y, n.props);
-      // fix id to saved id
       const oldId = node.id;
       node.id = n.id;
       node.el.dataset.id = n.id;
       node.el.querySelectorAll('[data-node]').forEach(el => {
         if (el.dataset.node == oldId) el.dataset.node = n.id;
       });
+      // fix the delete button onclick which was baked with the old id
+      const delBtn = node.el.querySelector('.node-del');
+      if (delBtn) delBtn.setAttribute('onclick', `deleteNode(${n.id})`);
       nodes[nodes.indexOf(node)] = node;
     });
     // restore wires
