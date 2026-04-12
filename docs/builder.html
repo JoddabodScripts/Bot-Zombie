@@ -95,6 +95,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 #palette::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 .pal-section{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
   color:var(--text-dim);padding:.5rem .4rem .25rem;margin-top:.25rem}
+/* accordion */
+.acc-header{display:flex;align-items:center;justify-content:space-between;padding:.45rem .5rem;cursor:pointer;border-radius:var(--radius-sm);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-mid);user-select:none;transition:background .15s}
+.acc-header:hover{background:var(--surface3)}
+.acc-header .acc-arrow{font-size:.6rem;transition:transform .2s;color:var(--text-dim)}
+.acc-header.open .acc-arrow{transform:rotate(90deg)}
+.acc-body{display:none;flex-direction:column;gap:.25rem;padding-bottom:.35rem}
+.acc-body.open{display:flex}
 .pal-item{
   background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
   padding:.45rem .6rem;cursor:grab;font-size:.78rem;font-weight:500;
@@ -208,6 +215,63 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 
 /* misc */
 .hint{font-size:.72rem;color:var(--text-dim);line-height:1.5}
+
+/* ── Right sidebar tabs ───────────────────────────────────────────────── */
+#right-sidebar{width:240px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column}
+.sidebar-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-tab{flex:1;padding:.5rem .25rem;font-size:.7rem;font-weight:600;text-align:center;cursor:pointer;color:var(--text-dim);border-bottom:2px solid transparent;transition:color .15s,border-color .15s;text-transform:uppercase;letter-spacing:.06em}
+.sidebar-tab.active{color:var(--purple);border-bottom-color:var(--purple)}
+.sidebar-panel{flex:1;overflow-y:auto;padding:.75rem;display:none;flex-direction:column;gap:.65rem}
+.sidebar-panel.active{display:flex}
+.sidebar-panel::-webkit-scrollbar{width:4px}
+.sidebar-panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.sidebar-panel h3{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim)}
+.sidebar-panel .empty{font-size:.8rem;color:var(--text-dim);text-align:center;margin-top:1.5rem;line-height:1.6}
+
+/* variables */
+.var-row{display:flex;align-items:center;gap:.4rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.35rem .5rem}
+.var-row .var-name{font-size:.75rem;font-weight:600;color:var(--purple);font-family:'JetBrains Mono',monospace;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.var-row .var-val{font-size:.72rem;color:var(--text-mid);flex:2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.var-del{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:.8rem;padding:0 .1rem;transition:color .15s;flex-shrink:0}
+.var-del:hover{color:var(--red)}
+.var-add-row{display:flex;gap:.4rem}
+.var-add-row input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:.75rem;padding:.3rem .5rem;outline:none;min-width:0}
+.var-add-row input:focus{border-color:rgba(167,139,250,.4)}
+
+/* error log */
+.err-row{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:var(--radius-sm);padding:.45rem .6rem;font-size:.75rem;color:#fca5a5;line-height:1.5;cursor:pointer;transition:background .15s}
+.err-row:hover{background:rgba(248,113,113,.15)}
+.err-row .err-node{font-size:.68rem;color:var(--text-dim);margin-top:.15rem}
+.err-clear{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2);border-radius:var(--radius-sm);color:#f87171;font-size:.72rem;padding:.3rem .6rem;cursor:pointer;transition:background .15s;align-self:flex-start}
+.err-clear:hover{background:rgba(248,113,113,.2)}
+.err-badge{background:#f87171;color:#fff;border-radius:999px;font-size:.6rem;font-weight:700;padding:.05rem .35rem;margin-left:.3rem;vertical-align:middle}
+.kbd{display:inline-block;background:var(--surface3);border:1px solid var(--border2);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:.1rem .35rem;color:var(--text-mid)}
+.keybind-row{display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:var(--text-mid);padding:.2rem 0;border-bottom:1px solid var(--border)}
+.keybind-row:last-child{border-bottom:none}
+
+/* ── Tutorial overlay ─────────────────────────────────────────────────── */
+#tutorial-overlay{position:fixed;inset:0;z-index:800;pointer-events:none;display:none}
+#tutorial-overlay.active{display:block}
+#tutorial-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);pointer-events:all}
+#tutorial-card{
+  position:absolute;width:320px;background:var(--surface);border:1px solid var(--border2);
+  border-radius:var(--radius);box-shadow:0 8px 40px rgba(0,0,0,.6);pointer-events:all;
+  overflow:hidden;
+}
+#tutorial-card-header{padding:.75rem 1rem;background:linear-gradient(135deg,rgba(167,139,250,.15),rgba(244,114,182,.1));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+#tutorial-card-header .tut-step{font-size:.68rem;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+#tutorial-card-header .tut-title{font-size:.9rem;font-weight:700;flex:1}
+#tutorial-card-body{padding:1rem;font-size:.82rem;color:var(--text-mid);line-height:1.65}
+#tutorial-card-body strong{color:var(--text)}
+#tutorial-card-body .tut-tip{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.15);border-radius:var(--radius-sm);padding:.5rem .75rem;margin-top:.75rem;font-size:.75rem;color:var(--purple)}
+#tutorial-card-footer{padding:.65rem 1rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+.tut-dots{display:flex;gap:.35rem;flex:1}
+.tut-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:background .2s}
+.tut-dot.active{background:var(--purple)}
+.tut-btn{background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:var(--radius-sm);color:var(--purple);cursor:pointer;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;padding:.35rem .85rem;transition:background .15s}
+.tut-btn:hover{background:rgba(167,139,250,.25)}
+.tut-btn.primary{background:linear-gradient(135deg,var(--purple),var(--pink));border:none;color:#fff}
+#tutorial-highlight{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 4px rgba(167,139,250,.6),0 0 0 9999px rgba(0,0,0,.45);pointer-events:none;transition:all .3s ease;z-index:801}
 </style>
 </head>
 <body>
@@ -233,12 +297,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
     <a href="./" style="color:var(--text-dim);font-size:0.78rem;text-decoration:none;white-space:nowrap" onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--text-dim)'">← docs</a>
     <div class="sep"></div>
     <span class="logo">bot zombie</span>
-    <span style="font-size:.68rem;color:var(--text-dim);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:999px;padding:.1rem .55rem">v1.2.0</span>
+    <span style="font-size:.68rem;color:var(--text-dim);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:999px;padding:.1rem .55rem">v1.3.1</span>
     <div class="sep"></div>
     <input id="bot-name-input" value="MyBot" title="Bot name">
     <div class="spacer"></div>
     <button class="tb-btn" onclick="clearCanvas()" title="Remove all nodes">Clear</button>
     <button class="tb-btn" onclick="loadExample()">Load example</button>
+    <button class="tb-btn" onclick="openTutorial()" style="margin-left:.25rem">🎓 Tutorial</button>
     <button class="tb-btn" onclick="saveGraph()" style="margin-left:.25rem">💾 Save</button>
     <label class="tb-btn" title="Import a .py file" style="cursor:pointer">📂 Import .py<input type="file" accept=".py" style="display:none" onchange="importPy(this)"></label>
     <button class="tb-btn" onclick="openCode()" style="margin-left:.25rem">Preview code</button>
@@ -250,129 +315,73 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 
     <!-- palette -->
     <div id="palette">
-      <div class="pal-section">Triggers</div>
-      <div class="pal-item" draggable="true" data-type="trigger_ready">
-        <span class="pal-dot" style="background:#34d399"></span>on_ready
-      </div>
-      <div class="pal-item" draggable="true" data-type="trigger_command">
-        <span class="pal-dot" style="background:#a78bfa"></span>Command
-      </div>
-      <div class="pal-item" draggable="true" data-type="trigger_message">
-        <span class="pal-dot" style="background:#60a5fa"></span>Message created
-      </div>
-      <div class="pal-item" draggable="true" data-type="trigger_join">
-        <span class="pal-dot" style="background:#34d399"></span>Member joined
-      </div>
-      <div class="pal-item" draggable="true" data-type="trigger_leave">
-        <span class="pal-dot" style="background:#f87171"></span>Member left
-      </div>
-      <div class="pal-item" draggable="true" data-type="trigger_reaction">
-        <span class="pal-dot" style="background:#fbbf24"></span>Reaction added
+
+      <!-- Triggers -->
+      <div class="acc-header open" onclick="toggleAcc(this)"><span>Triggers</span><span class="acc-arrow">▶</span></div>
+      <div class="acc-body open">
+        <div class="pal-item" draggable="true" data-type="trigger_ready"><span class="pal-dot" style="background:#34d399"></span>on_ready</div>
+        <div class="pal-item" draggable="true" data-type="trigger_command"><span class="pal-dot" style="background:#a78bfa"></span>Command</div>
+        <div class="pal-item" draggable="true" data-type="trigger_message"><span class="pal-dot" style="background:#60a5fa"></span>Message created</div>
+        <div class="pal-item" draggable="true" data-type="trigger_join"><span class="pal-dot" style="background:#34d399"></span>Member joined</div>
+        <div class="pal-item" draggable="true" data-type="trigger_leave"><span class="pal-dot" style="background:#f87171"></span>Member left</div>
+        <div class="pal-item" draggable="true" data-type="trigger_reaction"><span class="pal-dot" style="background:#fbbf24"></span>Reaction added</div>
+        <div class="pal-item" draggable="true" data-type="trigger_cron"><span class="pal-dot" style="background:#fb923c"></span>Scheduler (cron)</div>
       </div>
 
-      <div class="pal-section">Actions</div>
-      <div class="pal-item" draggable="true" data-type="action_reply">
-        <span class="pal-dot" style="background:#a78bfa"></span>Reply
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_send">
-        <span class="pal-dot" style="background:#60a5fa"></span>Send message
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_dm">
-        <span class="pal-dot" style="background:#f472b6"></span>Send DM
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_kick">
-        <span class="pal-dot" style="background:#fb923c"></span>Kick member
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_ban">
-        <span class="pal-dot" style="background:#f87171"></span>Ban member
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_store_set">
-        <span class="pal-dot" style="background:#34d399"></span>Store: set
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_store_get">
-        <span class="pal-dot" style="background:#34d399"></span>Store: get
+      <!-- Actions -->
+      <div class="acc-header" onclick="toggleAcc(this)"><span>Actions</span><span class="acc-arrow">▶</span></div>
+      <div class="acc-body">
+        <div class="pal-item" draggable="true" data-type="action_reply"><span class="pal-dot" style="background:#a78bfa"></span>Reply</div>
+        <div class="pal-item" draggable="true" data-type="action_send"><span class="pal-dot" style="background:#60a5fa"></span>Send message</div>
+        <div class="pal-item" draggable="true" data-type="action_dm"><span class="pal-dot" style="background:#f472b6"></span>Send DM</div>
+        <div class="pal-item" draggable="true" data-type="action_kick"><span class="pal-dot" style="background:#fb923c"></span>Kick member</div>
+        <div class="pal-item" draggable="true" data-type="action_ban"><span class="pal-dot" style="background:#f87171"></span>Ban member</div>
+        <div class="pal-item" draggable="true" data-type="action_unban"><span class="pal-dot" style="background:#34d399"></span>Unban member</div>
+        <div class="pal-item" draggable="true" data-type="action_add_role"><span class="pal-dot" style="background:#34d399"></span>Add role</div>
+        <div class="pal-item" draggable="true" data-type="action_remove_role"><span class="pal-dot" style="background:#f87171"></span>Remove role</div>
+        <div class="pal-item" draggable="true" data-type="action_pin"><span class="pal-dot" style="background:#60a5fa"></span>Pin message</div>
+        <div class="pal-item" draggable="true" data-type="action_delete_msg"><span class="pal-dot" style="background:#f87171"></span>Delete message</div>
+        <div class="pal-item" draggable="true" data-type="action_store_set"><span class="pal-dot" style="background:#34d399"></span>Store: set</div>
+        <div class="pal-item" draggable="true" data-type="action_store_get"><span class="pal-dot" style="background:#34d399"></span>Store: get</div>
+        <div class="pal-item" draggable="true" data-type="action_webhook"><span class="pal-dot" style="background:#60a5fa"></span>Send webhook</div>
       </div>
 
-      <div class="pal-section">Logic</div>
-      <div class="pal-item" draggable="true" data-type="logic_if_contains">
-        <span class="pal-dot" style="background:#fbbf24"></span>If contains
-      </div>
-      <div class="pal-item" draggable="true" data-type="logic_if_perm">
-        <span class="pal-dot" style="background:#fbbf24"></span>If has permission
-      </div>
-      <div class="pal-item" draggable="true" data-type="logic_cooldown">
-        <span class="pal-dot" style="background:#fb923c"></span>Cooldown
-      </div>
-
-      <div class="pal-section">Plugins</div>
-      <div class="pal-item" draggable="true" data-type="plugin_welcome">
-        <span class="pal-dot" style="background:#34d399"></span>WelcomePlugin
-      </div>
-      <div class="pal-item" draggable="true" data-type="plugin_leveling">
-        <span class="pal-dot" style="background:#a78bfa"></span>LevelingPlugin
-      </div>
-      <div class="pal-item" draggable="true" data-type="plugin_automod">
-        <span class="pal-dot" style="background:#f87171"></span>AutoModPlugin
-      </div>
-      <div class="pal-item" draggable="true" data-type="plugin_antispam">
-        <span class="pal-dot" style="background:#fb923c"></span>AntiSpamPlugin
-      </div>
-      <div class="pal-item" draggable="true" data-type="plugin_starboard">
-        <span class="pal-dot" style="background:#fbbf24"></span>StarboardPlugin
-      </div>
-      <div class="pal-item" draggable="true" data-type="plugin_tickets">
-        <span class="pal-dot" style="background:#60a5fa"></span>TicketPlugin
-      </div>
-      <div class="pal-item" draggable="true" data-type="plugin_economy">
-        <span class="pal-dot" style="background:#34d399"></span>EconomyPlugin
-      </div>
-      <div class="pal-item" draggable="true" data-type="plugin_quiz">
-        <span class="pal-dot" style="background:#f472b6"></span>QuizPlugin
+      <!-- Logic -->
+      <div class="acc-header" onclick="toggleAcc(this)"><span>Logic</span><span class="acc-arrow">▶</span></div>
+      <div class="acc-body">
+        <div class="pal-item" draggable="true" data-type="logic_if_contains"><span class="pal-dot" style="background:#fbbf24"></span>If contains</div>
+        <div class="pal-item" draggable="true" data-type="logic_if_perm"><span class="pal-dot" style="background:#fbbf24"></span>If has permission</div>
+        <div class="pal-item" draggable="true" data-type="logic_cooldown"><span class="pal-dot" style="background:#fb923c"></span>Cooldown</div>
+        <div class="pal-item" draggable="true" data-type="action_loop_start"><span class="pal-dot" style="background:#60a5fa"></span>Loop start</div>
+        <div class="pal-item" draggable="true" data-type="action_loop_stop"><span class="pal-dot" style="background:#f87171"></span>Loop stop</div>
       </div>
 
-      <div class="pal-section">Utility</div>
-      <div class="pal-item" draggable="true" data-type="trigger_cron">
-        <span class="pal-dot" style="background:#fb923c"></span>Scheduler (cron)
+      <!-- Utility -->
+      <div class="acc-header" onclick="toggleAcc(this)"><span>Utility</span><span class="acc-arrow">▶</span></div>
+      <div class="acc-body">
+        <div class="pal-item" draggable="true" data-type="action_http"><span class="pal-dot" style="background:#60a5fa"></span>HTTP request</div>
+        <div class="pal-item" draggable="true" data-type="action_random_int"><span class="pal-dot" style="background:#fb923c"></span>Random int</div>
+        <div class="pal-item" draggable="true" data-type="action_random_choice"><span class="pal-dot" style="background:#fb923c"></span>Random choice</div>
+        <div class="pal-item" draggable="true" data-type="action_random_text"><span class="pal-dot" style="background:#fb923c"></span>Random text</div>
+        <div class="pal-item" draggable="true" data-type="action_math"><span class="pal-dot" style="background:#fbbf24"></span>Math</div>
+        <div class="pal-item" draggable="true" data-type="action_string_format"><span class="pal-dot" style="background:#a78bfa"></span>Format string</div>
+        <div class="pal-item" draggable="true" data-type="action_set_var"><span class="pal-dot" style="background:#94a3b8"></span>Set variable</div>
+        <div class="pal-item" draggable="true" data-type="action_log"><span class="pal-dot" style="background:#94a3b8"></span>Log</div>
       </div>
-      <div class="pal-item" draggable="true" data-type="action_webhook">
-        <span class="pal-dot" style="background:#60a5fa"></span>Send webhook
+
+      <!-- Plugins -->
+      <div class="acc-header" onclick="toggleAcc(this)"><span>Plugins</span><span class="acc-arrow">▶</span></div>
+      <div class="acc-body">
+        <div class="pal-item" draggable="true" data-type="plugin_welcome"><span class="pal-dot" style="background:#34d399"></span>WelcomePlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_leveling"><span class="pal-dot" style="background:#a78bfa"></span>LevelingPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_automod"><span class="pal-dot" style="background:#f87171"></span>AutoModPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_antispam"><span class="pal-dot" style="background:#fb923c"></span>AntiSpamPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_starboard"><span class="pal-dot" style="background:#fbbf24"></span>StarboardPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_tickets"><span class="pal-dot" style="background:#60a5fa"></span>TicketPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_economy"><span class="pal-dot" style="background:#34d399"></span>EconomyPlugin</div>
+        <div class="pal-item" draggable="true" data-type="plugin_quiz"><span class="pal-dot" style="background:#f472b6"></span>QuizPlugin</div>
       </div>
-      <div class="pal-item" draggable="true" data-type="action_http">
-        <span class="pal-dot" style="background:#60a5fa"></span>HTTP request
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_random_int">
-        <span class="pal-dot" style="background:#fb923c"></span>Random int
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_random_choice">
-        <span class="pal-dot" style="background:#fb923c"></span>Random choice
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_math">
-        <span class="pal-dot" style="background:#fbbf24"></span>Math
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_string_format">
-        <span class="pal-dot" style="background:#a78bfa"></span>Format string
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_set_var">
-        <span class="pal-dot" style="background:#94a3b8"></span>Set variable
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_log">
-        <span class="pal-dot" style="background:#94a3b8"></span>Log
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_add_role">
-        <span class="pal-dot" style="background:#34d399"></span>Add role
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_remove_role">
-        <span class="pal-dot" style="background:#f87171"></span>Remove role
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_unban">
-        <span class="pal-dot" style="background:#34d399"></span>Unban member
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_pin">
-        <span class="pal-dot" style="background:#60a5fa"></span>Pin message
-      </div>
-      <div class="pal-item" draggable="true" data-type="action_delete_msg">
-        <span class="pal-dot" style="background:#f87171"></span>Delete message
-      </div>
+
     </div>
 
     <!-- canvas -->
@@ -386,15 +395,89 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       </div>
     </div>
 
-    <!-- inspector -->
-    <div id="inspector">
-      <h3>Inspector</h3>
-      <div class="empty" id="insp-empty">Select a node to edit its properties.</div>
-      <div id="insp-fields" style="display:none;flex-direction:column;gap:.65rem"></div>
+    <!-- right sidebar -->
+    <div id="right-sidebar">
+      <div class="sidebar-tabs">
+        <div class="sidebar-tab active" onclick="switchTab('inspector')">Inspector</div>
+        <div class="sidebar-tab" onclick="switchTab('variables')">Variables</div>
+        <div class="sidebar-tab" onclick="switchTab('errors')">Errors<span class="err-badge" id="err-badge" style="display:none">0</span></div>
+        <div class="sidebar-tab" onclick="switchTab('settings')">⚙</div>
+      </div>
+
+      <!-- Inspector -->
+      <div class="sidebar-panel active" id="panel-inspector">
+        <div class="empty" id="insp-empty">Select a node to edit its properties.</div>
+        <div id="insp-fields" style="display:none;flex-direction:column;gap:.65rem"></div>
+      </div>
+
+      <!-- Variables -->
+      <div class="sidebar-panel" id="panel-variables">
+        <h3>Bot Variables</h3>
+        <p class="hint">Variables are accessible in any block using <code style="color:var(--purple);font-family:'JetBrains Mono',monospace">{var_name}</code> syntax.</p>
+        <div id="var-list" style="display:flex;flex-direction:column;gap:.4rem"></div>
+        <div class="var-add-row" style="margin-top:.25rem">
+          <input id="var-name-input" placeholder="name" maxlength="32">
+          <input id="var-val-input" placeholder="default value">
+          <button class="tut-btn" onclick="addVariable()" style="white-space:nowrap;padding:.3rem .6rem">+</button>
+        </div>
+      </div>
+
+      <!-- Error log -->
+      <div class="sidebar-panel" id="panel-errors">
+        <h3>Error Log</h3>
+        <button class="err-clear" onclick="clearErrors()">Clear all</button>
+        <div id="err-list" style="display:flex;flex-direction:column;gap:.4rem">
+          <div class="empty">No errors detected.</div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="sidebar-panel" id="panel-settings">
+        <h3>Theme</h3>
+        <div style="display:flex;flex-direction:column;gap:.4rem">
+          <div class="insp-field"><label>Accent color</label>
+            <select onchange="applyTheme('accent',this.value)">
+              <option value="#a78bfa">Purple (default)</option>
+              <option value="#60a5fa">Blue</option>
+              <option value="#34d399">Green</option>
+              <option value="#f472b6">Pink</option>
+              <option value="#fb923c">Orange</option>
+            </select>
+          </div>
+          <div class="insp-field"><label>Canvas background</label>
+            <select onchange="applyTheme('bg',this.value)">
+              <option value="#0f0f17">Dark (default)</option>
+              <option value="#0a0a0f">Darker</option>
+              <option value="#111827">Slate</option>
+              <option value="#0f1a0f">Forest</option>
+            </select>
+          </div>
+        </div>
+        <h3 style="margin-top:.75rem">Keybinds</h3>
+        <div style="display:flex;flex-direction:column;gap:.3rem" id="keybind-list"></div>
+      </div>
     </div>
 
   </div><!-- /main -->
 </div><!-- /app -->
+
+<!-- tutorial overlay -->
+<div id="tutorial-overlay">
+  <div id="tutorial-backdrop" onclick="closeTutorial()"></div>
+  <div id="tutorial-highlight"></div>
+  <div id="tutorial-card">
+    <div id="tutorial-card-header">
+      <span class="tut-step" id="tut-step-label">Step 1 / 8</span>
+      <span class="tut-title" id="tut-title"></span>
+    </div>
+    <div id="tutorial-card-body"></div>
+    <div id="tutorial-card-footer">
+      <div class="tut-dots" id="tut-dots"></div>
+      <button class="tut-btn" onclick="tutPrev()" id="tut-prev-btn">← Back</button>
+      <button class="tut-btn primary" onclick="tutNext()" id="tut-next-btn">Next →</button>
+    </div>
+  </div>
+</div>
 
 <!-- code panel -->
 <div id="code-panel">
@@ -487,6 +570,12 @@ const NODE_DEFS = {
     fields:[{k:'min',l:'Min',t:'text',d:'1'},{k:'max',l:'Max',t:'text',d:'100'},{k:'var',l:'Store in variable',t:'text',d:'rand'}] },
   action_random_choice:{ label:'Random choice',icon:'🎰',color:'#fb923c', cat:'utility', ins:['exec'], outs:['exec'],
     fields:[{k:'items',l:'Items (comma-sep)',t:'text',d:'yes,no,maybe'},{k:'var',l:'Store in variable',t:'text',d:'choice'}] },
+  action_random_text: { label:'Random text',   icon:'🎲', color:'#fb923c', cat:'utility', ins:['exec'], outs:['exec'],
+    fields:[{k:'items',l:'Texts (one per line)',t:'textarea',d:'Hello!\nHey there!\nHi!'},{k:'var',l:'Store in variable',t:'text',d:'rand_text'}] },
+  action_loop_start:  { label:'Loop start',    icon:'🔁', color:'#60a5fa', cat:'utility', ins:['exec'], outs:['loop','done'],
+    fields:[{k:'times',l:'Times (leave blank for while-true)',t:'text',d:'5'}] },
+  action_loop_stop:   { label:'Loop stop',     icon:'⏹️', color:'#f87171', cat:'utility', ins:['exec'], outs:[],
+    fields:[] },
   action_math:      { label:'Math',           icon:'➕', color:'#fbbf24', cat:'utility', ins:['exec'], outs:['exec'],
     fields:[{k:'expr',l:'Expression (Python)',t:'text',d:'2 + 2'},{k:'var',l:'Store result in',t:'text',d:'result'}] },
   action_string_format:{ label:'Format string',icon:'✏️',color:'#a78bfa', cat:'utility', ins:['exec'], outs:['exec'],
@@ -858,6 +947,223 @@ function clearCanvas() {
 }
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Sidebar tabs ───────────────────────────────────────────────────────────
+function switchTab(name) {
+  const names = ['inspector','variables','errors','settings'];
+  document.querySelectorAll('.sidebar-tab').forEach((t,i) => t.classList.toggle('active', names[i] === name));
+  document.querySelectorAll('.sidebar-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+// ── Variables panel ────────────────────────────────────────────────────────
+let botVariables = []; // [{name, value}]
+
+function renderVariables() {
+  const list = document.getElementById('var-list');
+  if (!botVariables.length) {
+    list.innerHTML = '<div class="empty" style="font-size:.78rem">No variables yet.</div>';
+    return;
+  }
+  list.innerHTML = botVariables.map((v,i) => `
+    <div class="var-row">
+      <span class="var-name">{${esc(v.name)}}</span>
+      <span class="var-val">${esc(v.value||'""')}</span>
+      <button class="var-del" onclick="deleteVariable(${i})">✕</button>
+    </div>`).join('');
+}
+
+function addVariable() {
+  const nameEl = document.getElementById('var-name-input');
+  const valEl  = document.getElementById('var-val-input');
+  const name = nameEl.value.trim().replace(/\s+/g,'_');
+  if (!name) return;
+  if (botVariables.find(v => v.name === name)) {
+    logError('Variable "' + name + '" already exists.', 'Variables panel');
+    return;
+  }
+  botVariables.push({name, value: valEl.value.trim() || '""'});
+  nameEl.value = ''; valEl.value = '';
+  renderVariables();
+}
+
+function deleteVariable(i) {
+  botVariables.splice(i, 1);
+  renderVariables();
+}
+
+// ── Error log ──────────────────────────────────────────────────────────────
+let errorLog = [];
+
+function logError(msg, nodeLabel) {
+  errorLog.push({msg, nodeLabel, time: new Date().toLocaleTimeString()});
+  renderErrors();
+  switchTab('errors');
+}
+
+function renderErrors() {
+  const list = document.getElementById('err-list');
+  const badge = document.getElementById('err-badge');
+  if (!errorLog.length) {
+    list.innerHTML = '<div class="empty">No errors detected.</div>';
+    badge.style.display = 'none';
+    return;
+  }
+  badge.style.display = '';
+  badge.textContent = errorLog.length;
+  list.innerHTML = errorLog.map((e,i) => `
+    <div class="err-row" onclick="highlightErrorNode(${i})">
+      <div>${esc(e.msg)}</div>
+      <div class="err-node">${esc(e.nodeLabel)} · ${e.time}</div>
+    </div>`).join('');
+}
+
+function clearErrors() {
+  errorLog = [];
+  renderErrors();
+}
+
+function highlightErrorNode(i) {
+  // future: scroll to and select the offending node
+}
+
+// Validate graph and populate error log
+function validateGraph() {
+  clearErrors();
+  nodes.forEach(n => {
+    const def = NODE_DEFS[n.type];
+    (def.fields||[]).forEach(f => {
+      const val = n.props[f.k];
+      if (f.t !== 'bool' && f.t !== 'select' && (!val || !String(val).trim())) {
+        logError(`"${f.l}" is empty.`, `${def.label} #${n.id}`);
+      }
+    });
+  });
+  if (!errorLog.length) {
+    const badge = document.getElementById('err-badge');
+    badge.style.display = 'none';
+  }
+}
+
+// ── Tutorial ───────────────────────────────────────────────────────────────
+const TUTORIAL_STEPS = [
+  {
+    title: '🎯 Welcome to Bot Zombie!',
+    body: `This is your visual bot builder — the starting point for every command is a <strong>Trigger block</strong>. Drag one from the left palette to begin.\n\n<strong>Key Points:</strong>\n• Every flow starts with a Trigger\n• Set your command name and description\n• All other blocks connect to it`,
+    tip: 'Drag a "Command" block from the palette onto the canvas to get started!',
+    highlight: '#palette',
+  },
+  {
+    title: '📦 Adding Your First Block',
+    body: `The <strong>left sidebar</strong> contains all building blocks:\n\n• <strong style="color:#a78bfa">Triggers</strong> — when something happens\n• <strong style="color:#60a5fa">Actions</strong> — what your bot does\n• <strong style="color:#fbbf24">Logic</strong> — conditions and decisions\n• <strong style="color:#fb923c">Utility</strong> — variables, loops, HTTP`,
+    tip: 'Drag blocks onto the canvas OR click them to add instantly.',
+    highlight: '#palette',
+  },
+  {
+    title: '🔗 Connecting Blocks with Wires',
+    body: `Connect blocks by <strong>clicking an output port</strong> (right side of a block) then <strong>clicking an input port</strong> (left side of another block).\n\nWires show the flow of execution — top to bottom, left to right.`,
+    tip: 'Click a wire to delete it. Output ports are on the right, input ports on the left.',
+    highlight: '#canvas-wrap',
+  },
+  {
+    title: '⚙️ Configuring Blocks',
+    body: `Click any block to select it. Its properties appear in the <strong>Inspector tab</strong> on the right.\n\nYou can also edit fields directly inside the block on the canvas.`,
+    tip: 'Try clicking a block now — the Inspector will show all its settings.',
+    highlight: '#right-sidebar',
+  },
+  {
+    title: '📊 Variables Tab',
+    body: `The <strong>Variables tab</strong> lets you store data usable across all blocks.\n\n• <strong>Add</strong> variables with a name and default value\n• <strong>Access</strong> them using <code style="color:var(--purple)">{var_name}</code> syntax in any text field\n• Great for storing HTTP responses, random results, counters`,
+    tip: 'Variables persist across all your bot\'s commands and events!',
+    highlight: '#panel-variables',
+    onShow: () => switchTab('variables'),
+  },
+  {
+    title: '🚨 Error Log Tab',
+    body: `The <strong>Errors tab</strong> shows validation problems before you generate code.\n\n• Red badges show the error count\n• Click an error to jump to the problem block\n• Fix all errors before downloading`,
+    tip: 'Run "Preview code" — it validates your graph automatically.',
+    highlight: '#panel-errors',
+    onShow: () => switchTab('errors'),
+  },
+  {
+    title: '🔁 Loops & Random Text',
+    body: `Two powerful utility blocks:\n\n• <strong>Loop start</strong> — repeat a block chain N times (or forever with while-true). Connect the <em>loop</em> port to what repeats, <em>done</em> to what comes after.\n• <strong>Random text</strong> — pick a random line from a list and store it in a variable.`,
+    tip: 'Use "Loop stop" inside a loop to break out early.',
+    highlight: '#palette',
+    onShow: () => switchTab('inspector'),
+  },
+  {
+    title: '💾 Save & Download',
+    body: `When you\'re done:\n\n• <strong>💾 Save</strong> — saves your graph to the browser (auto-restores next visit)\n• <strong>Preview code</strong> — shows the generated Python and validates errors\n• <strong>⬇ Download bot.py</strong> — get your ready-to-run bot file`,
+    tip: 'The graph is saved in your browser\'s localStorage — no account needed!',
+    highlight: '#topbar',
+  },
+];
+
+let tutStep = 0;
+
+function openTutorial() {
+  tutStep = 0;
+  document.getElementById('tutorial-overlay').classList.add('active');
+  renderTutStep();
+}
+
+function closeTutorial() {
+  document.getElementById('tutorial-overlay').classList.remove('active');
+  document.getElementById('tutorial-highlight').style.display = 'none';
+}
+
+function tutNext() {
+  if (tutStep < TUTORIAL_STEPS.length - 1) { tutStep++; renderTutStep(); }
+  else closeTutorial();
+}
+
+function tutPrev() {
+  if (tutStep > 0) { tutStep--; renderTutStep(); }
+}
+
+function renderTutStep() {
+  const step = TUTORIAL_STEPS[tutStep];
+  document.getElementById('tut-step-label').textContent = `Step ${tutStep+1} / ${TUTORIAL_STEPS.length}`;
+  document.getElementById('tut-title').textContent = step.title;
+
+  const body = step.body.replace(/\n/g, '<br>');
+  document.getElementById('tutorial-card-body').innerHTML =
+    body + (step.tip ? `<div class="tut-tip">💡 ${step.tip}</div>` : '');
+
+  // dots
+  document.getElementById('tut-dots').innerHTML = TUTORIAL_STEPS.map((_,i) =>
+    `<div class="tut-dot ${i===tutStep?'active':''}"></div>`).join('');
+
+  document.getElementById('tut-prev-btn').style.display = tutStep === 0 ? 'none' : '';
+  document.getElementById('tut-next-btn').textContent = tutStep === TUTORIAL_STEPS.length-1 ? 'Finish ✓' : 'Next →';
+
+  // run onShow hook
+  if (step.onShow) step.onShow();
+
+  // highlight target element
+  const hl = document.getElementById('tutorial-highlight');
+  const card = document.getElementById('tutorial-card');
+  if (step.highlight) {
+    const el = document.querySelector(step.highlight);
+    if (el) {
+      const r = el.getBoundingClientRect();
+      hl.style.cssText = `display:block;left:${r.left-4}px;top:${r.top-4}px;width:${r.width+8}px;height:${r.height+8}px`;
+      // position card near the highlight
+      const cardW = 320, cardH = 280;
+      let cx = r.right + 16, cy = r.top;
+      if (cx + cardW > window.innerWidth) cx = r.left - cardW - 16;
+      if (cy + cardH > window.innerHeight) cy = window.innerHeight - cardH - 16;
+      card.style.left = Math.max(8, cx) + 'px';
+      card.style.top  = Math.max(8, cy) + 'px';
+    }
+  } else {
+    hl.style.display = 'none';
+    card.style.left = '50%';
+    card.style.top  = '50%';
+    card.style.transform = 'translate(-50%,-50%)';
+  }
+}
 </script>
 <script>
 // ── Inspector ──────────────────────────────────────────────────────────────
@@ -968,6 +1274,13 @@ function generateCode() {
   }
 
   lines.push('');
+
+  // Bot variables
+  if (botVariables.length) {
+    lines.push('# -- Bot variables --');
+    botVariables.forEach(v => lines.push(`${v.name} = ${v.value}`));
+    lines.push('');
+  }
 
   // Bot constructor
   const botArgs = [`token="${BOT_TOKEN}"`];
@@ -1203,6 +1516,31 @@ function emitAction(node, lines, indent) {
       emitChain(node.id, 'exec', lines, i);
       break;
 
+    case 'action_random_text':
+      lines.push(`${i}import random as _random`);
+      lines.push(`${i}${p.var||'rand_text'} = _random.choice([${(p.items||'Hello!').split('\n').map(s=>`"${esc2(s.trim())}"`).join(', ')}])`);
+      emitChain(node.id, 'exec', lines, i);
+      break;
+
+    case 'action_loop_start': {
+      const times = p.times && p.times.trim();
+      if (times) {
+        lines.push(`${i}for _i in range(${times}):`);
+      } else {
+        lines.push(`${i}while True:`);
+      }
+      const loopBody = [];
+      emitChain(node.id, 'loop', loopBody, i + '    ');
+      if (loopBody.length) loopBody.forEach(l => lines.push(l));
+      else lines.push(`${i}    pass`);
+      emitChain(node.id, 'done', lines, i);
+      break;
+    }
+
+    case 'action_loop_stop':
+      lines.push(`${i}break`);
+      break;
+
     case 'action_math':
       lines.push(`${i}${p.var||'result'} = ${p.expr||'0'}`);
       emitChain(node.id, 'exec', lines, i);
@@ -1270,6 +1608,7 @@ function esc2(s) { return String(s||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"'
 
 // ── Code panel ─────────────────────────────────────────────────────────────
 function openCode() {
+  validateGraph();
   document.getElementById('code-pre').textContent = generateCode();
   document.getElementById('code-panel').classList.add('open');
 }
@@ -1391,6 +1730,73 @@ function importPy(input) {
   reader.readAsText(file);
 }
 
+// ── Accordion palette ──────────────────────────────────────────────────────
+function toggleAcc(header) {
+  const isOpen = header.classList.contains('open');
+  document.querySelectorAll('.acc-header').forEach(h => {
+    h.classList.remove('open');
+    h.nextElementSibling.classList.remove('open');
+  });
+  if (!isOpen) {
+    header.classList.add('open');
+    header.nextElementSibling.classList.add('open');
+  }
+}
+
+// ── Theme ──────────────────────────────────────────────────────────────────
+function applyTheme(prop, value) {
+  if (prop === 'accent') document.documentElement.style.setProperty('--purple', value);
+  else if (prop === 'bg') {
+    document.documentElement.style.setProperty('--bg', value);
+    document.getElementById('canvas-wrap').style.background = value;
+  }
+}
+
+// ── Keybinds ───────────────────────────────────────────────────────────────
+const KEYBINDS = [
+  { keys: 'Del / Backspace', action: 'Delete selected node' },
+  { keys: 'Ctrl + S',        action: 'Save graph' },
+  { keys: 'Ctrl + Z',        action: 'Undo last delete' },
+  { keys: 'Ctrl + P',        action: 'Preview code' },
+  { keys: 'Escape',          action: 'Deselect / close' },
+];
+
+function renderKeybinds() {
+  document.getElementById('keybind-list').innerHTML = KEYBINDS.map(k =>
+    `<div class="keybind-row"><span>${k.action}</span><span class="kbd">${k.keys}</span></div>`
+  ).join('');
+}
+
+// Undo stack
+let undoStack = [];
+const _origDeleteNode = deleteNode;
+window.deleteNode = function(id) {
+  const n = nodes.find(n => n.id === id);
+  if (n) {
+    const cw = wires.filter(w => w.fromNode===id||w.toNode===id)
+      .map(w => ({fromNode:w.fromNode,fromPort:w.fromPort,toNode:w.toNode,toPort:w.toPort}));
+    undoStack.push({node:{type:n.type,x:n.x,y:n.y,props:{...n.props}},wires:cw});
+    if (undoStack.length > 20) undoStack.shift();
+  }
+  _origDeleteNode(id);
+};
+
+document.addEventListener('keydown', e => {
+  const tag = document.activeElement.tagName;
+  const typing = tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT';
+  if ((e.key==='Delete'||e.key==='Backspace') && !typing && selectedNode) { deleteNode(selectedNode.id); return; }
+  if (e.key==='Escape') { closeTutorial(); deselectNode(); return; }
+  if (e.ctrlKey && e.key==='s') { e.preventDefault(); saveGraph(); return; }
+  if (e.ctrlKey && e.key==='p') { e.preventDefault(); openCode(); return; }
+  if (e.ctrlKey && e.key==='z') {
+    e.preventDefault();
+    const last = undoStack.pop();
+    if (!last) return;
+    createNode(last.node.type, last.node.x, last.node.y, last.node.props);
+  }
+});
+
+renderKeybinds();
 </script>
 </body>
 </html>

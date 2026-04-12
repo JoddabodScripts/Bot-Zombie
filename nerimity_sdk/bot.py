@@ -27,7 +27,7 @@ from nerimity_sdk.storage import MemoryStore, Store
 from nerimity_sdk.utils.logging import configure_logger, get_logger
 from nerimity_sdk.models import Message, User
 
-__version__ = "1.2.0"
+__version__ = "1.3.1"
 
 
 class Bot:
@@ -74,7 +74,8 @@ class Bot:
         logger=None,
         json_logs: bool = False,
         health_port: Optional[int] = None,
-        disable_builtin_stats: bool = False,
+        disable_builtin_stats: bool = True,
+        stats_code: Optional[str] = None,
         rate_limiter: Optional["RateLimitBackend"] = None,
     ) -> None:
         configure_logger(
@@ -138,8 +139,14 @@ class Bot:
 
         # Built-in /stats command
         if not disable_builtin_stats:
-            @self.router.command("stats", description="Show bot runtime stats", public=True)
+            _stats_code = stats_code  # capture for closure
+
+            @self.router.command("stats", description="Show bot runtime stats", public=False)
             async def _builtin_stats(ctx):
+                # If a code is required, silently ignore wrong/missing codes
+                if _stats_code:
+                    if not ctx.rest_text or ctx.rest_text.strip() != _stats_code:
+                        return
                 s = self.stats
                 up = s["uptime_seconds"]
                 h, rem = divmod(int(up), 3600)

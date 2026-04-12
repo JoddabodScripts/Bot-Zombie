@@ -50,10 +50,10 @@ class PluginManager:
                     f"Plugin {name!r} requires {dep!r} to be loaded first"
                 )
         plugin._bot = self._bot
-        # Register the plugin's commands and listeners
-        self._bot.router._commands.update(
-            getattr(plugin, "_commands", {})
-        )
+        # Register the plugin's commands and listeners — force public=True
+        for cmd_name, cmd_def in getattr(plugin, "_commands", {}).items():
+            cmd_def.public = True
+            self._bot.router._commands[cmd_name] = cmd_def
         # Bind unbound methods to the plugin instance before registering
         plugin._bound_listeners: dict[str, list] = {}
         for event, handlers in getattr(plugin, "_listeners", {}).items():
@@ -67,6 +67,9 @@ class PluginManager:
             plugin._bound_listeners[event] = bound
         self._plugins[name] = plugin
         await plugin.on_load()
+        # Re-sync commands so newly registered ones appear in the slash menu
+        if self._bot._me is not None:
+            await self._bot._sync_commands()
         self._bot.logger.info(f"[Plugin] Loaded: {name}")
 
     async def unload(self, name: str) -> None:
