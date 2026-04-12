@@ -456,6 +456,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
         <div class="pal-item" draggable="true" data-type="action_math"><span class="pal-dot" style="background:#fbbf24"></span>Math</div>
         <div class="pal-item" draggable="true" data-type="action_string_format"><span class="pal-dot" style="background:#a78bfa"></span>Format string</div>
         <div class="pal-item" draggable="true" data-type="action_set_var"><span class="pal-dot" style="background:#94a3b8"></span>Set variable</div>
+        <div class="pal-item" draggable="true" data-type="action_get_rest"><span class="pal-dot" style="background:#a78bfa"></span>Get rest text</div>
+        <div class="pal-item" draggable="true" data-type="action_get_arg"><span class="pal-dot" style="background:#a78bfa"></span>Get argument</div>
         <div class="pal-item" draggable="true" data-type="action_log"><span class="pal-dot" style="background:#94a3b8"></span>Log</div>
       </div>
 
@@ -711,6 +713,10 @@ const NODE_DEFS = {
     fields:[{k:'times',l:'Times (leave blank for while-true)',t:'text',d:'5'}] },
   action_loop_stop:   { label:'Loop stop',     icon:'⏹️', color:'#f87171', cat:'utility', ins:['exec'], outs:[],
     fields:[] },
+  action_get_rest:    { label:'Get rest text',  icon:'📝', color:'#a78bfa', cat:'utility', ins:['exec'], outs:['exec'],
+    fields:[{k:'var',l:'Store in variable',t:'text',d:'input'}] },
+  action_get_arg:     { label:'Get argument',   icon:'📝', color:'#a78bfa', cat:'utility', ins:['exec'], outs:['exec'],
+    fields:[{k:'index',l:'Argument index (0 = first)',t:'text',d:'0'},{k:'var',l:'Store in variable',t:'text',d:'arg'}] },
   action_math:      { label:'Math',           icon:'➕', color:'#fbbf24', cat:'utility', ins:['exec'], outs:['exec'],
     fields:[{k:'expr',l:'Expression (Python)',t:'text',d:'2 + 2'},{k:'var',l:'Store result in',t:'text',d:'result'}] },
   action_string_format:{ label:'Format string',icon:'✏️',color:'#a78bfa', cat:'utility', ins:['exec'], outs:['exec'],
@@ -1811,6 +1817,16 @@ function emitAction(node, lines, indent) {
       emitChain(node.id, 'exec', lines, i);
       break;
 
+    case 'action_get_rest':
+      lines.push(`${i}${p.var||'input'} = ctx.rest_text or ""`);
+      emitChain(node.id, 'exec', lines, i);
+      break;
+
+    case 'action_get_arg':
+      lines.push(`${i}${p.var||'arg'} = ctx.args[${p.index||0}] if ctx.args and len(ctx.args) > ${p.index||0} else ""`);
+      emitChain(node.id, 'exec', lines, i);
+      break;
+
     case 'action_log':
       lines.push(`${i}print("[bot]", "${esc2(p.text||'')}")`);
       emitChain(node.id, 'exec', lines, i);
@@ -2488,6 +2504,16 @@ function previewExecNode(node, ctx, depth) {
       previewVars[p.var||'var'] = previewInterpolate(p.value||'', ctx);
       previewWalkChain(node.id, 'exec', ctx, depth+1);
       break;
+    case 'action_get_rest':
+      previewVars[p.var||'input'] = ctx.rest_text || '';
+      previewWalkChain(node.id, 'exec', ctx, depth+1);
+      break;
+    case 'action_get_arg': {
+      const _args = (ctx.rest_text||'').split(' ').filter(Boolean);
+      previewVars[p.var||'arg'] = _args[+(p.index||0)] || '';
+      previewWalkChain(node.id, 'exec', ctx, depth+1);
+      break;
+    }
     case 'action_random_int': {
       const val = Math.floor(Math.random() * ((+p.max||100) - (+p.min||1) + 1)) + (+p.min||1);
       previewVars[p.var||'rand'] = String(val);
