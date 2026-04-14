@@ -365,17 +365,28 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 </head>
 <body>
 
-<!-- ── Token screen ─────────────────────────────────────────────────── -->
+<!-- ── Auth screen ──────────────────────────────────────────────────── -->
 <div id="token-screen">
   <a href="./" style="position:absolute;top:1.25rem;left:1.5rem;color:var(--text-dim);font-size:0.82rem;text-decoration:none" onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--text-dim)'">← back to docs</a>
   <h1>Bot Zombie</h1>
-  <p>Enter your Nerimity bot token to start building. Your token never leaves your browser.</p>
+  <p>Build and host Nerimity bots — no coding needed.</p>
   <div class="token-box">
-    <label for="token-input">Bot token</label>
-    <input id="token-input" type="password" placeholder="paste your token here…" autocomplete="off">
-    <button class="btn-start" onclick="startBuilder()">Open Builder →</button>
+    <div style="display:flex;gap:.5rem;margin-bottom:.25rem">
+      <button id="tab-login" onclick="setAuthTab('login')" style="flex:1;background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.4);border-radius:var(--radius-sm);color:var(--purple);cursor:pointer;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;padding:.4rem">Login</button>
+      <button id="tab-register" onclick="setAuthTab('register')" style="flex:1;background:transparent;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text-mid);cursor:pointer;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;padding:.4rem">Register</button>
+    </div>
+    <label>Username</label>
+    <input id="auth-user" type="text" placeholder="username" autocomplete="username">
+    <label>Password</label>
+    <input id="auth-pass" type="password" placeholder="password" autocomplete="current-password">
+    <div id="auth-token-row" style="display:none">
+      <label>Bot Token <span style="color:var(--text-dim);font-weight:400">(saved to your account)</span></label>
+      <input id="auth-token" type="password" placeholder="paste your Nerimity bot token">
+    </div>
+    <div id="auth-error" style="color:var(--red);font-size:.78rem;display:none"></div>
+    <button class="btn-start" onclick="doAuth()">Open Builder →</button>
   </div>
-  <span class="hint">Don't have a token? <a href="https://nerimity.com" target="_blank" style="color:var(--purple)">Create a bot on Nerimity</a></span>
+  <span class="hint">Don't have a bot token? <a href="https://nerimity.com" target="_blank" style="color:var(--purple)">Create one on Nerimity</a></span>
 </div>
 
 <!-- ── App ──────────────────────────────────────────────────────────── -->
@@ -704,9 +715,9 @@ const NODE_DEFS = {
   action_dm:        { label:'Send DM',        icon:'💌', color:'#f472b6', cat:'action',  ins:['exec'], outs:['exec'],
     fields:[{k:'text',l:'Message text',t:'textarea',d:'Hey there!'}] },
   action_kick:      { label:'Kick member',    icon:'🦵', color:'#fb923c', cat:'action',  ins:['exec'], outs:['exec'],
-    fields:[{k:'reason',l:'Reason',t:'text',d:'Rule violation'}] },
+    fields:[{k:'target',l:'Target (mention, user ID, or "author")',t:'text',d:'author'},{k:'reason',l:'Reason',t:'text',d:'Rule violation'}] },
   action_ban:       { label:'Ban member',     icon:'🔨', color:'#f87171', cat:'action',  ins:['exec'], outs:['exec'],
-    fields:[{k:'reason',l:'Reason',t:'text',d:'Rule violation'}] },
+    fields:[{k:'target',l:'Target (mention, user ID, or "author")',t:'text',d:'author'},{k:'reason',l:'Reason',t:'text',d:'Rule violation'}] },
   action_store_set: { label:'Store: set',     icon:'💾', color:'#34d399', cat:'action',  ins:['exec'], outs:['exec'],
     fields:[{k:'key',l:'Key',t:'text',d:'my_key'},{k:'value',l:'Value',t:'text',d:'my_value'}] },
   action_store_get: { label:'Store: get',     icon:'📂', color:'#34d399', cat:'action',  ins:['exec'], outs:['exec'],
@@ -866,31 +877,87 @@ const NODE_DEFS = {
     fields:[{k:'rules',l:'Rules (keyword:reply, one per line)',t:'textarea',d:'hello:Hi there!\nthanks:You\'re welcome!'}] },
 };
 
-// ── Token screen ───────────────────────────────────────────────────────────
-function startBuilder() {
-  const t = document.getElementById('token-input').value.trim();
-  if (!t) { alert('Please enter your bot token.'); return; }
-  BOT_TOKEN = t;
+// ── Auth ───────────────────────────────────────────────────────────────────
+let _authTab = 'login';
+let _session = localStorage.getItem('bz_session') || '';
+let _authUsername = localStorage.getItem('bz_username') || '';
+
+function setAuthTab(tab) {
+  _authTab = tab;
+  document.getElementById('tab-login').style.background = tab==='login' ? 'rgba(167,139,250,.2)' : 'transparent';
+  document.getElementById('tab-login').style.color = tab==='login' ? 'var(--purple)' : 'var(--text-mid)';
+  document.getElementById('tab-register').style.background = tab==='register' ? 'rgba(167,139,250,.2)' : 'transparent';
+  document.getElementById('tab-register').style.color = tab==='register' ? 'var(--purple)' : 'var(--text-mid)';
+  document.getElementById('auth-token-row').style.display = tab==='register' ? 'flex' : 'none';
+  document.getElementById('auth-token-row').style.flexDirection = 'column';
+  document.getElementById('auth-token-row').style.gap = '.2rem';
+}
+
+async function doAuth() {
+  const u = document.getElementById('auth-user').value.trim();
+  const p = document.getElementById('auth-pass').value;
+  const errEl = document.getElementById('auth-error');
+  errEl.style.display = 'none';
+  if (!u || !p) { errEl.textContent = 'Fill in all fields.'; errEl.style.display='block'; return; }
+  try {
+    const endpoint = _authTab === 'login' ? '/auth/login' : '/auth/register';
+    const body = _authTab === 'register'
+      ? {username: u, password: p}
+      : {username: u, password: p};
+    const res = await fetch(RUNNER_URL + endpoint, {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Auth failed');
+    _session = data.session;
+    _authUsername = data.username;
+    BOT_TOKEN = data.bot_token || '';
+    localStorage.setItem('bz_session', _session);
+    localStorage.setItem('bz_username', _authUsername);
+    // on register, save token if provided
+    if (_authTab === 'register') {
+      const tok = document.getElementById('auth-token').value.trim();
+      if (tok) BOT_TOKEN = tok;
+    }
+    _enterBuilder();
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+async function _tryAutoLogin() {
+  if (!_session) return false;
+  try {
+    const res = await fetch(RUNNER_URL + '/status', {headers:{'Authorization':'Bearer '+_session}});
+    if (res.status === 401) { localStorage.removeItem('bz_session'); return false; }
+    return true;
+  } catch(e) { return false; }
+}
+
+function _enterBuilder() {
   document.getElementById('token-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   initCanvas();
   loadGraph();
-  // auto-deploy on start
   deployBotSilent();
-  // keepalive ping every 20s while page is open
   setInterval(() => fetch(RUNNER_URL + '/health').catch(()=>{}), 20 * 1000);
 }
 
-async function deployBotSilent() {
-  if (!BOT_TOKEN) return;
-  try {
-    await fetch(RUNNER_URL + '/deploy', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({token: BOT_TOKEN, code: generateCode()})
-    });
-  } catch(e) {}
-}
+// Try auto-login on page load
+window.addEventListener('DOMContentLoaded', async () => {
+  if (_session && await _tryAutoLogin()) {
+    // fetch saved bot token
+    try {
+      const res = await fetch(RUNNER_URL + '/status', {headers:{'Authorization':'Bearer '+_session}});
+      const data = await res.json();
+      BOT_TOKEN = data.bot_token || '';
+    } catch(e) {}
+    _enterBuilder();
+  }
+});
+
+function startBuilder() { doAuth(); } // legacy compat
 
 // ── Canvas init ────────────────────────────────────────────────────────────
 function initCanvas() {
@@ -2143,31 +2210,40 @@ function openDeploy() {
 function closeDeploy() {
   document.getElementById('deploy-panel').classList.remove('open');
 }
+async function deployBotSilent() {
+  if (!_session) return;
+  try {
+    await fetch(RUNNER_URL + '/deploy', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session},
+      body: JSON.stringify({code: generateCode(), bot_token: BOT_TOKEN || undefined})
+    });
+  } catch(e) {}
+}
 async function deployBot() {
-  if (!BOT_TOKEN) { setDeployStatus('err', 'No token — go back to the start screen.'); return; }
-  const code = generateCode();
+  if (!_session) { setDeployStatus('err', 'Not logged in.'); return; }
   setDeployStatus('loading', 'Deploying…');
   try {
     const res = await fetch(RUNNER_URL + '/deploy', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({token: BOT_TOKEN, code})
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session},
+      body: JSON.stringify({code: generateCode(), bot_token: BOT_TOKEN || undefined})
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || 'Deploy failed');
-    setDeployStatus('ok', `✅ Bot is running! (${data.token_hint})`);
+    setDeployStatus('ok', '✅ Bot is running!');
   } catch(e) {
     setDeployStatus('err', '❌ ' + e.message);
   }
 }
 async function stopBot() {
-  if (!BOT_TOKEN) return;
+  if (!_session) return;
   setDeployStatus('loading', 'Stopping…');
   try {
     await fetch(RUNNER_URL + '/stop', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({token: BOT_TOKEN, code: ''})
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session},
+      body: JSON.stringify({code: ''})
     });
     setDeployStatus('ok', '⏹ Bot stopped.');
   } catch(e) {

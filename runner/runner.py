@@ -1,107 +1,190 @@
-"""
-Hosted bot runner — receives generated bot code from the builder and runs it.
-Deploy this to Fly.io (free tier) so anyone can host their bot without a server.
-"""
 import asyncio
+import hashlib
+import json
 import os
+import secrets
 import subprocess
 import sys
 import tempfile
-from typing import Optional
-from fastapi import FastAPI, HTTPException
+from pathlib import Path
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-# token → running subprocess
-_procs: dict[str, subprocess.Popen] = {}
+DATA = Path("/data")
+DATA.mkdir(parents=True, exist_ok=True)
+BOTS_FILE  = DATA / "bots.json"
+USERS_FILE = DATA / "users.json"
+
+_bots:    dict[str, dict] = {}   # token → {proc, code}
+_users:   dict[str, dict] = {}   # username → {pw_hash, bot_token}
+_sessions: dict[str, str] = {}   # session_token → username
 
 
-class DeployRequest(BaseModel):
-    token: str
-    code: str
+# ── Persistence ────────────────────────────────────────────────────────────
+
+def _load():
+    if BOTS_FILE.exists():
+        try:
+            for token, code in json.loads(BOTS_FILE.read_text()).items():
+                _bots[token] = {"proc": _launch(token, code), "code": code}
+        except Exception:
+            pass
+    if USERS_FILE.exists():
+        try:
+            _users.update(json.loads(USERS_FILE.read_text()))
+        except Exception:
+            pass
+
+def _save_bots():
+    BOTS_FILE.write_text(json.dumps({t: b["code"] for t, b in _bots.items()}))
+
+def _save_users():
+    USERS_FILE.write_text(json.dumps(_users))
+
+def _hash(pw: str) -> str:
+    return hashlib.sha256(pw.encode()).hexdigest()
 
 
-class StatusResponse(BaseModel):
-    running: bool
-    token_hint: str  # first 8 chars only, never expose full token
+# ── Bot process management ─────────────────────────────────────────────────
 
-
-@app.get("/health")
-async def health():
-    return {"ok": True}
-
-
-@app.post("/deploy")
-async def deploy(req: DeployRequest):
-    token = req.token.strip()
-    if not token:
-        raise HTTPException(400, "token is required")
-
-    # Stop existing process for this token if any
-    _stop(token)
-
-    # Write code to a temp file, injecting the token as env var
-    tmp = tempfile.NamedTemporaryFile(suffix=".py", delete=False, mode="w")
-    # Replace any hardcoded token references with the env var
-    code = req.code.replace('os.environ["NERIMITY_TOKEN"]', f'"{token}"')
+def _launch(token: str, code: str) -> subprocess.Popen:
+    code = code.replace('os.environ["NERIMITY_TOKEN"]', f'"{token}"')
     code = code.replace("os.environ['NERIMITY_TOKEN']", f'"{token}"')
+    tmp = tempfile.NamedTemporaryFile(suffix=".py", delete=False, mode="w")
     tmp.write(code)
     tmp.flush()
     tmp.close()
-
-    proc = subprocess.Popen(
+    return subprocess.Popen(
         [sys.executable, tmp.name],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
         env={**os.environ, "NERIMITY_TOKEN": token, "NERIMITY_CHILD": "1"},
     )
-    _procs[token] = proc
-    return {"status": "started", "token_hint": token[:8] + "..."}
 
+async def _watchdog():
+    while True:
+        await asyncio.sleep(20)
+        for token, bot in list(_bots.items()):
+            if bot["proc"].poll() is not None:
+                bot["proc"] = _launch(token, bot["code"])
+
+
+# ── Auth helpers ───────────────────────────────────────────────────────────
+
+def _require_session(authorization: Optional[str]) -> str:
+    """Returns username or raises 401."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "Not authenticated")
+    token = authorization.removeprefix("Bearer ").strip()
+    username = _sessions.get(token)
+    if not username:
+        raise HTTPException(401, "Invalid or expired session")
+    return username
+
+
+# ── Startup ────────────────────────────────────────────────────────────────
+
+@app.on_event("startup")
+async def startup():
+    _load()
+    asyncio.create_task(_watchdog())
+
+
+# ── Auth endpoints ─────────────────────────────────────────────────────────
+
+class AuthRequest(BaseModel):
+    username: str
+    password: str
+
+@app.post("/auth/register")
+async def register(req: AuthRequest):
+    u = req.username.strip().lower()
+    if not u or len(u) < 3:
+        raise HTTPException(400, "Username must be at least 3 characters")
+    if u in _users:
+        raise HTTPException(409, "Username already taken")
+    _users[u] = {"pw_hash": _hash(req.password), "bot_token": ""}
+    _save_users()
+    session = secrets.token_hex(32)
+    _sessions[session] = u
+    return {"session": session, "username": u}
+
+@app.post("/auth/login")
+async def login(req: AuthRequest):
+    u = req.username.strip().lower()
+    user = _users.get(u)
+    if not user or user["pw_hash"] != _hash(req.password):
+        raise HTTPException(401, "Invalid username or password")
+    session = secrets.token_hex(32)
+    _sessions[session] = u
+    return {"session": session, "username": u, "bot_token": user.get("bot_token", "")}
+
+@app.post("/auth/logout")
+async def logout(authorization: Optional[str] = Header(None)):
+    username = _require_session(authorization)
+    token = authorization.removeprefix("Bearer ").strip()
+    _sessions.pop(token, None)
+    return {"status": "logged out"}
+
+
+# ── Bot endpoints (require auth) ───────────────────────────────────────────
+
+class DeployRequest(BaseModel):
+    code: str
+    bot_token: Optional[str] = None  # if provided, saves it to account
+
+@app.post("/deploy")
+async def deploy(req: DeployRequest, authorization: Optional[str] = Header(None)):
+    username = _require_session(authorization)
+    user = _users[username]
+
+    # use provided token or saved one
+    token = (req.bot_token or user.get("bot_token", "")).strip()
+    if not token:
+        raise HTTPException(400, "No bot token — save one to your account first")
+
+    # save token to account if new
+    if req.bot_token and req.bot_token != user.get("bot_token"):
+        user["bot_token"] = req.bot_token.strip()
+        _save_users()
+
+    if token in _bots:
+        p = _bots[token]["proc"]
+        if p.poll() is None:
+            p.terminate()
+    _bots[token] = {"proc": _launch(token, req.code), "code": req.code}
+    _save_bots()
+    return {"status": "started"}
 
 @app.post("/stop")
-async def stop(req: DeployRequest):
-    token = req.token.strip()
-    _stop(token)
+async def stop(authorization: Optional[str] = Header(None)):
+    username = _require_session(authorization)
+    token = _users[username].get("bot_token", "")
+    bot = _bots.pop(token, None)
+    if bot and bot["proc"].poll() is None:
+        bot["proc"].terminate()
+    _save_bots()
     return {"status": "stopped"}
 
-
-@app.get("/status/{token_hint}")
-async def status(token_hint: str):
-    for token, proc in _procs.items():
-        if token.startswith(token_hint):
-            alive = proc.poll() is None
-            return {"running": alive, "token_hint": token[:8] + "..."}
-    return {"running": False, "token_hint": token_hint}
+@app.get("/status")
+async def status(authorization: Optional[str] = Header(None)):
+    username = _require_session(authorization)
+    token = _users[username].get("bot_token", "")
+    bot = _bots.get(token)
+    return {"running": bool(bot and bot["proc"].poll() is None), "bot_token": token}
 
 
-def _stop(token: str):
-    proc = _procs.pop(token, None)
-    if proc and proc.poll() is None:
-        proc.terminate()
-        try:
-            proc.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            proc.kill()
+# ── Health ─────────────────────────────────────────────────────────────────
+
+@app.get("/health")
+async def health():
+    return {"ok": True, "bots": len(_bots)}
 
 
 if __name__ == "__main__":
     import uvicorn
-    import threading
-    import time
-    import urllib.request
-
-    def _keepalive():
-        time.sleep(10)
-        while True:
-            try:
-                urllib.request.urlopen("http://localhost:8080/health", timeout=5)
-            except Exception:
-                pass
-            time.sleep(20)
-
-    threading.Thread(target=_keepalive, daemon=True).start()
     uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
