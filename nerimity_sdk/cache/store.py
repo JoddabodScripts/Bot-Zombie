@@ -43,7 +43,7 @@ class Cache:
     """Central cache for all Nerimity objects.
 
     Objects are stored in LRU caches keyed by their snowflake ID.
-    All upsert_* methods merge partial data rather than overwriting —
+    All upsert_* methods merge partial data rather than overwriting -
     so a gateway event that only sends {id, username} won't wipe the avatar.
 
     After a reconnect, objects are marked stale (obj.stale == True) until
@@ -117,6 +117,6 @@ class Cache:
         for obj in self.users.values():
             obj.stale = True
         for obj in self.servers.values():
-            pass  # Server has no stale flag — channels/members cover it
+            pass  # Server has no stale flag - channels/members cover it
         for obj in self.channels.values():
             obj.stale = True

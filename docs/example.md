@@ -12,7 +12,7 @@ pip install "nerimity-sdk[cron]"
 
 Create a `.env` file in the project folder.
 
-**Windows** — run in Command Prompt:
+**Windows** - run in Command Prompt:
 ```
 notepad .env
 ```

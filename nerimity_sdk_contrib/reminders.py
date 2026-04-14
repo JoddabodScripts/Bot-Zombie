@@ -1,4 +1,4 @@
-"""ReminderPlugin — !remind 10m take a break → DMs the user after the time.
+"""ReminderPlugin - !remind 10m take a break → DMs the user after the time.
 
 Usage::
 

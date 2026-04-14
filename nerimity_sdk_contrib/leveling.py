@@ -1,4 +1,4 @@
-"""LevelingPlugin — XP per message, level-up announcements.
+"""LevelingPlugin - XP per message, level-up announcements.
 
 Usage::
 
@@ -68,7 +68,7 @@ class LevelingPlugin(PluginBase):
             await self.bot.rest.create_message(
                 self.announce_channel_id,
                 f"🎉 {mention(uid)} reached **level {new_level}**! "
-                f"({xp} XP — next level at {_xp_for_level(new_level + 1)} XP)"
+                f"({xp} XP - next level at {_xp_for_level(new_level + 1)} XP)"
             )
 
     async def get_xp(self, server_id: str, user_id: str) -> int:
@@ -100,7 +100,7 @@ class LevelingPlugin(PluginBase):
                 lvl = _level_for_xp(xp)
                 user = plugin.bot.cache.users.get(uid)
                 name = user.username if user else uid
-                lines.append(f"{medal} **{name}** — Level {lvl} ({xp} XP)")
+                lines.append(f"{medal} **{name}** - Level {lvl} ({xp} XP)")
             await ctx.reply("\n".join(lines))
 
         @self.bot.command("level", description="Show your current level and XP")
@@ -116,7 +116,7 @@ class LevelingPlugin(PluginBase):
             bar_filled = int((xp - _xp_for_level(lvl)) / (next_xp - _xp_for_level(lvl)) * 10)
             bar = "█" * bar_filled + "░" * (10 - bar_filled)
             await ctx.reply(
-                f"⭐ **{target.username}** — Level **{lvl}**\n"
+                f"⭐ **{target.username}** - Level **{lvl}**\n"
                 f"{bar} {xp} / {next_xp} XP\n"
                 f"_{needed} XP to level {lvl + 1}_"
             )

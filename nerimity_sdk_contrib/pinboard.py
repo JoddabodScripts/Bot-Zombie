@@ -1,4 +1,4 @@
-"""PinboardPlugin — community-driven message pinboard.
+"""PinboardPlugin - community-driven message pinboard.
 
 Any member can nominate a message for the pinboard by reacting with the
 configured emoji (default 📌).  Once a message reaches *threshold* reactions
@@ -6,7 +6,7 @@ it is forwarded to the pinboard channel.  Each message is only pinned once.
 
 Commands
 --------
-``/pinboard``  — show the last 5 pinned messages.
+``/pinboard``  - show the last 5 pinned messages.
 
 Usage::
 

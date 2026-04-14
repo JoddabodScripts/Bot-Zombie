@@ -2,7 +2,7 @@
 
 Commands are functions that run when a user types `/ping` in chat.
 
-`@bot.command` does both at once — it registers the command with Nerimity's `/` slash menu **and** handles the prefix version. You only write the handler once.
+`@bot.command` does both at once - it registers the command with Nerimity's `/` slash menu **and** handles the prefix version. You only write the handler once.
 
 ```python
 @bot.command("ping", description="Check if the bot is alive")
@@ -49,11 +49,11 @@ from nerimity_sdk import Int
 
 @bot.command("add", args=[Int, Int])
 async def add(ctx):
-    a, b = ctx.args   # already ints — if the user types garbage, they get a friendly error
+    a, b = ctx.args   # already ints - if the user types garbage, they get a friendly error
     await ctx.reply(f"{a + b}")
 ```
 
-Or even simpler — just use **type annotations** and the SDK figures it out automatically:
+Or even simpler - just use **type annotations** and the SDK figures it out automatically:
 
 ```python
 @bot.command("add")
@@ -74,7 +74,7 @@ No `args=` needed. The SDK reads the annotations and applies the right converter
 | `UserConverter` | `[@:id]`, user ID | `User` object |
 | `ChannelConverter` | channel ID | `Channel` object |
 
-If conversion fails, the bot automatically replies with a friendly error and stops — your function never runs.
+If conversion fails, the bot automatically replies with a friendly error and stops - your function never runs.
 
 ---
 
@@ -115,7 +115,7 @@ Quoted arguments are kept together:
     description="Kick a member",   # shown in !help
     usage="<@member> [reason]",     # shown in !help
     category="Moderation",          # groups commands in !help
-    aliases=["k"],                  # /k works too — also synced to slash menu
+    aliases=["k"],                  # /k works too - also synced to slash menu
     guild_only=True,                # DMs get a friendly error
     cooldown=5.0,                   # 5 second per-user cooldown
     cooldown_scope="user",          # "user" (default), "server", or "channel"
@@ -172,7 +172,7 @@ async def setup(ctx):
 
 Only run a command if the user has the right permissions.
 
-**Shortcut — `requires=`** (recommended):
+**Shortcut - `requires=`** (recommended):
 
 ```python
 from nerimity_sdk import Permissions
@@ -189,7 +189,7 @@ Pass multiple permissions as a list:
 async def nuke(ctx): ...
 ```
 
-**Legacy — `required_user_perms=`** (still works):
+**Legacy - `required_user_perms=`** (still works):
 
 ```python
 @bot.command("ban", required_user_perms=[Permissions.BAN_MEMBERS])

@@ -1,4 +1,4 @@
-"""RoleMenuPlugin — react to a message to get a role, unreact to remove it.
+"""RoleMenuPlugin - react to a message to get a role, unreact to remove it.
 
 Usage::
 

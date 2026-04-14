@@ -1,4 +1,4 @@
-"""nerimity-sdk — A fully-featured Python SDK for building Nerimity bots."""
+"""nerimity-sdk - A fully-featured Python SDK for building Nerimity bots."""
 from nerimity_sdk.bot import Bot, __version__
 from nerimity_sdk.models import (
     User, UserBadge, Message, MessageAttachment,

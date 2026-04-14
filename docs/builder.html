@@ -369,7 +369,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
 <div id="token-screen">
   <a href="./" style="position:absolute;top:1.25rem;left:1.5rem;color:var(--text-dim);font-size:0.82rem;text-decoration:none" onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--text-dim)'">← back to docs</a>
   <h1>Bot Zombie</h1>
-  <p>Build and host Nerimity bots — no coding needed.</p>
+  <p>Build and host Nerimity bots - no coding needed.</p>
   <div class="token-box">
     <div style="display:flex;gap:.5rem;margin-bottom:.25rem">
       <button id="tab-login" onclick="setAuthTab('login')" style="flex:1;background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.4);border-radius:var(--radius-sm);color:var(--purple);cursor:pointer;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;padding:.4rem">Login</button>
@@ -667,7 +667,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       <button class="tb-btn" onclick="closeDeploy()">✕</button>
     </div>
     <div id="deploy-body">
-      <div class="hint">Your bot will be hosted for free. Just click Deploy — no setup needed.</div>
+      <div class="hint">Your bot will be hosted for free. Just click Deploy - no setup needed.</div>
       <div id="deploy-status"></div>
       <div style="display:flex;gap:.5rem">
         <button class="tb-btn primary" onclick="deployBot()" style="flex:1">🚀 Deploy</button>
@@ -1400,26 +1400,26 @@ function validateGraph() {
 const TUTORIAL_STEPS = [
   {
     title: '🎯 Welcome to Bot Zombie!',
-    body: `This is your visual bot builder — the starting point for every command is a <strong>Trigger block</strong>. Drag one from the left palette to begin.\n\n<strong>Key Points:</strong>\n• Every flow starts with a Trigger\n• Set your command name and description\n• All other blocks connect to it`,
+    body: `This is your visual bot builder - the starting point for every command is a <strong>Trigger block</strong>. Drag one from the left palette to begin.\n\n<strong>Key Points:</strong>\n• Every flow starts with a Trigger\n• Set your command name and description\n• All other blocks connect to it`,
     tip: 'Drag a "Command" block from the palette onto the canvas to get started!',
     highlight: '#palette',
   },
   {
     title: '📦 Adding Your First Block',
-    body: `The <strong>left sidebar</strong> contains all building blocks:\n\n• <strong style="color:#a78bfa">Triggers</strong> — when something happens\n• <strong style="color:#60a5fa">Actions</strong> — what your bot does\n• <strong style="color:#fbbf24">Logic</strong> — conditions and decisions\n• <strong style="color:#fb923c">Utility</strong> — variables, loops, HTTP`,
+    body: `The <strong>left sidebar</strong> contains all building blocks:\n\n• <strong style="color:#a78bfa">Triggers</strong> - when something happens\n• <strong style="color:#60a5fa">Actions</strong> - what your bot does\n• <strong style="color:#fbbf24">Logic</strong> - conditions and decisions\n• <strong style="color:#fb923c">Utility</strong> - variables, loops, HTTP`,
     tip: 'Drag blocks onto the canvas OR click them to add instantly.',
     highlight: '#palette',
   },
   {
     title: '🔗 Connecting Blocks with Wires',
-    body: `Connect blocks by <strong>clicking an output port</strong> (right side of a block) then <strong>clicking an input port</strong> (left side of another block).\n\nWires show the flow of execution — top to bottom, left to right.`,
+    body: `Connect blocks by <strong>clicking an output port</strong> (right side of a block) then <strong>clicking an input port</strong> (left side of another block).\n\nWires show the flow of execution - top to bottom, left to right.`,
     tip: 'Click a wire to delete it. Output ports are on the right, input ports on the left.',
     highlight: '#canvas-wrap',
   },
   {
     title: '⚙️ Configuring Blocks',
     body: `Click any block to select it. Its properties appear in the <strong>Inspector tab</strong> on the right.\n\nYou can also edit fields directly inside the block on the canvas.`,
-    tip: 'Try clicking a block now — the Inspector will show all its settings.',
+    tip: 'Try clicking a block now - the Inspector will show all its settings.',
     highlight: '#right-sidebar',
   },
   {
@@ -1432,21 +1432,21 @@ const TUTORIAL_STEPS = [
   {
     title: '🚨 Error Log Tab',
     body: `The <strong>Errors tab</strong> shows validation problems before you generate code.\n\n• Red badges show the error count\n• Click an error to jump to the problem block\n• Fix all errors before downloading`,
-    tip: 'Run "Preview code" — it validates your graph automatically.',
+    tip: 'Run "Preview code" - it validates your graph automatically.',
     highlight: '#panel-errors',
     onShow: () => switchTab('errors'),
   },
   {
     title: '🔁 Loops & Random Text',
-    body: `Two powerful utility blocks:\n\n• <strong>Loop start</strong> — repeat a block chain N times (or forever with while-true). Connect the <em>loop</em> port to what repeats, <em>done</em> to what comes after.\n• <strong>Random text</strong> — pick a random line from a list and store it in a variable.`,
+    body: `Two powerful utility blocks:\n\n• <strong>Loop start</strong> - repeat a block chain N times (or forever with while-true). Connect the <em>loop</em> port to what repeats, <em>done</em> to what comes after.\n• <strong>Random text</strong> - pick a random line from a list and store it in a variable.`,
     tip: 'Use "Loop stop" inside a loop to break out early.',
     highlight: '#palette',
     onShow: () => switchTab('inspector'),
   },
   {
     title: '💾 Save & Download',
-    body: `When you\'re done:\n\n• <strong>💾 Save</strong> — saves your graph to the browser (auto-restores next visit)\n• <strong>Preview code</strong> — shows the generated Python and validates errors\n• <strong>⬇ Download bot.py</strong> — get your ready-to-run bot file`,
-    tip: 'The graph is saved in your browser\'s localStorage — no account needed!',
+    body: `When you\'re done:\n\n• <strong>💾 Save</strong> - saves your graph to the browser (auto-restores next visit)\n• <strong>Preview code</strong> - shows the generated Python and validates errors\n• <strong>⬇ Download bot.py</strong> - get your ready-to-run bot file`,
+    tip: 'The graph is saved in your browser\'s localStorage - no account needed!',
     highlight: '#topbar',
   },
 ];
@@ -2155,8 +2155,8 @@ function lintCode(code) {
   stack.forEach(s => errors.push(`Line ${s.line}: unclosed '${s.ch}'`));
   const lines = code.split('\n');
   if (lines.some(l=>l.startsWith('\t')) && lines.some(l=>l.startsWith('    ')))
-    errors.push('Mixed tabs and spaces — Python will reject this.');
-  if (!code.includes('Bot(')) errors.push("No Bot() constructor found — did you delete it?");
+    errors.push('Mixed tabs and spaces - Python will reject this.');
+  if (!code.includes('Bot(')) errors.push("No Bot() constructor found - did you delete it?");
   lines.forEach((line,li) => {
     if (/^\s*async def /.test(line)) {
       const body = lines.slice(li+1,li+10).join('\n');
@@ -2743,7 +2743,7 @@ function previewExecNode(node, ctx, depth) {
     }
     case 'logic_if_perm':
       // in preview, always grant permission so you can test the happy path
-      ctx.replies.push(`[Permission check: ${p.perm||'?'} — granted in preview]`);
+      ctx.replies.push(`[Permission check: ${p.perm||'?'} - granted in preview]`);
       previewWalkChain(node.id, 'true', ctx, depth+1);
       break;
     case 'logic_cooldown':

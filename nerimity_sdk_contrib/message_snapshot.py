@@ -1,4 +1,4 @@
-"""MessageSnapshotPlugin — logs deleted/edited messages to a channel.
+"""MessageSnapshotPlugin - logs deleted/edited messages to a channel.
 
 Usage::
 

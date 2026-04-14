@@ -113,9 +113,9 @@ async def monday_message():
 ```
 
 Cron format: `minute hour day month weekday`
-- `"0 9 * * *"` — every day at 9am
-- `"*/30 * * * *"` — every 30 minutes
-- `"0 12 * * 5"` — every Friday at noon
+- `"0 9 * * *"` - every day at 9am
+- `"*/30 * * * *"` - every 30 minutes
+- `"0 12 * * 5"` - every Friday at noon
 
 ---
 
@@ -166,8 +166,8 @@ await bot.plugins.load(LevelingPlugin(
     xp_cooldown=60,   # seconds between XP grants
 ))
 # Users now earn XP for chatting.
-# /level — shows their level and progress bar
-# /leaderboard — shows top 10
+# /level - shows their level and progress bar
+# /leaderboard - shows top 10
 ```
 
 ---

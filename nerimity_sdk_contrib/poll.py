@@ -1,4 +1,4 @@
-"""PollPlugin — create a timed poll with reaction counting.
+"""PollPlugin - create a timed poll with reaction counting.
 
 Usage::
 
@@ -59,7 +59,7 @@ class PollPlugin(PluginBase):
 
         # Fetch final counts from cache
         counts = self._polls.pop(msg.id, {})
-        result_lines = [f"📊 **{question}** — Results:"]
+        result_lines = [f"📊 **{question}** - Results:"]
         for opt, count in sorted(counts.items(), key=lambda x: -x[1]):
             bar = "█" * count + "░" * max(0, 10 - count)
             result_lines.append(f"{opt}  {bar}  {count} vote{'s' if count != 1 else ''}")

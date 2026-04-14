@@ -70,7 +70,7 @@ Logs every raw gateway payload with pretty JSON formatting. Useful when reverse-
 bot = Bot(token="...", json_logs=True)
 ```
 
-Outputs every log line as a JSON object — useful for bots running in Docker or cloud environments where logs are piped to a collector (Datadog, CloudWatch, etc.).
+Outputs every log line as a JSON object - useful for bots running in Docker or cloud environments where logs are piped to a collector (Datadog, CloudWatch, etc.).
 
 ## Runtime stats
 

@@ -1,4 +1,4 @@
-"""ServerStatsPlugin — post periodic server stats to a channel."""
+"""ServerStatsPlugin - post periodic server stats to a channel."""
 from __future__ import annotations
 from nerimity_sdk.plugins.manager import PluginBase
 

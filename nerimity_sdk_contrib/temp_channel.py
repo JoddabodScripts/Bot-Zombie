@@ -1,4 +1,4 @@
-"""TempChannelPlugin — create temporary channels that auto-delete after inactivity."""
+"""TempChannelPlugin - create temporary channels that auto-delete after inactivity."""
 from __future__ import annotations
 import asyncio
 from nerimity_sdk.plugins.manager import PluginBase, listener

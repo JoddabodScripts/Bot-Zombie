@@ -53,7 +53,7 @@ class Watcher:
                     self._bot.logger.error(f"[Watcher] Reload failed for {name}: {exc}")
                 return
         # If not a known plugin, try load_from_path
-        self._bot.logger.info(f"[Watcher] New file detected: {p.name} — use bot.plugins.load_from_path() to load it")
+        self._bot.logger.info(f"[Watcher] New file detected: {p.name} - use bot.plugins.load_from_path() to load it")
 
     async def start(self) -> None:
         self._task = asyncio.create_task(self._watch())

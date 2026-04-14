@@ -1,4 +1,4 @@
-"""SlowmodePlugin — per-channel message rate limiting enforced by the bot.
+"""SlowmodePlugin - per-channel message rate limiting enforced by the bot.
 
 Usage::
 

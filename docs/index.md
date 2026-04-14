@@ -30,7 +30,7 @@ cd my-bot
 copy .env.example .env
 ```
 
-Open `.env` in Notepad — run this in Command Prompt (`.env` is hidden in File Explorer, so open it this way):
+Open `.env` in Notepad - run this in Command Prompt (`.env` is hidden in File Explorer, so open it this way):
 
 ```
 notepad .env
@@ -48,7 +48,7 @@ Then start your bot:
 python bot.py
 ```
 
-Or set it up manually — create `bot.py`:
+Or set it up manually - create `bot.py`:
 
 ```python
 import os
@@ -82,10 +82,10 @@ NERIMITY_TOKEN=paste_your_token_here
 | Feature | How to use |
 |---|---|
 | Event listeners | `@bot.on("message:created")` |
-| Prefix + slash commands | `@bot.command("ping")` — works as `/ping` (default) |
+| Prefix + slash commands | `@bot.command("ping")` - works as `/ping` (default) |
 | Prefix-only commands | `@bot.command_private("debug")` |
 | Argument converters | `args=[Int, MemberConverter]` or type annotations |
-| Type annotation converters | `async def add(ctx, a: int, b: int)` — no `args=` needed |
+| Type annotation converters | `async def add(ctx, a: int, b: int)` - no `args=` needed |
 | Permission shortcut | `@bot.command("ban", requires=Permissions.BAN_MEMBERS)` |
 | Confirmation prompts | `await ctx.confirm("Sure?")` |
 | Multi-step conversations | `await ctx.ask("Your name?")` |
@@ -109,7 +109,7 @@ NERIMITY_TOKEN=paste_your_token_here
 | Static analysis | `nerimity lint` |
 | Debug mode | `Bot(debug=True)` |
 | JSON structured logs | `Bot(json_logs=True)` |
-| Runtime stats | `bot.stats` — uptime, messages, commands, cache sizes, rate limit hits |
+| Runtime stats | `bot.stats` - uptime, messages, commands, cache sizes, rate limit hits |
 | Auto-restart on crash | enabled by default in `bot.run()` |
 | Auto-restart on file save | enabled by default in `bot.run()` |
 | Health check endpoint | `Bot(health_port=8080)` → `GET /health` and `GET /stats` |

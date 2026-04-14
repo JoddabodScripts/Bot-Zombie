@@ -26,9 +26,9 @@ NerimitySdkError
 │   ├── ArgumentError     # wrong number or type of arguments
 │   └── GuildOnlyError    # command used outside a server
 ├── APIError              # HTTP error from the Nerimity API
-│   ├── NotFoundError     # 404 — resource doesn't exist
-│   ├── ForbiddenError    # 403 — bot lacks permission
-│   └── RateLimitError    # 429 — rate limited
+│   ├── NotFoundError     # 404 - resource doesn't exist
+│   ├── ForbiddenError    # 403 - bot lacks permission
+│   └── RateLimitError    # 429 - rate limited
 └── GatewayError          # WebSocket connection error
 ```
 
@@ -94,7 +94,7 @@ Raised when a command is invoked before its cooldown expires.
 | `scope` | `str` | `"user"` or `"server"` |
 
 ### `ArgumentError`
-Raised when argument parsing fails — wrong type, missing required arg, etc.
+Raised when argument parsing fails - wrong type, missing required arg, etc.
 
 | Attribute | Type | Description |
 |---|---|---|
@@ -113,13 +113,13 @@ Raised when the Nerimity API returns an error response.
 | `route` | `str` | The API route that failed |
 
 ### `NotFoundError(APIError)`
-HTTP 404 — the resource (message, channel, user, etc.) doesn't exist.
+HTTP 404 - the resource (message, channel, user, etc.) doesn't exist.
 
 ### `ForbiddenError(APIError)`
-HTTP 403 — the bot doesn't have permission to perform the action.
+HTTP 403 - the bot doesn't have permission to perform the action.
 
 ### `RateLimitError(APIError)`
-HTTP 429 — the bot is being rate limited.
+HTTP 429 - the bot is being rate limited.
 
 | Attribute | Type | Description |
 |---|---|---|

@@ -48,7 +48,7 @@ extra:
     - property: og:type
       content: website
     - property: og:title
-      content: nerimity-sdk — Python SDK for Nerimity bots
+      content: nerimity-sdk - Python SDK for Nerimity bots
     - property: og:description
       content: A fully-featured Python SDK for building bots on Nerimity. Commands, events, plugins, storage, OAuth2 and more.
     - property: og:image

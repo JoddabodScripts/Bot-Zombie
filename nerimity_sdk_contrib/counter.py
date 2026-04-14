@@ -1,4 +1,4 @@
-"""CounterPlugin — keeps a channel name updated with a live count.
+"""CounterPlugin - keeps a channel name updated with a live count.
 
 Usage::
 

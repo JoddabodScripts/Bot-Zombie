@@ -1,11 +1,11 @@
-"""EconomyPlugin — virtual coin economy for your server.
+"""EconomyPlugin - virtual coin economy for your server.
 
 Features
 --------
-- ``/balance [user]``   — check your (or another user's) coin balance.
-- ``/daily``            — claim a daily reward (once per 24 h).
-- ``/give <user> <amount>`` — transfer coins to another user.
-- ``/richest``          — top-10 richest users in the server.
+- ``/balance [user]``   - check your (or another user's) coin balance.
+- ``/daily``            - claim a daily reward (once per 24 h).
+- ``/give <user> <amount>`` - transfer coins to another user.
+- ``/richest``          - top-10 richest users in the server.
 
 Coins are stored in the bot's store under ``eco:<server_id>:<user_id>``.
 
@@ -141,5 +141,5 @@ class EconomyPlugin(PluginBase):
                 user = plugin.bot.cache.users.get(uid)
                 name = user.username if user else uid
                 medal = medals[i] if i < 3 else f"#{i+1}"
-                lines.append(f"{medal} **{name}** — {plugin._fmt(bal)}")
+                lines.append(f"{medal} **{name}** - {plugin._fmt(bal)}")
             await ctx.reply("\n".join(lines))

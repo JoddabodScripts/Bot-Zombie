@@ -1,4 +1,4 @@
-"""nerimity lint — static checks for common bot code mistakes."""
+"""nerimity lint - static checks for common bot code mistakes."""
 from __future__ import annotations
 import ast
 import os
@@ -41,13 +41,13 @@ class _Visitor(ast.NodeVisitor):
 
             if ".command(" in name or ".command_private(" in name or ".slash(" in name:
                 if "description=" not in name:
-                    self._warn(node, f"@command '{node.name}' has no description= — won't show in help")
+                    self._warn(node, f"@command '{node.name}' has no description= - won't show in help")
                 self._commands.append(node.name)
 
             if ".slash(" in name:
                 self._slash.append(node.name)
 
-            # @bot.button("id") — extract the ID string and check for duplicates
+            # @bot.button("id") - extract the ID string and check for duplicates
             if ".button(" in name:
                 self._buttons.append(node.name)
                 if isinstance(dec, ast.Call) and dec.args:
@@ -55,7 +55,7 @@ class _Visitor(ast.NodeVisitor):
                     if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
                         self._button_ids.append((arg.value, node.lineno))
 
-            # @bot.cron("expr") — validate cron syntax
+            # @bot.cron("expr") - validate cron syntax
             if ".cron(" in name:
                 if isinstance(dec, ast.Call) and dec.args:
                     arg = dec.args[0]
@@ -75,7 +75,7 @@ class _Visitor(ast.NodeVisitor):
             if "wait_for" in func_str:
                 kwarg_names = {kw.arg for kw in call.keywords}
                 if "timeout" not in kwarg_names:
-                    self._warn(node, "wait_for() called without timeout= — can hang forever")
+                    self._warn(node, "wait_for() called without timeout= - can hang forever")
         self.generic_visit(node)
 
     def _check_cron(self, node: ast.AST, expr: str) -> None:
@@ -112,7 +112,7 @@ def lint_files(paths: list[str]) -> list[str]:
     has_slash = any(v._slash for v in visitors)
 
     if has_any_command and not has_error_handler:
-        all_issues.append("  (global)  No @bot.on_command_error handler found — errors will only be logged")
+        all_issues.append("  (global)  No @bot.on_command_error handler found - errors will only be logged")
     if has_slash and not has_slash_error_handler:
         all_issues.append("  (global)  No @bot.on_slash_error handler found")
     if has_buttons and not has_button_error_handler:

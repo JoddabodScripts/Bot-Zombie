@@ -76,7 +76,7 @@ class MiddlewarePipeline:
         return composed
 
     def apply(self, handler: Callable) -> Callable:
-        """Decorator — wrap a command handler with this pipeline."""
+        """Decorator - wrap a command handler with this pipeline."""
         composed = self.build()
 
         async def wrapped(ctx: "Context") -> None:

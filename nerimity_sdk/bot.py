@@ -157,7 +157,7 @@ class Bot:
                     f"💬 Messages seen: `{s['messages_seen']}`\n"
                     f"⚡ Commands dispatched: `{s['commands_dispatched']}`\n"
                     f"🚦 Rate limit hits: `{s['rate_limit_hits']}`\n"
-                    f"🗄 Cache — users: `{s['cached_users']}` "
+                    f"🗄 Cache - users: `{s['cached_users']}` "
                     f"servers: `{s['cached_servers']}` "
                     f"channels: `{s['cached_channels']}` "
                     f"members: `{s['cached_members']}`"
@@ -214,7 +214,7 @@ class Bot:
         return self.router.command(name, public=True, **kwargs)
 
     def command_private(self, name: str, **kwargs):
-        """Register a prefix-only command — it will NOT appear in the / menu.
+        """Register a prefix-only command - it will NOT appear in the / menu.
 
         Use this for admin/debug commands you don't want users to discover.
 
@@ -227,18 +227,18 @@ class Bot:
         return self.router.command(name, public=False, **kwargs)
 
     def slash(self, name: str, **kwargs):
-        """Same as @bot.command — alias for people who prefer the name 'slash'."""
+        """Same as @bot.command - alias for people who prefer the name 'slash'."""
         return self.command(name, **kwargs)
 
     def slash_private(self, name: str, **kwargs):
-        """Same as @bot.command_private — alias for people who prefer the name 'slash'."""
+        """Same as @bot.command_private - alias for people who prefer the name 'slash'."""
         return self.command_private(name, **kwargs)
 
     def button(self, pattern: str, ttl: Optional[float] = None):
         """Handle a button click. The pattern matches the button's ID.
 
         Use {name} segments to capture dynamic parts of the ID.
-        Note: colons are not allowed in button IDs — use underscores instead.
+        Note: colons are not allowed in button IDs - use underscores instead.
 
         Usage::
 
@@ -255,9 +255,9 @@ class Bot:
 
         A cron expression is 5 fields: minute hour day month weekday
         Examples:
-            "0 9 * * *"    — every day at 09:00 UTC
-            "0 9 * * 1"    — every Monday at 09:00 UTC
-            "*/30 * * * *" — every 30 minutes
+            "0 9 * * *"    - every day at 09:00 UTC
+            "0 9 * * 1"    - every Monday at 09:00 UTC
+            "*/30 * * * *" - every 30 minutes
 
         Requires: pip install "nerimity-sdk[cron]"
 
@@ -436,7 +436,7 @@ class Bot:
     def use(self, fn: Callable) -> Callable:
         """Register a middleware function that runs before every command.
 
-        The middleware receives ``(ctx, next)`` — call ``await next()`` to
+        The middleware receives ``(ctx, next)`` - call ``await next()`` to
         continue to the command handler, or skip it to block the command.
 
         Usage::
@@ -643,7 +643,7 @@ class Bot:
             self.cache.channels.delete(event.channel_id)
 
     async def _on_inbox_opened(self, event: Any) -> None:
-        """inbox:opened — a DM channel was opened. Cache the channel."""
+        """inbox:opened - a DM channel was opened. Cache the channel."""
         data = event if isinstance(event, dict) else {}
         channel_data = data.get("channel") or data
         if isinstance(channel_data, dict) and "id" in channel_data:
@@ -651,7 +651,7 @@ class Bot:
 
     async def _on_disconnect(self, _: Any) -> None:
         if self._invalidate_on_disconnect:
-            self.logger.warning("[Bot] Disconnected — marking cache stale")
+            self.logger.warning("[Bot] Disconnected - marking cache stale")
             self.cache.mark_all_stale()
         self._ready.clear()
 

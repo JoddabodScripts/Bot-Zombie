@@ -112,7 +112,7 @@ class MockContext(Context):
 
 
 class MockBot(Bot):
-    """A Bot subclass that never connects to the real gateway — for testing.
+    """A Bot subclass that never connects to the real gateway - for testing.
 
     Usage::
 

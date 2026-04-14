@@ -19,16 +19,16 @@ Usage::
         redirect_uri="https://yoursite.com/callback",
     )
 
-    # Step 1 — send user to this URL
+    # Step 1 - send user to this URL
     url = client.authorize_url(scopes=["identify", "servers"])
 
-    # Step 2 — in your callback handler:
+    # Step 2 - in your callback handler:
     token = await client.exchange_code(code=request.args["code"])
 
     user    = await client.get_current_user(token["accessToken"])
     servers = await client.get_current_user_servers(token["accessToken"])
 
-    # Later — refresh an expired token:
+    # Later - refresh an expired token:
     new_token = await client.refresh_token(token["refreshToken"])
 """
 from __future__ import annotations

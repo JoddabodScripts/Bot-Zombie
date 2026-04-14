@@ -40,7 +40,7 @@ if __name__ == "__main__":
 '''
 
 _PLUGIN_TEMPLATE = '''\
-"""Example plugin — drop this in your plugins/ folder."""
+"""Example plugin - drop this in your plugins/ folder."""
 from nerimity_sdk.plugins.manager import PluginBase, listener
 
 

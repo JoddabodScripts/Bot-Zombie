@@ -124,7 +124,7 @@ class CommandRouter:
         return decorator
 
     def command_private(self, name: str, **kwargs):
-        """Register a prefix-only command — never synced to the Nerimity API."""
+        """Register a prefix-only command - never synced to the Nerimity API."""
         return self.command(name, public=False, **kwargs)
 
     def group(self, name: str, description: str = "") -> "CommandGroup":

@@ -14,7 +14,7 @@ cd Nerimity-SDK
 pip install -e ".[redis,sqlite,cron,watch]"
 ```
 
-The `-e` flag installs in editable mode — changes to the source take effect immediately without reinstalling.
+The `-e` flag installs in editable mode - changes to the source take effect immediately without reinstalling.
 
 ### Running tests
 

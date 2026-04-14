@@ -35,7 +35,7 @@ async def log_all(data): ...
 | `user:presence_update` | `PresenceUpdatedEvent` | `.user_id`, `.status`, `.custom` |
 | `channel:typing` | `TypingEvent` | `.channel_id`, `.user_id` |
 
-Unknown events fall back to raw dicts — nothing breaks when Nerimity adds new events.
+Unknown events fall back to raw dicts - nothing breaks when Nerimity adds new events.
 
 ## Error isolation
 

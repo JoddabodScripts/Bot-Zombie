@@ -1,4 +1,4 @@
-"""TranslatePlugin — auto-translate messages in a channel using MyMemory (free, no key).
+"""TranslatePlugin - auto-translate messages in a channel using MyMemory (free, no key).
 
 Usage::
 

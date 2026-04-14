@@ -1,8 +1,8 @@
-"""nerimity-help — quick reference for the nerimity-sdk."""
+"""nerimity-help - quick reference for the nerimity-sdk."""
 
 
 HELP = """
-nerimity-sdk — Quick Reference
+nerimity-sdk - Quick Reference
 ================================
 
 INSTALL
@@ -13,7 +13,7 @@ SCAFFOLD A PROJECT
   nerimity create my-bot
   cd my-bot && python bot.py
 
-TOKEN SETUP  (.env file — never hardcode your token)
+TOKEN SETUP  (.env file - never hardcode your token)
   NERIMITY_TOKEN=your_token_here
 
   In bot.py:
@@ -64,7 +64,7 @@ PAGINATOR
   await Paginator(["Page 1", "Page 2", "Page 3"]).send(ctx)
 
 EVENTS
-  @bot.on("message:created")   # MessageCreatedEvent — fully typed
+  @bot.on("message:created")   # MessageCreatedEvent - fully typed
   @bot.on("server:member_joined")
   @bot.on("*")                 # wildcard
 

@@ -1,6 +1,6 @@
 # Rate Limiting
 
-Nerimity's API enforces rate limits on HTTP requests. The SDK handles these automatically — you don't need to do anything for basic usage.
+Nerimity's API enforces rate limits on HTTP requests. The SDK handles these automatically - you don't need to do anything for basic usage.
 
 ---
 
@@ -12,7 +12,7 @@ Every request through `bot.rest` goes through a rate limit manager that:
 2. Queues requests that would exceed the limit and retries them after the reset window
 3. Handles global rate limits (which apply across all routes) separately from per-route limits
 
-This means your code will never see a `429` error under normal conditions — the SDK just waits and retries transparently.
+This means your code will never see a `429` error under normal conditions - the SDK just waits and retries transparently.
 
 ---
 
@@ -39,9 +39,9 @@ This fires every time the SDK hits a rate limit, before it retries. Useful for m
 
 The automatic handling covers most cases. You may need to think about rate limits if:
 
-- You're sending **bulk messages** (e.g. announcing to many channels at once) — space them out manually or use `asyncio.sleep`
-- You're running **multiple shards** hitting the same routes — the rate limit manager is per-process by default, so shards don't coordinate with each other. Use the Redis backend if this matters (see below)
-- You're calling REST methods in a tight loop — add a small delay between calls
+- You're sending **bulk messages** (e.g. announcing to many channels at once) - space them out manually or use `asyncio.sleep`
+- You're running **multiple shards** hitting the same routes - the rate limit manager is per-process by default, so shards don't coordinate with each other. Use the Redis backend if this matters (see below)
+- You're calling REST methods in a tight loop - add a small delay between calls
 
 ```python
 import asyncio
@@ -55,7 +55,7 @@ for channel_id in channel_ids:
 
 ## Distributed rate limiting (multi-shard / multi-process)
 
-By default the rate limiter is in-process — each shard tracks its own buckets independently. If you're running multiple shards as separate processes, they can each exhaust the same route bucket without knowing about each other.
+By default the rate limiter is in-process - each shard tracks its own buckets independently. If you're running multiple shards as separate processes, they can each exhaust the same route bucket without knowing about each other.
 
 Use `RedisRateLimiter` to share rate limit state across all processes:
 
@@ -73,7 +73,7 @@ Requires:
 pip install "nerimity-sdk[redis]"
 ```
 
-All bot processes pointing at the same Redis instance will coordinate — if one shard exhausts a bucket, the others will wait correctly instead of all hitting 429 at once.
+All bot processes pointing at the same Redis instance will coordinate - if one shard exhausts a bucket, the others will wait correctly instead of all hitting 429 at once.
 
 You can also implement your own backend by subclassing `RateLimitBackend`:
 

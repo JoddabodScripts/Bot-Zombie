@@ -15,12 +15,12 @@ Usage::
     async def on_msg(event):
         print(event)
 
-    # Wildcard — all message events
+    # Wildcard - all message events
     @bus.subscribe("message.*")
     async def on_any_message(event):
         print(event)
 
-    # Deep wildcard — everything
+    # Deep wildcard - everything
     @bus.subscribe("**")
     async def on_everything(event):
         print(event)
@@ -76,7 +76,7 @@ class EventBus:
     # ── Subscribe ─────────────────────────────────────────────────────────────
 
     def subscribe(self, pattern: str) -> Callable[[Handler], Handler]:
-        """Decorator — register a handler for *pattern*."""
+        """Decorator - register a handler for *pattern*."""
         def decorator(fn: Handler) -> Handler:
             self._subs.setdefault(pattern, []).append(fn)
             return fn

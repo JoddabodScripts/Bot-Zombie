@@ -1,4 +1,4 @@
-"""SuggestionPlugin — /suggest <idea>, posts to a suggestions channel with reactions.
+"""SuggestionPlugin - /suggest <idea>, posts to a suggestions channel with reactions.
 
 Usage::
 

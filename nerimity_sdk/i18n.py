@@ -1,4 +1,4 @@
-"""i18n — lightweight localization helper for Nerimity bots.
+"""i18n - lightweight localization helper for Nerimity bots.
 
 Supports JSON locale files, per-guild locale overrides, and simple
 ``{key}`` placeholder substitution.

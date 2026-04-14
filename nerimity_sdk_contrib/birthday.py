@@ -1,4 +1,4 @@
-"""BirthdayPlugin — users set their birthday, bot announces on the day.
+"""BirthdayPlugin - users set their birthday, bot announces on the day.
 
 Usage::
 

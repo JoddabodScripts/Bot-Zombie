@@ -1,4 +1,4 @@
-"""CustomCommandPlugin — let admins create simple trigger→response commands at runtime."""
+"""CustomCommandPlugin - let admins create simple trigger→response commands at runtime."""
 from __future__ import annotations
 from nerimity_sdk.plugins.manager import PluginBase, listener
 

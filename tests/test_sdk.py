@@ -1,4 +1,4 @@
-"""Unit tests for nerimity-sdk — no real network connection required."""
+"""Unit tests for nerimity-sdk - no real network connection required."""
 import asyncio
 import pytest
 from nerimity_sdk.testing import MockBot, make_context, make_user

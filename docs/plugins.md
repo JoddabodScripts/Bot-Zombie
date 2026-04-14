@@ -32,9 +32,9 @@ async def on_ready(me):
 | `PollPlugin` | Timed reaction poll with automatic result tallying | loaded once, then `await plugin.create(ctx, question, options, duration)` |
 | `AntiSpamPlugin` | Rate-limits messages per user, auto-kicks/bans/deletes on threshold | `max_messages`, `window`, `action` (`"kick"`, `"ban"`, `"delete"`), `log_channel_id` |
 | `LevelingPlugin` | XP per message with cooldown, level-up announcements, persistent storage | `announce_channel_id`, `xp_per_message`, `xp_cooldown` |
-| `TicketPlugin` | DM-based support tickets — users DM the bot, staff reply via a channel | `staff_channel_id`, `open_message`, `close_message` |
+| `TicketPlugin` | DM-based support tickets - users DM the bot, staff reply via a channel | `staff_channel_id`, `open_message`, `close_message` |
 | `GiveawayPlugin` | React-to-enter giveaway with random winner after a duration | loaded once, then `await plugin.start(ctx, prize, duration, emoji)` |
-| `ReminderPlugin` | `!remind 10m take a break` — DMs the user after the time | loaded once, then `await plugin.set(ctx)` |
+| `ReminderPlugin` | `!remind 10m take a break` - DMs the user after the time | loaded once, then `await plugin.set(ctx)` |
 | `TranslatePlugin` | Auto-translate messages in a channel (MyMemory, no API key needed) | `watch_channel_id`, `target_lang` |
 | `AutoRolePlugin` | Assigns a role automatically when a member joins | `server_id`, `role_id` |
 | `ReactionRolesPlugin` | Persistent reaction roles (survives restarts) | loaded once, then `await plugin.add(message_id, emoji, role_id, server_id)` |
@@ -42,9 +42,9 @@ async def on_ready(me):
 | `CounterPlugin` | Keeps a channel name updated with a live count | `server_id`, `channel_id`, `label`, `interval`, `count_fn` |
 | `ModerationLogPlugin` | Logs mod actions (kicks, bans, role changes) to a channel | `log_channel_id` |
 | `SlowmodePlugin` | Per-channel message rate limiting enforced by the bot | loaded once, then `/slowmode set <channel_id> <seconds>` |
-| `AFKPlugin` | `/afk <reason>` — bot replies to mentions with the AFK message | loaded once |
-| `SuggestionPlugin` | `/suggest <idea>` — posts to suggestions channel with 👍/👎 reactions | `channel_id`, `upvote`, `downvote` |
-| `WarnPlugin` | `/warn @user <reason>` — stores warnings, auto-kicks at threshold | `threshold`, `log_channel_id` |
+| `AFKPlugin` | `/afk <reason>` - bot replies to mentions with the AFK message | loaded once |
+| `SuggestionPlugin` | `/suggest <idea>` - posts to suggestions channel with 👍/👎 reactions | `channel_id`, `upvote`, `downvote` |
+| `WarnPlugin` | `/warn @user <reason>` - stores warnings, auto-kicks at threshold | `threshold`, `log_channel_id` |
 | `MessageFilterPlugin` | Block links, invites, or custom regex patterns | `block_links`, `block_invites`, `patterns`, `log_channel_id`, `exempt_roles` |
 | `MessageSnapshotPlugin` | Logs deleted and edited messages to a channel before they're gone | `log_channel_id` |
 
@@ -52,7 +52,7 @@ async def on_ready(me):
 
 ## Community plugins
 
-*None listed yet — be the first!*
+*None listed yet - be the first!*
 
 To list your plugin here, open a PR adding a row to this table:
 

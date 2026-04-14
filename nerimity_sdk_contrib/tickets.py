@@ -1,7 +1,7 @@
-"""TicketPlugin — users DM the bot to open a support ticket; staff reply via DM relay.
+"""TicketPlugin - users DM the bot to open a support ticket; staff reply via DM relay.
 
 How it works:
-  1. User sends the bot a DM — a ticket is opened.
+  1. User sends the bot a DM - a ticket is opened.
   2. Every DM from the user is forwarded to the staff channel.
   3. Staff reply with "!reply <user_id> <message>" to respond.
   4. User sends "!close" or staff uses "!close <user_id>" to close the ticket.
@@ -66,7 +66,7 @@ class TicketPlugin(PluginBase):
             username = msg.created_by.username
             await self.bot.rest.create_message(
                 self.staff_channel_id,
-                f"📩 **Ticket** from {mention(uid)} (`{uid}` — {username}):\n{content}\n"
+                f"📩 **Ticket** from {mention(uid)} (`{uid}` - {username}):\n{content}\n"
                 f"_Reply: `!reply {uid} <message>` | Close: `!close {uid}`_"
             )
             return

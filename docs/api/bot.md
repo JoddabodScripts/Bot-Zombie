@@ -19,7 +19,7 @@ async def handler(event: MessageCreatedEvent): ...
 @bot.on("ready")
 async def on_ready(me: User): ...
 
-@bot.on("*")          # wildcard — fires for every event
+@bot.on("*")          # wildcard - fires for every event
 async def log_all(data): ...
 ```
 
@@ -120,7 +120,7 @@ reactions = await bot.wait_for(
 ```
 
 ### `await bot.start()`
-Async version — use if you need to run alongside other async code.
+Async version - use if you need to run alongside other async code.
 
 ### `await bot.close()`
 Flush queues, stop scheduler, disconnect gateway, close HTTP session.

@@ -14,7 +14,7 @@ message = bot.cache.messages.get("message_id")
 
 ## Partial merge
 
-Gateway events often send partial objects. The cache merges them intelligently — a `{id, username}` update won't wipe the avatar field.
+Gateway events often send partial objects. The cache merges them intelligently - a `{id, username}` update won't wipe the avatar field.
 
 ## Configuration
 

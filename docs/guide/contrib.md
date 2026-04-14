@@ -80,7 +80,7 @@ await bot.plugins.load(MessageFilterPlugin(
 ---
 
 ### `WarnPlugin`
-`/warn @user <reason>` — stores warnings, auto-kicks at threshold.
+`/warn @user <reason>` - stores warnings, auto-kicks at threshold.
 
 ```python
 await bot.plugins.load(WarnPlugin(threshold=3, log_channel_id="LOG_CHANNEL_ID"))
@@ -234,7 +234,7 @@ async def poll(ctx):
 ---
 
 ### `SuggestionPlugin`
-`/suggest <idea>` — posts to a suggestions channel with 👍/👎 reactions.
+`/suggest <idea>` - posts to a suggestions channel with 👍/👎 reactions.
 
 ```python
 await bot.plugins.load(SuggestionPlugin(channel_id="SUGGESTIONS_CHANNEL_ID"))
@@ -245,7 +245,7 @@ await bot.plugins.load(SuggestionPlugin(channel_id="SUGGESTIONS_CHANNEL_ID"))
 ## Utility
 
 ### `ReminderPlugin`
-`/remind 10m take a break` — DMs the user after the time.
+`/remind 10m take a break` - DMs the user after the time.
 
 ```python
 plugin = ReminderPlugin()
@@ -255,7 +255,7 @@ await bot.plugins.load(plugin)
 ---
 
 ### `AFKPlugin`
-`/afk <reason>` — bot replies to mentions with the AFK message.
+`/afk <reason>` - bot replies to mentions with the AFK message.
 
 ```python
 await bot.plugins.load(AFKPlugin())
@@ -264,7 +264,7 @@ await bot.plugins.load(AFKPlugin())
 ---
 
 ### `BirthdayPlugin`
-`/birthday MM-DD` — announces birthdays daily.
+`/birthday MM-DD` - announces birthdays daily.
 
 ```python
 await bot.plugins.load(BirthdayPlugin(
@@ -288,7 +288,7 @@ await bot.plugins.load(TranslatePlugin(
 ---
 
 ### `TicketPlugin`
-DM-based support tickets — users DM the bot, staff reply via a channel.
+DM-based support tickets - users DM the bot, staff reply via a channel.
 
 ```python
 await bot.plugins.load(TicketPlugin(

@@ -39,7 +39,7 @@ class Paginator:
         from nerimity_sdk.commands.builders import MessageBuilder
         from nerimity_sdk.commands.buttons import Button, ComponentRow, ButtonContext
 
-        # Send initial page (plain text — Nerimity button API via message body)
+        # Send initial page (plain text - Nerimity button API via message body)
         sent = await ctx.reply(self._render())
         if len(self.pages) == 1:
             return
@@ -50,7 +50,7 @@ class Paginator:
         # Register ephemeral button handlers on the bot's ButtonRouter
         bot_router: Optional["ButtonRouter"] = getattr(ctx, "_button_router", None)
         if bot_router is None:
-            # No button router wired — fall back to ask()-based navigation
+            # No button router wired - fall back to ask()-based navigation
             await self._ask_navigation(ctx)
             return
 

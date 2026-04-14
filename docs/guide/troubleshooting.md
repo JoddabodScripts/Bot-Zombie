@@ -8,12 +8,12 @@ Common problems and how to fix them.
 
 Python isn't on your PATH. Two options:
 
-**Option 1 — Reinstall Python with PATH enabled:**
+**Option 1 - Reinstall Python with PATH enabled:**
 1. Uninstall Python from **Settings → Apps**
 2. Re-download from [python.org/downloads](https://www.python.org/downloads/)
 3. Run the installer and **check "Add Python to PATH"** before clicking Install
 
-**Option 2 — Try `py` instead:**
+**Option 2 - Try `py` instead:**
 ```
 py -m pip install nerimity-sdk
 py bot.py
@@ -66,7 +66,7 @@ notepad .env
 
 ## Bot crashes immediately on startup
 
-Look at the error message in the terminal — it usually tells you exactly what's wrong. Common causes:
+Look at the error message in the terminal - it usually tells you exactly what's wrong. Common causes:
 
 - Invalid or expired token → regenerate it from the developer portal
 - Missing a required package → run `pip install nerimity-sdk` again

@@ -1,4 +1,4 @@
-"""AutoReplyPlugin — keyword-triggered auto-replies."""
+"""AutoReplyPlugin - keyword-triggered auto-replies."""
 from __future__ import annotations
 import re
 from nerimity_sdk.plugins.manager import PluginBase, listener
@@ -20,7 +20,7 @@ class AutoReplyPlugin(PluginBase):
 
     def __init__(self, rules: list[tuple[str, str]] | None = None) -> None:
         super().__init__()
-        # Each rule: (pattern, response) — pattern is treated as regex
+        # Each rule: (pattern, response) - pattern is treated as regex
         self._rules: list[tuple[re.Pattern, str]] = [
             (re.compile(p, re.IGNORECASE), r) for p, r in (rules or [])
         ]

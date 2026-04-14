@@ -1,4 +1,4 @@
-"""MutePlugin — mute/unmute users via a muted role."""
+"""MutePlugin - mute/unmute users via a muted role."""
 from __future__ import annotations
 from nerimity_sdk.plugins.manager import PluginBase, listener
 

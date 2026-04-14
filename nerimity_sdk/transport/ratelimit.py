@@ -30,7 +30,7 @@ class RateLimitBackend(ABC):
 
 
 class LocalRateLimitBackend(RateLimitBackend):
-    """Default in-process backend — same behaviour as before, zero dependencies."""
+    """Default in-process backend - same behaviour as before, zero dependencies."""
 
     def __init__(self) -> None:
         self._buckets: dict[str, tuple[int, float]] = {}  # key -> (remaining, reset_at)

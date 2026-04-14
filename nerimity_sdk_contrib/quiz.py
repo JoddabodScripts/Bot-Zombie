@@ -1,7 +1,7 @@
-"""QuizPlugin — channel-based trivia quiz game.
+"""QuizPlugin - channel-based trivia quiz game.
 
 How it works:
-  1. ``/quiz start [rounds]`` — starts a quiz in the current channel.
+  1. ``/quiz start [rounds]`` - starts a quiz in the current channel.
   2. The bot posts a question; players type the answer.
   3. First correct answer wins the round and earns a point.
   4. After all rounds the leaderboard is shown.
@@ -102,7 +102,7 @@ class QuizPlugin(PluginBase):
 
         await self.bot.rest.create_message(
             channel_id,
-            f"🎉 **Quiz starting!** {len(questions)} rounds — {self.answer_timeout:.0f}s per question."
+            f"🎉 **Quiz starting!** {len(questions)} rounds - {self.answer_timeout:.0f}s per question."
         )
         await asyncio.sleep(2)
 
@@ -155,7 +155,7 @@ class QuizPlugin(PluginBase):
             user = self.bot.cache.users.get(uid)
             name = user.username if user else uid
             medal = medals[idx] if idx < 3 else f"#{idx+1}"
-            lines.append(f"{medal} **{name}** — {pts} point{'s' if pts != 1 else ''}")
+            lines.append(f"{medal} **{name}** - {pts} point{'s' if pts != 1 else ''}")
         await self.bot.rest.create_message(channel_id, "\n".join(lines))
 
     async def _wait_for_answer(self, state: dict[str, Any]) -> None:

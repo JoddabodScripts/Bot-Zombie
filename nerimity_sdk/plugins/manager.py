@@ -50,7 +50,7 @@ class PluginManager:
                     f"Plugin {name!r} requires {dep!r} to be loaded first"
                 )
         plugin._bot = self._bot
-        # Register the plugin's commands and listeners — force public=True
+        # Register the plugin's commands and listeners - force public=True
         for cmd_name, cmd_def in getattr(plugin, "_commands", {}).items():
             cmd_def.public = True
             self._bot.router._commands[cmd_name] = cmd_def

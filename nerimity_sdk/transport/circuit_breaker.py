@@ -6,9 +6,9 @@ elapsed (half-open probe).
 
 States
 ------
-CLOSED  — normal operation; failures are counted.
-OPEN    — calls are rejected immediately with ``CircuitOpenError``.
-HALF_OPEN — one probe call is allowed; success → CLOSED, failure → OPEN.
+CLOSED  - normal operation; failures are counted.
+OPEN    - calls are rejected immediately with ``CircuitOpenError``.
+HALF_OPEN - one probe call is allowed; success → CLOSED, failure → OPEN.
 
 Usage::
 

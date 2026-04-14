@@ -1,4 +1,4 @@
-"""MessageFilterPlugin — block links, invites, or custom regex patterns.
+"""MessageFilterPlugin - block links, invites, or custom regex patterns.
 
 Usage::
 

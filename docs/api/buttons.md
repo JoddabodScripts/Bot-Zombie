@@ -33,7 +33,7 @@ async def on_cancel(bctx):
     await bctx.popup("Cancelled", "Nothing was changed.")
 ```
 
-`bctx.popup(title, content)` shows a modal dialog to the user who clicked — it doesn't post a message in the channel.
+`bctx.popup(title, content)` shows a modal dialog to the user who clicked - it doesn't post a message in the channel.
 
 `bctx.reply(content)` posts a message in the channel instead.
 

@@ -1,5 +1,5 @@
 """
-Example bot — demonstrates every major nerimity-sdk feature:
+Example bot - demonstrates every major nerimity-sdk feature:
   - Prefix commands with arg converters, cooldowns, middleware
   - ctx.confirm(), ctx.ask(), ctx.mentions
   - Slash commands
@@ -150,7 +150,7 @@ async def clear(ctx):
 @bot.slash("info", description="Show bot info")
 async def slash_info(sctx):
     from nerimity_sdk import __version__
-    await sctx.reply(f"nerimity-sdk v{__version__} — running as {bot._me.username if bot._me else '?'}")
+    await sctx.reply(f"nerimity-sdk v{__version__} - running as {bot._me.username if bot._me else '?'}")
 
 
 @bot.slash("ban", description="Ban a user", args_hint="<user_id> [reason]")
@@ -175,7 +175,7 @@ async def poll(ctx):
     # Send the poll message; use a temporary key, then re-key on the real message ID
     msg = await ctx.rest.create_message(
         ctx.channel_id,
-        f"📊 **{question}**\n👍 Yes — 0  |  👎 No — 0",
+        f"📊 **{question}**\n👍 Yes - 0  |  👎 No - 0",
         buttons=[
             {"label": "👍 Yes (0)", "id": f"poll_yes_PENDING", "alert": False},
             {"label": "👎 No (0)",  "id": f"poll_no_PENDING",  "alert": True},
@@ -187,7 +187,7 @@ async def poll(ctx):
     # Edit the message so button IDs contain the real message ID
     await ctx.rest.update_message(
         ctx.channel_id, msg_id,
-        f"📊 **{question}**\n👍 Yes — 0  |  👎 No — 0",
+        f"📊 **{question}**\n👍 Yes - 0  |  👎 No - 0",
         buttons=[
             {"label": "👍 Yes (0)", "id": f"poll_yes_{msg_id}", "alert": False},
             {"label": "👎 No (0)",  "id": f"poll_no_{msg_id}",  "alert": True},
@@ -204,7 +204,7 @@ async def on_poll_yes(bctx):
         return
     votes["yes"].add(bctx.user_id)
     votes["no"].discard(bctx.user_id)
-    await bctx.popup("Voted! 👍", f"Yes — {len(votes['yes'])}  |  No — {len(votes['no'])}")
+    await bctx.popup("Voted! 👍", f"Yes - {len(votes['yes'])}  |  No - {len(votes['no'])}")
 
 
 @bot.button("poll_no_{msg_id}")
@@ -216,7 +216,7 @@ async def on_poll_no(bctx):
         return
     votes["no"].add(bctx.user_id)
     votes["yes"].discard(bctx.user_id)
-    await bctx.popup("Voted! 👎", f"Yes — {len(votes['yes'])}  |  No — {len(votes['no'])}")
+    await bctx.popup("Voted! 👎", f"Yes - {len(votes['yes'])}  |  No - {len(votes['no'])}")
 
 
 @bot.button("confirm:{action}:{target}")

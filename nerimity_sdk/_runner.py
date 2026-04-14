@@ -5,7 +5,7 @@ re-executes the same script inside a child process and:
   - Restarts it automatically if it crashes
   - Restarts it when any .py file in the working directory is modified or created
 
-The parent process is purely a watchdog — all bot logic runs in the child.
+The parent process is purely a watchdog - all bot logic runs in the child.
 Set the env var NERIMITY_CHILD=1 to skip the wrapper (the child sets this itself).
 """
 from __future__ import annotations
@@ -70,9 +70,9 @@ def launch(script: str) -> None:
             return
 
         if restart_reason:
-            print(f"\n[nerimity] {restart_reason} — restarting...\n", flush=True)
+            print(f"\n[nerimity] {restart_reason} - restarting...\n", flush=True)
         elif proc.returncode not in (0, -2, 130):  # 130 = 128+SIGINT, -2 = SIGINT on Unix
-            print(f"\n[nerimity] Bot exited with code {proc.returncode} — restarting in 2s...\n",
+            print(f"\n[nerimity] Bot exited with code {proc.returncode} - restarting in 2s...\n",
                   flush=True)
             time.sleep(2)
         else:

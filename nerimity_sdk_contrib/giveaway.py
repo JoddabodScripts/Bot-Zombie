@@ -1,4 +1,4 @@
-"""GiveawayPlugin — react to enter, random winner picked after duration.
+"""GiveawayPlugin - react to enter, random winner picked after duration.
 
 Usage::
 
@@ -40,7 +40,7 @@ class GiveawayPlugin(PluginBase):
         entries = self._entries.pop(msg.id, set())
         if not entries:
             await self.bot.rest.create_message(msg.channel_id,
-                f"{emoji} Giveaway for **{prize}** ended — no entries!")
+                f"{emoji} Giveaway for **{prize}** ended - no entries!")
             return
         winner = random.choice(list(entries))
         from nerimity_sdk.utils.mentions import mention

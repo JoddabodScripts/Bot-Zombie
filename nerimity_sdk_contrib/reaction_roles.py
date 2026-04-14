@@ -1,4 +1,4 @@
-"""ReactionRolesPlugin — persistent reaction roles stored in bot.store.
+"""ReactionRolesPlugin - persistent reaction roles stored in bot.store.
 
 Unlike RoleMenuPlugin, this survives bot restarts.
 

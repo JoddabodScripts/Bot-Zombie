@@ -1,4 +1,4 @@
-"""AutoRolePlugin — assign a role automatically when a member joins.
+"""AutoRolePlugin - assign a role automatically when a member joins.
 
 Usage::
 

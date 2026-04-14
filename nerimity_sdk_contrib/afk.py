@@ -1,4 +1,4 @@
-"""AFKPlugin — /afk <reason>, bot replies to mentions with the AFK message.
+"""AFKPlugin - /afk <reason>, bot replies to mentions with the AFK message.
 
 Usage::
 

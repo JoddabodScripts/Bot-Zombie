@@ -145,7 +145,7 @@ async def deploy(req: DeployRequest, authorization: Optional[str] = Header(None)
     # use provided token or saved one
     token = (req.bot_token or user.get("bot_token", "")).strip()
     if not token:
-        raise HTTPException(400, "No bot token — save one to your account first")
+        raise HTTPException(400, "No bot token - save one to your account first")
 
     # save token to account if new
     if req.bot_token and req.bot_token != user.get("bot_token"):

@@ -14,7 +14,7 @@ Nerimity's gateway has a connection limit per token. Once your bot reaches that 
 
 ## How it works
 
-Each shard is identified by two numbers: its **shard ID** (0-indexed) and the **total shard count**. The gateway uses these to divide servers evenly — shard `n` receives events only for servers where `server_id % shard_count == n`.
+Each shard is identified by two numbers: its **shard ID** (0-indexed) and the **total shard count**. The gateway uses these to divide servers evenly - shard `n` receives events only for servers where `server_id % shard_count == n`.
 
 ---
 
@@ -55,8 +55,8 @@ python bot.py 3 4
 
 ## What changes with sharding
 
-- Each shard only receives events for its subset of servers — `bot.cache` only contains data for those servers
-- `bot.rest` works normally on all shards — REST calls are not sharded
+- Each shard only receives events for its subset of servers - `bot.cache` only contains data for those servers
+- `bot.rest` works normally on all shards - REST calls are not sharded
 - The built-in `/stats` command reports per-shard stats
 - Plugins, storage, and scheduled tasks work the same way on each shard
 

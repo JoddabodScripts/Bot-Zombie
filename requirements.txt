@@ -3,7 +3,7 @@ aiohttp>=3.9
 python-dotenv>=1.0
 mkdocs-material>=9.0
 
-# Optional extras — uncomment what you need
+# Optional extras - uncomment what you need
 # croniter>=2.0       # @bot.cron() scheduled tasks
 # watchfiles>=0.21    # watch=True plugin auto-reload
 # aiosqlite>=0.19     # SqliteStore

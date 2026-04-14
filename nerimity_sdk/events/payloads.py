@@ -24,7 +24,7 @@ def _msg(d: Any) -> Optional[Message]:
 
 @dataclass
 class ReadyEvent:
-    """user:authenticated — fired once after login."""
+    """user:authenticated - fired once after login."""
     user: User
     servers: list[Server] = field(default_factory=list)
     channels: list[Channel] = field(default_factory=list)

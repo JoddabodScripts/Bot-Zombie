@@ -1,4 +1,4 @@
-"""ModerationLogPlugin — logs mod actions (kicks, bans, unbans, role changes) to a channel.
+"""ModerationLogPlugin - logs mod actions (kicks, bans, unbans, role changes) to a channel.
 
 Usage::
 

@@ -1,6 +1,6 @@
 # Webhooks
 
-Webhooks let you send messages to a Nerimity channel without a running bot — useful for notifications from external services, CI/CD pipelines, or any script.
+Webhooks let you send messages to a Nerimity channel without a running bot - useful for notifications from external services, CI/CD pipelines, or any script.
 
 ## Install
 

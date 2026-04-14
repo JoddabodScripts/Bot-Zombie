@@ -65,7 +65,7 @@ class ButtonContext:
     async def popup(self, title: str, content: str) -> None:
         """Send a popup dialog to the user who clicked the button.
 
-        This is the primary way to respond to button clicks — it shows a
+        This is the primary way to respond to button clicks - it shows a
         small modal to the user without posting a message in the channel.
 
         Usage::

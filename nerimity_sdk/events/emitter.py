@@ -11,7 +11,7 @@ class EventEmitter:
     """Async event emitter. Attach handlers with on()/once(), fire them with emit().
 
     Handlers run concurrently via asyncio.gather. A crash in one handler
-    is logged and isolated — it won't affect other handlers for the same event.
+    is logged and isolated - it won't affect other handlers for the same event.
     """
     def __init__(self) -> None:
         self._listeners: dict[str, list[tuple[Handler, bool]]] = defaultdict(list)

@@ -7,7 +7,7 @@
 Your bot token is equivalent to a password. Anyone with it can control your bot and read every message it can see.
 
 - **Never hardcode it** in your source code
-- **Never commit it** to Git — add `.env` to `.gitignore` (the scaffold does this automatically)
+- **Never commit it** to Git - add `.env` to `.gitignore` (the scaffold does this automatically)
 - **Never share it** in screenshots, streams, or chat
 - If it leaks, regenerate it immediately from the developer portal
 

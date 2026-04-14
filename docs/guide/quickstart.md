@@ -9,7 +9,7 @@ Your token is like a password that lets your bot log in.
 1. Go to [nerimity.com/app/settings/developer/applications](https://nerimity.com/app/settings/developer/applications)
 2. Click **New Application**, give it a name
 3. Go to the **Bot** tab → click **Add Bot**
-4. Copy the token — keep it secret, never share it 🔒
+4. Copy the token - keep it secret, never share it 🔒
 
 ## 2. Install the SDK
 
@@ -62,19 +62,19 @@ python bot.py
 
 You should see `✅ Logged in as YourBot!` in the terminal.
 
-Go to Nerimity and type `/ping` in any channel your bot can see — it should reply **Pong! 🏓**
+Go to Nerimity and type `/ping` in any channel your bot can see - it should reply **Pong! 🏓**
 
 ---
 
 ## How it works (the basics)
 
-You don't need to understand all of this right away — just copy the patterns and experiment!
+You don't need to understand all of this right away - just copy the patterns and experiment!
 
-**`@bot.command("name")`** — a *decorator* that tells the SDK "when someone types `/name`, run this function".
+**`@bot.command("name")`** - a *decorator* that tells the SDK "when someone types `/name`, run this function".
 
-**`ctx`** — short for "context". It's passed to every command and holds everything about the message: who sent it, what channel it's in, etc.
+**`ctx`** - short for "context". It's passed to every command and holds everything about the message: who sent it, what channel it's in, etc.
 
-**`await ctx.reply("...")`** — sends a message back. The `await` is needed because sending a message takes a moment (it goes over the internet).
+**`await ctx.reply("...")`** - sends a message back. The `await` is needed because sending a message takes a moment (it goes over the internet).
 
 ---
 
@@ -158,13 +158,13 @@ async def recall(ctx):
 
 ## What's next?
 
-- [Recipes](recipes.md) — copy-paste examples for common bot patterns
-- [Commands in depth](../api/commands.md) — all the options for commands
-- [Plugins](../api/plugins.md) — split your bot into separate files
-- [Example Bot](../example.md) — a complete bot showing everything at once
+- [Recipes](recipes.md) - copy-paste examples for common bot patterns
+- [Commands in depth](../api/commands.md) - all the options for commands
+- [Plugins](../api/plugins.md) - split your bot into separate files
+- [Example Bot](../example.md) - a complete bot showing everything at once
 
 ---
 
 ## Linux
 
-Open a terminal and follow the same steps — just use `pip3` if `pip` isn't found, and there's no need for the File Explorer tip.
+Open a terminal and follow the same steps - just use `pip3` if `pip` isn't found, and there's no need for the File Explorer tip.

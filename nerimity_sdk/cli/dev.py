@@ -1,4 +1,4 @@
-"""nerimity dev — development runner.
+"""nerimity dev - development runner.
 
 - Auto-restarts the bot when any .py file in the working directory changes
 - Checks PyPI for a newer version of nerimity-sdk on startup
@@ -64,7 +64,7 @@ def _check_for_update() -> None:
                 f"   Run: {c['BOLD']}pip install nerimity-sdk=={latest}{c['RESET']}\n"
             )
     except Exception:
-        pass  # no internet / PyPI down — silently skip
+        pass  # no internet / PyPI down - silently skip
 
 
 def _snapshot(directory: str) -> dict[str, float]:
@@ -94,7 +94,7 @@ def run(bot_file: str) -> None:
 
     print(f"{c['BOLD']}{c['INFO']}[dev]{c['RESET']} Watching {directory} for changes...\n")
 
-    # Dashboard state — populated via the health endpoint if health_port is set
+    # Dashboard state - populated via the health endpoint if health_port is set
     _stats_url: str | None = None
 
     def _try_read_health_port() -> str | None:
@@ -145,7 +145,7 @@ def run(bot_file: str) -> None:
                            if snapshot.get(p) != m or p not in snapshot]
                 if changed:
                     rel = os.path.relpath(changed[0], directory)
-                    print(f"\n{c['WARNING']}[dev] {rel} changed — restarting...{c['RESET']}\n")
+                    print(f"\n{c['WARNING']}[dev] {rel} changed - restarting...{c['RESET']}\n")
                     proc.terminate()
                     try:
                         proc.wait(timeout=5)

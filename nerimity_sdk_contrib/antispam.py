@@ -1,4 +1,4 @@
-"""AntiSpamPlugin — rate-limit messages per user, auto-mute/kick on threshold.
+"""AntiSpamPlugin - rate-limit messages per user, auto-mute/kick on threshold.
 
 Usage::
 
@@ -57,10 +57,10 @@ class AntiSpamPlugin(PluginBase):
             await self.bot.rest.delete_message(msg.channel_id, msg.id)
         elif self.action == "kick":
             await self.bot.rest.kick_member(msg.server_id, uid)
-            log += " — kicked"
+            log += " - kicked"
         elif self.action == "ban":
             await self.bot.rest.ban_member(msg.server_id, uid)
-            log += " — banned"
+            log += " - banned"
 
         if self.log_channel_id:
             await self.bot.rest.create_message(self.log_channel_id, log)

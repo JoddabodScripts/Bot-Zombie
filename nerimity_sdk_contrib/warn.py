@@ -1,4 +1,4 @@
-"""WarnPlugin — /warn @user <reason>, stores warnings, auto-kicks at threshold.
+"""WarnPlugin - /warn @user <reason>, stores warnings, auto-kicks at threshold.
 
 Usage::
 

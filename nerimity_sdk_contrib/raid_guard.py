@@ -1,4 +1,4 @@
-"""RaidGuardPlugin — automatic lockdown on member-join spike.
+"""RaidGuardPlugin - automatic lockdown on member-join spike.
 
 Monitors the rate of ``member:joined`` events.  If more than *threshold*
 members join within *window* seconds the server is considered under a raid
@@ -8,9 +8,9 @@ Lockdown mode can be cleared manually with ``/raidguard unlock``.
 
 Commands
 --------
-``/raidguard status``  — show current guard status and join rate.
-``/raidguard unlock``  — manually clear lockdown (mod only).
-``/raidguard lock``    — manually trigger lockdown (mod only).
+``/raidguard status``  - show current guard status and join rate.
+``/raidguard unlock``  - manually clear lockdown (mod only).
+``/raidguard lock``    - manually trigger lockdown (mod only).
 
 Usage::
 
@@ -82,7 +82,7 @@ class RaidGuardPlugin(PluginBase):
             self._locked = True
             await self.bot.rest.create_message(
                 self.alert_channel_id,
-                f"🚨 **RAID ALERT** — {rate} members joined in the last "
+                f"🚨 **RAID ALERT** - {rate} members joined in the last "
                 f"{self.window:.0f}s (threshold: {self.threshold}).\n"
                 f"Use `/raidguard unlock` to clear lockdown once the raid is over."
             )
@@ -100,7 +100,7 @@ class RaidGuardPlugin(PluginBase):
                 rate = plugin._current_rate()
                 status = "🔴 LOCKED DOWN" if plugin._locked else "🟢 Normal"
                 await ctx.reply(
-                    f"**Raid Guard** — {status}\n"
+                    f"**Raid Guard** - {status}\n"
                     f"Joins in last {plugin.window:.0f}s: **{rate}** (threshold: {plugin.threshold})"
                 )
 

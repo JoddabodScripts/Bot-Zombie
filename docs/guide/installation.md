@@ -7,30 +7,30 @@
 
 ---
 
-## Step 1 — Install Python (Windows)
+## Step 1 - Install Python (Windows)
 
 If you haven't installed Python yet:
 
 1. Go to [python.org/downloads](https://www.python.org/downloads/) and download the latest version
 2. Run the installer
-3. ⚠️ **Check "Add Python to PATH"** before clicking Install — this is important!
+3. ⚠️ **Check "Add Python to PATH"** before clicking Install - this is important!
 4. Open **Command Prompt** (`Win + R` → type `cmd` → Enter)
-5. Run `python --version` — if you see a version number, you're all set ✅
+5. Run `python --version` - if you see a version number, you're all set ✅
 
 ---
 
-## Step 2 — Get a token
+## Step 2 - Get a token
 
 Your token is what lets your bot log in to Nerimity.
 
 1. Go to [nerimity.com/app/settings/developer/applications](https://nerimity.com/app/settings/developer/applications)
 2. Click **New Application** and give it a name
 3. Go to the **Bot** tab → click **Add Bot**
-4. Copy the token — **keep it secret, never share it or commit it to GitHub**
+4. Copy the token - **keep it secret, never share it or commit it to GitHub**
 
 ---
 
-## Step 3 — Install the SDK
+## Step 3 - Install the SDK
 
 Open **Command Prompt** and run:
 
@@ -52,7 +52,7 @@ pip install "nerimity-sdk[redis,sqlite,cron,watch]"   # Everything
 
 ---
 
-## Step 4 — Create your project
+## Step 4 - Create your project
 
 ```
 nerimity create my-bot
@@ -99,9 +99,9 @@ You should see a "Logged in" message in the terminal. Your bot is online! 🎉
 
 ---
 
-## Tip — Use VS Code instead of Notepad
+## Tip - Use VS Code instead of Notepad
 
-Notepad works, but [Visual Studio Code](https://code.visualstudio.com/) is a free editor that makes writing bot code much easier — it highlights errors, autocompletes, and has a built-in terminal.
+Notepad works, but [Visual Studio Code](https://code.visualstudio.com/) is a free editor that makes writing bot code much easier - it highlights errors, autocompletes, and has a built-in terminal.
 
 1. Download and install it from [code.visualstudio.com](https://code.visualstudio.com/)
 2. Open your bot folder: **File → Open Folder**

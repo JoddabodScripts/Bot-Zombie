@@ -1,6 +1,6 @@
 # OAuth2
 
-OAuth2 lets users log in to your website or app with their Nerimity account — similar to "Login with Discord/Google".
+OAuth2 lets users log in to your website or app with their Nerimity account - similar to "Login with Discord/Google".
 
 ## Setup
 

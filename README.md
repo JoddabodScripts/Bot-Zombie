@@ -1,17 +1,17 @@
 # nerimity-sdk
 
-A Python library for building bots on [Nerimity](https://nerimity.com). Don't worry if you're new to Python — this guide will walk you through everything step by step! 🐱
+A Python library for building bots on [Nerimity](https://nerimity.com). Don't worry if you're new to Python - this guide will walk you through everything step by step! 🐱
 
 ---
 
-## Before you start — install Python (Windows)
+## Before you start - install Python (Windows)
 
 If you've never used Python before, that's totally fine! Here's how to get set up:
 
 1. Go to [python.org/downloads](https://www.python.org/downloads/) and download the latest version
-2. Run the installer — **make sure to check "Add Python to PATH"** before clicking Install
+2. Run the installer - **make sure to check "Add Python to PATH"** before clicking Install
 3. Open **Command Prompt** (press `Win + R`, type `cmd`, hit Enter)
-4. Type `python --version` and press Enter — if you see a version number, you're good to go! ✅
+4. Type `python --version` and press Enter - if you see a version number, you're good to go! ✅
 
 ---
 
@@ -24,7 +24,7 @@ pip install nerimity-sdk
 pip install nerimity-sdk-contrib
 ```
 
-> `nerimity-sdk-contrib` is optional — it adds ready-made plugins like welcome messages, leveling, polls, and more.
+> `nerimity-sdk-contrib` is optional - it adds ready-made plugins like welcome messages, leveling, polls, and more.
 
 ---
 
@@ -99,8 +99,8 @@ python bot.py
 
 | Feature | How to use |
 |---|---|
-| Slash + prefix commands | `@bot.command("ping")` — works as `/ping` (default) |
-| Type annotation converters | `async def add(ctx, a: int, b: int)` — no `args=` needed |
+| Slash + prefix commands | `@bot.command("ping")` - works as `/ping` (default) |
+| Type annotation converters | `async def add(ctx, a: int, b: int)` - no `args=` needed |
 | Permission shortcut | `@bot.command("ban", requires=Permissions.BAN_MEMBERS)` |
 | Command groups | `mod = bot.group("mod")` → `/mod ban`, `/mod kick` |
 | Disable/enable commands | `bot.disable_command("ping", server_id)` |
@@ -125,7 +125,7 @@ python bot.py
 | Rate limit hook | `@bot.on_ratelimit async def handler(route, retry_after)` |
 | Health endpoint | `Bot(health_port=8080)` → `GET /health`, `GET /stats` |
 | JSON structured logs | `Bot(json_logs=True)` |
-| Runtime stats | `bot.stats` — uptime, messages, commands, cache sizes |
+| Runtime stats | `bot.stats` - uptime, messages, commands, cache sizes |
 | Built-in /stats command | every bot gets `/stats` automatically |
 | Auto-restart on crash | enabled by default in `bot.run()` |
 | Auto-restart on file save | enabled by default in `bot.run()` |
@@ -198,7 +198,7 @@ pip install nerimity-sdk
 pip install nerimity-sdk-contrib  # optional
 ```
 
-Then follow the same steps above — just use `cp .env.example .env` instead of `copy`.
+Then follow the same steps above - just use `cp .env.example .env` instead of `copy`.
 
 ---
 

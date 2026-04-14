@@ -1,6 +1,6 @@
 # Slash Commands
 
-Slash commands in nerimity-sdk are the same as prefix commands — `@bot.slash` is an alias for `@bot.command`.
+Slash commands in nerimity-sdk are the same as prefix commands - `@bot.slash` is an alias for `@bot.command`.
 
 ```python
 @bot.command("ban", description="Ban a user")
@@ -36,7 +36,7 @@ This never appears in the `/` menu.
 
 ## SlashContext vs Context
 
-There is no separate `SlashContext` — slash and prefix invocations both receive the same `Context` object. See [Context](context.md) for the full reference.
+There is no separate `SlashContext` - slash and prefix invocations both receive the same `Context` object. See [Context](context.md) for the full reference.
 
 ## Registration
 

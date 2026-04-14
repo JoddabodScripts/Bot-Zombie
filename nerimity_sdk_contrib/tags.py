@@ -1,14 +1,14 @@
-"""TagPlugin — custom server tags / text snippets.
+"""TagPlugin - custom server tags / text snippets.
 
 Lets moderators define short named snippets that anyone can retrieve with
 ``/tag <name>``.
 
 Commands
 --------
-``/tag <name>``          — post the tag's content.
-``/tag add <name> <content>``  — create or overwrite a tag (mod only).
-``/tag delete <name>``   — delete a tag (mod only).
-``/tag list``            — list all tag names in this server.
+``/tag <name>``          - post the tag's content.
+``/tag add <name> <content>``  - create or overwrite a tag (mod only).
+``/tag delete <name>``   - delete a tag (mod only).
+``/tag list``            - list all tag names in this server.
 
 Tags are stored in the bot's store under ``tag:<server_id>:<name>``.
 
