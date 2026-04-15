@@ -2,5 +2,6 @@ fastapi
 uvicorn
 pydantic
 nerimity-sdk
+nerimity-sdk-contrib
 python-dotenv
 firebase-admin
