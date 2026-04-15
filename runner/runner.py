@@ -78,9 +78,14 @@ def _require_session(authorization: Optional[str]) -> str:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(401, "Not authenticated")
     tok = authorization.removeprefix("Bearer ").strip()
+    # check in-memory first, then Firestore
     u = _sessions.get(tok)
     if not u:
-        raise HTTPException(401, "Invalid or expired session")
+        doc = db.collection("sessions").document(tok).get()
+        if not doc.exists:
+            raise HTTPException(401, "Invalid or expired session")
+        u = doc.to_dict()["username"]
+        _sessions[tok] = u  # cache it
     return u
 
 class AuthRequest(BaseModel):
@@ -97,6 +102,7 @@ async def register(req: AuthRequest):
     _set_user(u, {"pw_hash": _hash(req.password), "tokens": []})
     session = secrets.token_hex(32)
     _sessions[session] = u
+    db.collection("sessions").document(session).set({"username": u})
     return {"session": session, "username": u, "tokens": []}
 
 @app.post("/auth/login")
@@ -107,11 +113,14 @@ async def login(req: AuthRequest):
         raise HTTPException(401, "Invalid username or password")
     session = secrets.token_hex(32)
     _sessions[session] = u
+    db.collection("sessions").document(session).set({"username": u})
     return {"session": session, "username": u, "tokens": user.get("tokens", [])}
 
 @app.post("/auth/logout")
 async def logout(authorization: Optional[str] = Header(None)):
-    _sessions.pop((authorization or "").removeprefix("Bearer ").strip(), None)
+    tok = (authorization or "").removeprefix("Bearer ").strip()
+    _sessions.pop(tok, None)
+    db.collection("sessions").document(tok).delete()
     return {"status": "logged out"}
 
 
