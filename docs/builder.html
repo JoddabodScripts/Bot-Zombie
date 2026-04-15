@@ -2136,8 +2136,9 @@ function emitAction(node, lines, indent) {
 
     case 'action_reply_buttons': {
       const btns = [];
-      if (p.btn1_id) btns.push(`Button(id=f"${esc2(p.btn1_id)}", label="${esc2(p.btn1_label||'Option 1')}")`);
-      if (p.btn2_id) btns.push(`Button(id=f"${esc2(p.btn2_id)}", label="${esc2(p.btn2_label||'Option 2')}"${p.btn2_alert==='true'||p.btn2_alert===true?', alert=True':''})`);
+      const fixId = s => esc2(s).replace(/\{channel_id\}/g, '{ctx.channel_id}').replace(/\{user_id\}/g, '{ctx.author.id}').replace(/\{server_id\}/g, '{ctx.server_id}');
+      if (p.btn1_id) btns.push(`Button(id=f"${fixId(p.btn1_id)}", label="${esc2(p.btn1_label||'Option 1')}")`);
+      if (p.btn2_id) btns.push(`Button(id=f"${fixId(p.btn2_id)}", label="${esc2(p.btn2_label||'Option 2')}"${p.btn2_alert==='true'||p.btn2_alert===true?', alert=True':''})`);
       lines.push(`${i}from nerimity_sdk import Button`);
       lines.push(`${i}await ctx.reply(f"${esc2(p.text||'Choose:')}", buttons=[${btns.join(', ')}])`);
       emitChain(node.id, 'exec', lines, i); break;
