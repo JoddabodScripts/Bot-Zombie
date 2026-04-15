@@ -1274,7 +1274,9 @@ function addWire(fromNode, fromPort, toNode, toPort) {
   path.setAttribute('class','wire');
   path.setAttribute('stroke', fromDef?.color || '#a78bfa');
   path.setAttribute('data-wire', id);
-  path.addEventListener('click', () => deleteWire(id));
+  path.addEventListener('click', (e) => { e.stopPropagation(); deleteWire(id); });
+  path.addEventListener('mouseenter', () => { path.style.strokeWidth = '5'; path.style.stroke = '#f87171'; path.title = 'Click to delete'; });
+  path.addEventListener('mouseleave', () => { path.style.strokeWidth = ''; path.style.stroke = ''; });
   wireSvg.appendChild(path);
   wires.push({id, fromNode, fromPort, toNode, toPort, el: path});
   redrawWires();
