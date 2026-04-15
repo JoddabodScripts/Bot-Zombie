@@ -1,5 +1,6 @@
 import asyncio
 import hashlib
+import json
 import os
 import secrets
 import subprocess
@@ -15,48 +16,40 @@ from firebase_admin import credentials, firestore
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-# ── Firebase init ──────────────────────────────────────────────────────────────
-import json
 _cred_data = json.loads(os.environ["FIREBASE_CREDENTIALS_JSON"])
 cred = credentials.Certificate(_cred_data)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-_bots:    dict[str, dict] = {}   # token → {proc, code}  (in-memory only)
-_sessions: dict[str, str] = {}   # session_token → username  (in-memory, short-lived)
+_bots:     dict[str, dict] = {}   # token → {proc, code}
+_sessions: dict[str, str]  = {}   # session → username
 
 
-# ── Firestore helpers ──────────────────────────────────────────────────────────
+# ── Firestore ──────────────────────────────────────────────────────────────────
 
-def _get_user(username: str) -> Optional[dict]:
-    doc = db.collection("users").document(username).get()
+def _get_user(u: str) -> Optional[dict]:
+    doc = db.collection("users").document(u).get()
     return doc.to_dict() if doc.exists else None
 
-def _set_user(username: str, data: dict):
-    db.collection("users").document(username).set(data)
-
-def _get_bots() -> dict:
-    doc = db.collection("state").document("bots").get()
-    return doc.to_dict() or {} if doc.exists else {}
+def _set_user(u: str, data: dict):
+    db.collection("users").document(u).set(data)
 
 def _save_bots():
     db.collection("state").document("bots").set(
-        {token: bot["code"] for token, bot in _bots.items()}
+        {t: b["code"] for t, b in _bots.items()}
     )
 
 def _hash(pw: str) -> str:
     return hashlib.sha256(pw.encode()).hexdigest()
 
 
-# ── Bot process management ─────────────────────────────────────────────────────
+# ── Process management ─────────────────────────────────────────────────────────
 
 def _launch(token: str, code: str) -> subprocess.Popen:
     code = code.replace('os.environ["NERIMITY_TOKEN"]', f'"{token}"')
     code = code.replace("os.environ['NERIMITY_TOKEN']", f'"{token}"')
     tmp = tempfile.NamedTemporaryFile(suffix=".py", delete=False, mode="w")
-    tmp.write(code)
-    tmp.flush()
-    tmp.close()
+    tmp.write(code); tmp.flush(); tmp.close()
     return subprocess.Popen(
         [sys.executable, tmp.name],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
@@ -70,30 +63,25 @@ async def _watchdog():
             if bot["proc"].poll() is not None:
                 bot["proc"] = _launch(token, bot["code"])
 
+@app.on_event("startup")
+async def startup():
+    doc = db.collection("state").document("bots").get()
+    if doc.exists:
+        for token, code in (doc.to_dict() or {}).items():
+            _bots[token] = {"proc": _launch(token, code), "code": code}
+    asyncio.create_task(_watchdog())
 
-# ── Auth helpers ───────────────────────────────────────────────────────────────
+
+# ── Auth ───────────────────────────────────────────────────────────────────────
 
 def _require_session(authorization: Optional[str]) -> str:
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(401, "Not authenticated")
-    token = authorization.removeprefix("Bearer ").strip()
-    username = _sessions.get(token)
-    if not username:
+    tok = authorization.removeprefix("Bearer ").strip()
+    u = _sessions.get(tok)
+    if not u:
         raise HTTPException(401, "Invalid or expired session")
-    return username
-
-
-# ── Startup ────────────────────────────────────────────────────────────────────
-
-@app.on_event("startup")
-async def startup():
-    # reload bots from Firestore
-    for token, code in _get_bots().items():
-        _bots[token] = {"proc": _launch(token, code), "code": code}
-    asyncio.create_task(_watchdog())
-
-
-# ── Auth endpoints ─────────────────────────────────────────────────────────────
+    return u
 
 class AuthRequest(BaseModel):
     username: str
@@ -106,10 +94,10 @@ async def register(req: AuthRequest):
         raise HTTPException(400, "Username must be at least 3 characters")
     if _get_user(u):
         raise HTTPException(409, "Username already taken")
-    _set_user(u, {"pw_hash": _hash(req.password), "bot_token": ""})
+    _set_user(u, {"pw_hash": _hash(req.password), "tokens": []})
     session = secrets.token_hex(32)
     _sessions[session] = u
-    return {"session": session, "username": u, "bot_token": ""}
+    return {"session": session, "username": u, "tokens": []}
 
 @app.post("/auth/login")
 async def login(req: AuthRequest):
@@ -119,43 +107,89 @@ async def login(req: AuthRequest):
         raise HTTPException(401, "Invalid username or password")
     session = secrets.token_hex(32)
     _sessions[session] = u
-    return {"session": session, "username": u, "bot_token": user.get("bot_token", "")}
+    return {"session": session, "username": u, "tokens": user.get("tokens", [])}
 
 @app.post("/auth/logout")
 async def logout(authorization: Optional[str] = Header(None)):
-    token = (authorization or "").removeprefix("Bearer ").strip()
-    _sessions.pop(token, None)
+    _sessions.pop((authorization or "").removeprefix("Bearer ").strip(), None)
     return {"status": "logged out"}
 
 
-# ── Bot endpoints ──────────────────────────────────────────────────────────────
+# ── Token management ───────────────────────────────────────────────────────────
+
+class TokenRequest(BaseModel):
+    bot_token: str
+
+@app.post("/tokens/add")
+async def add_token(req: TokenRequest, authorization: Optional[str] = Header(None)):
+    u = _require_session(authorization)
+    user = _get_user(u)
+    tokens = user.get("tokens", [])
+    if req.bot_token not in tokens:
+        tokens.append(req.bot_token.strip())
+        user["tokens"] = tokens
+        _set_user(u, user)
+    return {"tokens": tokens}
+
+@app.post("/tokens/remove")
+async def remove_token(req: TokenRequest, authorization: Optional[str] = Header(None)):
+    u = _require_session(authorization)
+    user = _get_user(u)
+    tokens = [t for t in user.get("tokens", []) if t != req.bot_token]
+    user["tokens"] = tokens
+    _set_user(u, user)
+    # stop bot if running
+    bot = _bots.pop(req.bot_token, None)
+    if bot and bot["proc"].poll() is None:
+        bot["proc"].terminate()
+    _save_bots()
+    return {"tokens": tokens}
+
+@app.get("/tokens")
+async def list_tokens(authorization: Optional[str] = Header(None)):
+    u = _require_session(authorization)
+    user = _get_user(u)
+    tokens = user.get("tokens", [])
+    return {"tokens": [{"token_hint": t[:8] + "...", "running": t in _bots and _bots[t]["proc"].poll() is None} for t in tokens]}
+
+
+# ── Deploy / stop ──────────────────────────────────────────────────────────────
 
 class DeployRequest(BaseModel):
     code: str
-    bot_token: Optional[str] = None
+    bot_token: str  # must specify which token to deploy
 
 @app.post("/deploy")
 async def deploy(req: DeployRequest, authorization: Optional[str] = Header(None)):
-    username = _require_session(authorization)
-    user = _get_user(username)
-    token = (req.bot_token or user.get("bot_token", "")).strip()
+    u = _require_session(authorization)
+    user = _get_user(u)
+    token = req.bot_token.strip()
     if not token:
-        raise HTTPException(400, "No bot token saved to your account")
-    if req.bot_token and req.bot_token != user.get("bot_token"):
-        user["bot_token"] = req.bot_token.strip()
-        _set_user(username, user)
+        raise HTTPException(400, "bot_token required")
+    # auto-add token to account if not already there
+    tokens = user.get("tokens", [])
+    if token not in tokens:
+        tokens.append(token)
+        user["tokens"] = tokens
+        _set_user(u, user)
     if token in _bots:
         p = _bots[token]["proc"]
         if p.poll() is None:
             p.terminate()
     _bots[token] = {"proc": _launch(token, req.code), "code": req.code}
     _save_bots()
-    return {"status": "started"}
+    return {"status": "started", "token_hint": token[:8] + "..."}
+
+class StopRequest(BaseModel):
+    bot_token: str
 
 @app.post("/stop")
-async def stop(authorization: Optional[str] = Header(None)):
-    username = _require_session(authorization)
-    token = (_get_user(username) or {}).get("bot_token", "")
+async def stop(req: StopRequest, authorization: Optional[str] = Header(None)):
+    u = _require_session(authorization)
+    user = _get_user(u)
+    token = req.bot_token.strip()
+    if token not in user.get("tokens", []):
+        raise HTTPException(403, "Token not in your account")
     bot = _bots.pop(token, None)
     if bot and bot["proc"].poll() is None:
         bot["proc"].terminate()
@@ -164,10 +198,12 @@ async def stop(authorization: Optional[str] = Header(None)):
 
 @app.get("/status")
 async def status(authorization: Optional[str] = Header(None)):
-    username = _require_session(authorization)
-    token = (_get_user(username) or {}).get("bot_token", "")
-    bot = _bots.get(token)
-    return {"running": bool(bot and bot["proc"].poll() is None), "bot_token": token}
+    u = _require_session(authorization)
+    user = _get_user(u)
+    return {"tokens": [
+        {"token_hint": t[:8] + "...", "running": t in _bots and _bots[t]["proc"].poll() is None}
+        for t in user.get("tokens", [])
+    ]}
 
 @app.get("/health")
 async def health():

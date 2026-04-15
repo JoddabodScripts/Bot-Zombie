@@ -685,6 +685,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);heigh
       </div>
       <div id="dtab-visual-body">
         <div class="hint">Deploys the bot generated from your visual nodes. Hosted for free - no setup needed.</div>
+        <div class="node-field">
+          <label>Bot Token <span style="color:var(--text-dim);font-weight:400">(select or add)</span></label>
+          <div style="display:flex;gap:.5rem">
+            <select id="deploy-token-select" style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'Inter',sans-serif;font-size:.78rem;padding:.35rem .5rem;outline:none">
+              <option value="">-- select a token --</option>
+            </select>
+            <button class="tb-btn" onclick="addDeployToken()" title="Add new token">+</button>
+          </div>
+          <input id="deploy-new-token" type="password" placeholder="Paste new bot token and click +" style="display:none;margin-top:.35rem">
+        </div>
       </div>
       <div id="dtab-custom-body" style="display:none;flex-direction:column;gap:.75rem">
         <div class="hint">Paste any Python bot code. It will be deployed and run on the hosted runner.</div>
@@ -948,10 +958,9 @@ async function doAuth() {
     if (!res.ok) throw new Error(data.detail || 'Auth failed');
     _session = data.session;
     _authUsername = data.username;
-    BOT_TOKEN = data.bot_token || '';
+    BOT_TOKEN = (data.tokens && data.tokens[0]) || '';
     localStorage.setItem('bz_session', _session);
     localStorage.setItem('bz_username', _authUsername);
-    // on register, save token if provided
     if (_authTab === 'register') {
       const tok = document.getElementById('auth-token').value.trim();
       if (tok) BOT_TOKEN = tok;
@@ -2299,13 +2308,43 @@ function _onEdit() {
   if (++_editCount % 3 === 0) deployBotSilent();
 }
 function openDeploy() {
-  const panel = document.getElementById('deploy-panel');
-  panel.classList.add('open');
+  document.getElementById('deploy-panel').classList.add('open');
   document.getElementById('deploy-status').className = '';
   document.getElementById('deploy-status').textContent = '';
+  _loadDeployTokens();
 }
 function closeDeploy() {
   document.getElementById('deploy-panel').classList.remove('open');
+}
+async function _loadDeployTokens() {
+  if (!_session) return;
+  try {
+    const res = await fetch(RUNNER_URL + '/tokens', {headers:{'Authorization':'Bearer '+_session}});
+    const data = await res.json();
+    const sel = document.getElementById('deploy-token-select');
+    sel.innerHTML = '<option value="">-- select a token --</option>';
+    (data.tokens || []).forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.token_hint;
+      opt.textContent = t.token_hint + (t.running ? ' 🟢' : ' ⚫');
+      sel.appendChild(opt);
+    });
+    // pre-select if only one
+    if (data.tokens && data.tokens.length === 1) sel.value = data.tokens[0].token_hint;
+  } catch(e) {}
+}
+function addDeployToken() {
+  const inp = document.getElementById('deploy-new-token');
+  if (inp.style.display === 'none') { inp.style.display = 'block'; inp.focus(); return; }
+  const tok = inp.value.trim();
+  if (!tok) return;
+  BOT_TOKEN = tok;
+  inp.value = ''; inp.style.display = 'none';
+  // add to account
+  fetch(RUNNER_URL + '/tokens/add', {
+    method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+_session},
+    body: JSON.stringify({bot_token: tok})
+  }).then(() => _loadDeployTokens());
 }
 let _deployTab = 'visual';
 function setDeployTab(tab) {
@@ -2318,12 +2357,12 @@ function setDeployTab(tab) {
   document.getElementById('dtab-custom-body').style.display = tab==='custom' ? 'flex' : 'none';
 }
 async function deployBotSilent() {
-  if (!_session) return;
+  if (!_session || !BOT_TOKEN) return;
   try {
     await fetch(RUNNER_URL + '/deploy', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session},
-      body: JSON.stringify({code: generateCode(), bot_token: BOT_TOKEN || undefined})
+      body: JSON.stringify({code: generateCode(), bot_token: BOT_TOKEN})
     });
   } catch(e) {}
 }
@@ -2333,30 +2372,40 @@ async function deployBot() {
     ? document.getElementById('deploy-custom-code').value.trim()
     : generateCode();
   if (!code) { setDeployStatus('err', 'No code to deploy.'); return; }
+  // get selected token
+  const sel = document.getElementById('deploy-token-select');
+  const tokenHint = sel ? sel.value : '';
+  const token = BOT_TOKEN || tokenHint;
+  if (!token) { setDeployStatus('err', 'Select or add a bot token first.'); return; }
   setDeployStatus('loading', 'Deploying…');
   try {
     const res = await fetch(RUNNER_URL + '/deploy', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session},
-      body: JSON.stringify({code, bot_token: BOT_TOKEN || undefined})
+      body: JSON.stringify({code, bot_token: token})
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || 'Deploy failed');
-    setDeployStatus('ok', '✅ Bot is running!');
+    setDeployStatus('ok', `✅ Bot is running! (${data.token_hint})`);
+    _loadDeployTokens();
   } catch(e) {
     setDeployStatus('err', '❌ ' + e.message);
   }
 }
 async function stopBot() {
   if (!_session) return;
+  const sel = document.getElementById('deploy-token-select');
+  const token = (sel && sel.value) || BOT_TOKEN;
+  if (!token) { setDeployStatus('err', 'Select a token to stop.'); return; }
   setDeployStatus('loading', 'Stopping…');
   try {
     await fetch(RUNNER_URL + '/stop', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session},
-      body: JSON.stringify({code: ''})
+      body: JSON.stringify({bot_token: token})
     });
     setDeployStatus('ok', '⏹ Bot stopped.');
+    _loadDeployTokens();
   } catch(e) {
     setDeployStatus('err', '❌ ' + e.message);
   }
