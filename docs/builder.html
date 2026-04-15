@@ -988,18 +988,16 @@ function _enterBuilder() {
   document.getElementById('app').style.display = 'flex';
   initCanvas();
   loadGraph();
-  deployBotSilent();
   setInterval(() => fetch(RUNNER_URL + '/health').catch(()=>{}), 20 * 1000);
 }
 
 // Try auto-login on page load
 window.addEventListener('DOMContentLoaded', async () => {
   if (_session && await _tryAutoLogin()) {
-    // fetch saved bot token
     try {
-      const res = await fetch(RUNNER_URL + '/status', {headers:{'Authorization':'Bearer '+_session}});
+      const res = await fetch(RUNNER_URL + '/tokens', {headers:{'Authorization':'Bearer '+_session}});
       const data = await res.json();
-      BOT_TOKEN = data.bot_token || '';
+      if (data.tokens && data.tokens.length > 0) BOT_TOKEN = data.tokens[0].token;
     } catch(e) {}
     _enterBuilder();
   }
