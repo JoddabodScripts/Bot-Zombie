@@ -258,7 +258,13 @@ class RESTClient:
 
     async def open_dm(self, user_id: str) -> dict:
         """Open (or retrieve) a DM channel with a user. Returns the Channel."""
-        return await self.request("POST", f"/users/{user_id}/open-channel")
+        import logging
+        data = await self.request("POST", f"/users/{user_id}/open-channel")
+        logging.getLogger("nerimity_sdk").debug(f"[open_dm] user={user_id} response={data!r}")
+        # API may return {"channel": {...}} or the channel object directly
+        if isinstance(data, dict) and "channel" in data:
+            return data["channel"]
+        return data
 
     async def bulk_delete_messages(self, channel_id: str, message_ids: list[str]) -> None:
         """Delete multiple messages. Falls back to sequential deletes if no bulk endpoint."""

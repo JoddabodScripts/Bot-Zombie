@@ -95,11 +95,12 @@ class Context:
         from nerimity_sdk.models import Message
         btn_data = None
         if buttons is not None:
-            from nerimity_sdk.commands.buttons import Button
-            btn_data = [
-                {"label": str(b.label), "id": str(b.id), "alert": getattr(b, "alert", False)}
-                for b in buttons
-            ]
+            btn_data = []
+            for b in buttons:
+                if isinstance(b, dict):
+                    btn_data.append({"label": str(b["label"]), "id": str(b["id"]), "alert": bool(b.get("alert", False))})
+                else:
+                    btn_data.append({"label": str(b.label), "id": str(b.id), "alert": getattr(b, "alert", False)})
         data = await self.rest.create_message(self.channel_id, content, buttons=btn_data)
         self._last_reply: Optional["Message"] = Message.from_dict(data)
         return self._last_reply
@@ -246,7 +247,7 @@ class Context:
             pass
         return None
 
-    async def reply_embed(self, embed: "Any") -> "Message":
+    async def reply_embed(self, embed: "Any", buttons: list | None = None) -> "Message":
         """Send an embed. Accepts an Embed builder object or a raw HTML string."""
         from nerimity_sdk.models import Message
         if isinstance(embed, str):
@@ -255,8 +256,16 @@ class Context:
             html = embed.get("htmlEmbed", "")
         else:
             html = embed.to_html()
+        btn_data = None
+        if buttons is not None:
+            btn_data = []
+            for b in buttons:
+                if isinstance(b, dict):
+                    btn_data.append({"label": str(b["label"]), "id": str(b["id"]), "alert": bool(b.get("alert", False))})
+                else:
+                    btn_data.append({"label": str(b.label), "id": str(b.id), "alert": getattr(b, "alert", False)})
         data = await self.rest.create_message(self.channel_id, "\u200b",
-                                               embed={"htmlEmbed": html})
+                                               embed={"htmlEmbed": html}, buttons=btn_data)
         return Message.from_dict(data)
 
     async def pin(self) -> None:
