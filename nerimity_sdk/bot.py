@@ -509,6 +509,7 @@ class Bot:
             bot_id_in_cmd = token_parts[1] if len(token_parts) > 1 else None
             # If a bot ID is specified and it doesn't match this bot, ignore
             if bot_id_in_cmd and self._me and bot_id_in_cmd != str(self._me.id):
+                self.logger.debug(f"[slash] ignoring cmd for bot {bot_id_in_cmd!r}, we are {self._me.id!r}")
                 await self.emitter.emit("message", msg)
                 return
             rest_of = parts[1] if len(parts) > 1 else ""
