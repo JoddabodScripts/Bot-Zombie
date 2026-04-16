@@ -731,11 +731,12 @@ function previewCmdCode(cmdId) {
   const code = generateCommandCode(cmd);
   const el = document.createElement('div');
   el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:flex;align-items:center;justify-content:center;padding:2rem';
+  el.dataset.overlay = '';
   el.onclick = e => { if (e.target === el) el.remove(); };
   el.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);width:min(700px,95vw);max-height:85vh;display:flex;flex-direction:column;overflow:hidden">
     <div style="padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center">
       <span style="font-size:.85rem;font-weight:600;flex:1">${esc(cmd.prefix)}${esc(cmd.name)} — Generated Code</span>
-      <button class="tb-btn" onclick="this.closest('[style]').remove()">Close</button>
+      <button class="tb-btn" onclick="this.closest('[data-overlay]').remove()">Close</button>
     </div>
     <pre style="flex:1;overflow:auto;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6;color:var(--green);background:rgba(0,0,0,.3)">${esc(code)}</pre>
   </div>`;
@@ -962,11 +963,12 @@ function previewEvtCode(evtId) {
   const code = generateEventCode(evt);
   const el = document.createElement('div');
   el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:flex;align-items:center;justify-content:center;padding:2rem';
+  el.dataset.overlay = '';
   el.onclick = e => { if (e.target === el) el.remove(); };
   el.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);width:min(700px,95vw);max-height:85vh;display:flex;flex-direction:column;overflow:hidden">
     <div style="padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center">
       <span style="font-size:.85rem;font-weight:600;flex:1">${esc(evt.name)} — Generated Code</span>
-      <button class="tb-btn" onclick="this.closest('[style]').remove()">Close</button>
+      <button class="tb-btn" onclick="this.closest('[data-overlay]').remove()">Close</button>
     </div>
     <pre style="flex:1;overflow:auto;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;line-height:1.6;color:var(--green);background:rgba(0,0,0,.3)">${esc(code)}</pre>
   </div>`;
@@ -1110,7 +1112,7 @@ function generateEmbedHTML() {
 }
 
 function generateEmbedJSCode() {
-  const embedHtml = generateEmbedHTML().replace(/`/g, '\\`').replace(/\$/g, '\\$');
+  const embedHtml = generateEmbedHTML().replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
   return `// Send an embed reply using Nerimity.js
 const embedHtml = \`${embedHtml}\`;
 
