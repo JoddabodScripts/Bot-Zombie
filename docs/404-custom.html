@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>404 - nerimity-sdk</title>
+<title>404 - bot-zombie</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -28,7 +28,7 @@
 <body>
 <div class="top">
   <div><div>ERR // 404 // PAGE</div><div id="ts"></div></div>
-  <div style="text-align:right"><div>nerimity-sdk</div><div>docs</div></div>
+  <div style="text-align:right"><div>bot-zombie</div><div>docs</div></div>
 </div>
 <div class="center">
   <div class="big">404</div>
@@ -44,7 +44,7 @@
   const pad = n => String(n).padStart(2,'0');
   const tick = () => { const d = new Date(); document.getElementById('ts').textContent = pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); };
   tick(); setInterval(tick, 1000);
-  const items = ['page not found','·','nerimity-sdk','·','404','·','lost in the void','·','check the url','·','nerimity-sdk','·'];
+  const items = ['page not found','·','bot-zombie','·','404','·','lost in the void','·','check the url','·','bot-zombie','·'];
   const html = items.map(t => t==='·'?'<span class="dot">·</span>':'<span>'+t+'</span>').join('');
   document.getElementById('tr').innerHTML = html + html;
 </script>
