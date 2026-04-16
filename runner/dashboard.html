@@ -1182,7 +1182,7 @@ function generateActionCode(action, indent) {
     case 'delay':
       return `${indent}await new Promise(r => setTimeout(r, ${parseInt(p.ms) || 1000}));`;
     case 'condition':
-      return `${indent}if (${p.condition || 'true'}) {\n${indent}  // condition met\n${indent}}`;
+      return `${indent}if (!(${p.condition || 'true'})) return; // guard: skip if condition is false`;
     case 'log':
       return `${indent}console.log(${JSON.stringify(p.text || 'log')});`;
     default:
