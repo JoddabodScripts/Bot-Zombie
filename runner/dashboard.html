@@ -1174,7 +1174,7 @@ function generateActionCode(action, indent) {
     case 'delete_msg':
       return `${indent}await fetch(\`https://nerimity.com/api/channels/\${message.channelId}/messages/\${message.id}\`, { method: 'DELETE', headers: { Authorization: process.env.NERIMITY_TOKEN } });`;
     case 'set_variable':
-      return `${indent}global['${p.name || 'myVar'}'] = ${p.value || "''"};`;
+      return `${indent}global[${JSON.stringify(p.name || 'myVar')}] = ${p.value || "''"};`;
     case 'send_api':
       return `${indent}const apiResp = await fetch(${JSON.stringify(p.url || 'https://api.example.com')}, { method: ${JSON.stringify(p.method || 'GET')}${p.body ? `, headers: { 'Content-Type': 'application/json' }, body: ${JSON.stringify(p.body)}` : ''} });`;
     case 'delay':
@@ -1193,7 +1193,7 @@ function generateCommandCode(cmd) {
   let code = `// Command: ${cmd.prefix}${cmd.name}\n`;
   code += `// ${cmd.description}\n`;
   if (cmd.serverOnly) code += `// Server only\n`;
-  code += `if (message.content.startsWith('${cmd.prefix}${cmd.name}')) {\n`;
+  code += `if (message.content.startsWith(${JSON.stringify(cmd.prefix + cmd.name)})) {\n`;
   if (cmd.serverOnly) code += `  if (!message.serverId) return; // server only\n`;
   cmd.actions.forEach(a => {
     code += generateActionCode(a, '  ') + '\n';
@@ -1258,7 +1258,7 @@ function generateFullCode() {
     code += `  if (message.createdBy.bot) return; // ignore bots\n\n`;
     enabledCmds.forEach((cmd, i) => {
       code += `  // ${cmd.prefix}${cmd.name}: ${cmd.description}\n`;
-      code += `  if (message.content.startsWith('${cmd.prefix}${cmd.name}')) {\n`;
+      code += `  if (message.content.startsWith(${JSON.stringify(cmd.prefix + cmd.name)})) {\n`;
       if (cmd.serverOnly) code += `    if (!message.serverId) return;\n`;
       cmd.actions.forEach(a => {
         code += generateActionCode(a, '    ') + '\n';
