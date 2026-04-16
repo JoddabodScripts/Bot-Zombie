@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: nerimity-runner
+    runtime: python
+    buildCommand: |
+      pip install -r runner/requirements.txt
+      curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+      apt-get install -y nodejs
+    startCommand: python runner/runner.py
+    envVars:
+      - key: PORT
+        value: 8080
