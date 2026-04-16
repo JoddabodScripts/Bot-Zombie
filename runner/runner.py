@@ -8,6 +8,7 @@ import sys
 import tempfile
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from typing import Optional
 import firebase_admin
@@ -182,6 +183,12 @@ async def get_logs(authorization: Optional[str] = Header(None)):
 
 @app.get("/health")
 async def health(): return {"ok": True, "bots": len(_bots)}
+
+@app.get("/", response_class=HTMLResponse)
+async def index():
+    import pathlib
+    p = pathlib.Path(__file__).parent / "builder.html"
+    return HTMLResponse(p.read_text())
 
 if __name__ == "__main__":
     import uvicorn
